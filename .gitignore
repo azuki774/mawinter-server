@@ -1,0 +1,9 @@
+memo
+*.sqlite
+*.pem
+.htpasswd
+*.tar
+migration.txt
+migration.sql
+sync.*
+*secret*

@@ -1,0 +1,56 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: maw-dump-pv
+  labels:
+    type: maw-dump-pv
+spec:
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/maw-dump
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: maw-dump-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mawinter-dump-cron
+spec:
+  schedule: "0 19 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - image: mysql:8.0.3
+            name: mawinter-dunp
+            volumeMounts:
+            - name: maw-dump-persistent-storage
+              mountPath: /backup
+            command: ["/bin/sh"]
+            args: ["-c", "/usr/bin/mysqldump --skip-column-statistics -u root -ppassword -h mawinter-db mawinter > /backup/`date +%Y%m%d%H%M`.sql"]
+            env:
+            - name: TZ
+              value: Asia/Tokyo
+          restartPolicy: Never
+          volumes:
+          - name: maw-dump-persistent-storage
+            persistentVolumeClaim:
+              claimName: maw-dump-pv-claim

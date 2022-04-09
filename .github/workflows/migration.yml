@@ -1,0 +1,30 @@
+name: MigrationTest
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - '**' 
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+
+    - name: Setup DB for test
+      run: docker-compose -f build/migration-test.yml up -d
+
+    - name: sleep (10s)
+      run: sleep 10s
+
+    - name: Test
+      run: go test -v ./... -tags=integration
