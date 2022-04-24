@@ -37,7 +37,7 @@ func (apis *apiService) GetYearSummary(year int64) (yearSummary []GetYearSummary
 
 	fetchDBData, err := apis.dbR.GetYearSummaryDB(tx, year) // fetchDBData is sorted by category_id
 	if err != nil {
-		l.Logger.Error("API", "GetYearSummary", zap.Error(err))
+		l.Logger.Errorw("API error", "name", "GetYearSummary", "error", zap.Error(err))
 		return nil, err
 	}
 
@@ -60,7 +60,7 @@ func (apis *apiService) GetYearSummary(year int64) (yearSummary []GetYearSummary
 		// 20xxyy -> yy = datenumに変換
 		datenum, err := strconv.Atoi(v.YearMonth[4:6])
 		if err != nil {
-			l.Logger.Error("API", "GetYearSummary", zap.Error(err))
+			l.Logger.Errorw("API error", "name", "GetYearSummary", "error", zap.Error(err))
 			return nil, err
 		}
 
@@ -107,12 +107,12 @@ func posCompSlideint64(arr []int64) (indexes []int) {
 }
 
 func (apis *apiService) AddRecord(addRecord db.Records) (retAddRecord db.Records, err error) {
-	l.Logger.Info("API", "AddRecord called")
+	l.Logger.Infow("API called", "name", "AddRecord")
 	tx := apis.dbR.OpenTx()
 	defer apis.dbR.CloseTx(tx, err)
 	retAddRecord, err = apis.dbR.AddRecordDB(tx, addRecord)
 	if err != nil {
-		l.Logger.Error("API", "AddRecord", zap.Error(err))
+		l.Logger.Errorw("API error", "name", "AddRecord", "error", zap.Error(err))
 		return db.Records{}, err
 	}
 
@@ -120,12 +120,12 @@ func (apis *apiService) AddRecord(addRecord db.Records) (retAddRecord db.Records
 }
 
 func (apis *apiService) DeleteRecord(id int64) (err error) {
-	l.Logger.Info("API", "DeleteRecord called")
+	l.Logger.Infow("API called", "name", "DeleteRecord")
 	tx := apis.dbR.OpenTx()
 	defer apis.dbR.CloseTx(tx, err)
 	err = apis.dbR.DeleteRecordDB(tx, id)
 	if err != nil {
-		l.Logger.Error("API", "DeleteRecord", zap.Error(err))
+		l.Logger.Errorw("API error", "name", "DeleteRecord", "error", zap.Error(err))
 	}
 
 	return nil
@@ -133,7 +133,7 @@ func (apis *apiService) DeleteRecord(id int64) (err error) {
 
 // 直近の Record データをdataNum件分取得。
 func (apis *apiService) GetRecentRecord(dataNum int64) (getRecentData []db.RecordsDetails, err error) {
-	l.Logger.Info("API", "GetRecentRecord called")
+	l.Logger.Infow("API called", "name", "GetRecentRecord")
 	tx := apis.dbR.OpenTx()
 	defer apis.dbR.CloseTx(tx, err)
 
@@ -144,7 +144,7 @@ func (apis *apiService) GetRecentRecord(dataNum int64) (getRecentData []db.Recor
 	getRecentDataDB, err := apis.dbR.GetRecentRecord(tx, dataNum)
 
 	if err != nil {
-		l.Logger.Error("API", "GetRecentRecord", zap.Error(err))
+		l.Logger.Errorw("API error", "name", "GetRecentRecord", "error", zap.Error(err))
 		return nil, err
 	}
 
