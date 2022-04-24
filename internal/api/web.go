@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"mawinter-expense/internal/azerror"
 	"mawinter-expense/internal/db"
-	"mawinter-expense/internal/logger"
+	l "mawinter-expense/internal/logger"
 	"net/http"
 	"os"
 	"strconv"
@@ -14,6 +14,7 @@ import (
 
 	httpdate "github.com/Songmu/go-httpdate"
 	"github.com/gorilla/mux"
+	"go.uber.org/zap"
 )
 
 // HTTPの入力の際に使う構造体
@@ -45,7 +46,7 @@ func (inWebRecords *inWebRecords) inWebRecordToRecord() (record db.Records, err 
 	}
 
 	if err != nil {
-		logger.InfoPrint("inWebRecordToRecord: BadRequest")
+		l.Logger.Info("Web", "inWebRecordToRecord", "BadRequest")
 		return db.Records{}, azerror.ErrBadRequest
 	}
 
@@ -59,7 +60,7 @@ func ServerStart() {
 	router.Methods("GET").Path("/record/recent/").HandlerFunc(getRecentRecordFunc)
 	router.Methods("POST").Path("/record/").HandlerFunc(addRecordFunc)
 	router.Methods("DELETE").Path("/record/{id}").HandlerFunc(deleteRecordFunc)
-	logger.InfoPrint("API Start")
+	l.Logger.Info("Web", "WebServer Start", "BadRequest")
 	http.ListenAndServe(":80", router)
 }
 
@@ -72,7 +73,7 @@ func handleBasicAuth(w http.ResponseWriter, r *http.Request) error {
 		w.Header().Set("WWW-Authenticate", `Basic realm="SECRET AREA"`)
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		fmt.Fprintf(w, "%d Not authorized.", http.StatusUnauthorized)
-		logger.ErrorPrint("Not basic authorized")
+		l.Logger.Info("Web", "Not basic authorized")
 		return azerror.ErrAuthorized
 	}
 
@@ -80,20 +81,20 @@ func handleBasicAuth(w http.ResponseWriter, r *http.Request) error {
 		w.Header().Set("WWW-Authenticate", `Basic realm="SECRET AREA"`)
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		fmt.Fprintf(w, "%d Not authorized.\n", http.StatusUnauthorized)
-		logger.ErrorPrint("Basic authorized password unmatched")
+		l.Logger.Warn("Web", "Basic authorized password unmatched access")
 		return azerror.ErrAuthorized
 	}
 	return nil
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
-	logger.AccessInfoPrint("/mawinter/", "GET", r.Header.Get("X-Forwarded-For"))
+	l.Logger.Info("Web", "/mawinter", "GET", r.Header.Get("X-Forwarded-For"))
 	fmt.Fprintf(w, "It is the root page.\n")
 }
 
 func getYearSummaryFunc(w http.ResponseWriter, r *http.Request) {
 	// /api/summary/year/{year}
-	logger.AccessInfoPrint("/mawinter/summary/year/{year}", "GET", r.Header.Get("X-Forwarded-For"))
+	l.Logger.Info("Web", "/mawinter/summary/year/{year}", "GET", r.Header.Get("X-Forwarded-For"))
 	err := handleBasicAuth(w, r)
 	if err != nil {
 		return
@@ -111,13 +112,12 @@ func getYearSummaryFunc(w http.ResponseWriter, r *http.Request) {
 
 	year, err := strconv.ParseInt(pathParam["year"], 10, 64)
 	if err != nil {
-		logger.InfoPrint(fmt.Sprintf("getYearSummaryFunc : parameter parse error (year) : %s", err.Error()))
+		l.Logger.Info("Web", "getYearSummaryFunc", "parameter parse error (year)", zap.Error(err))
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
 	yearSummary, err := as.GetYearSummary(year)
 	if err != nil {
-		logger.ErrorPrint(fmt.Sprintf("getYearSummaryFunc : %s", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
@@ -127,7 +127,6 @@ func getYearSummaryFunc(w http.ResponseWriter, r *http.Request) {
 
 	outputJson, err := json.Marshal(&yearSummary)
 	if err != nil {
-		logger.ErrorPrint(fmt.Sprintf("getYearSummaryFunc : %s", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
@@ -137,7 +136,7 @@ func getYearSummaryFunc(w http.ResponseWriter, r *http.Request) {
 
 func addRecordFunc(w http.ResponseWriter, r *http.Request) {
 	// /api/record/
-	logger.AccessInfoPrint("/mawinter/record/", "POST", r.Header.Get("X-Forwarded-For"))
+	l.Logger.Info("Web", "/mawinter/record/", "POST", r.Header.Get("X-Forwarded-For"))
 	err := handleBasicAuth(w, r)
 	if err != nil {
 		return
@@ -163,12 +162,10 @@ func addRecordFunc(w http.ResponseWriter, r *http.Request) {
 	addRecordRes, err := as.AddRecord(addRecord)
 	if err != nil {
 		// データ追加時エラー
-		logger.ErrorPrint(fmt.Sprintf("addRecordFunc : %s", err.Error()))
 		w.WriteHeader(http.StatusBadRequest)
 	}
 	outputJson, err := json.Marshal(&addRecordRes)
 	if err != nil {
-		logger.ErrorPrint(fmt.Sprintf("addRecordFunc : %s", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -176,7 +173,7 @@ func addRecordFunc(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteRecordFunc(w http.ResponseWriter, r *http.Request) {
-	logger.AccessInfoPrint("/mawinter/delete/{id}", "GET", r.Header.Get("X-Forwarded-For"))
+	l.Logger.Info("Web", "/mawinter/delete/{id}", "DELETE", r.Header.Get("X-Forwarded-For"))
 	err := handleBasicAuth(w, r)
 	if err != nil {
 		return
@@ -185,7 +182,6 @@ func deleteRecordFunc(w http.ResponseWriter, r *http.Request) {
 	pathParam := mux.Vars(r)
 	id, err := strconv.ParseInt(pathParam["id"], 10, 64)
 	if err != nil {
-		logger.InfoPrint(fmt.Sprintf("deleteRecordFunc : parameter parse error (id) : %s", err.Error()))
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
@@ -209,7 +205,7 @@ func deleteRecordFunc(w http.ResponseWriter, r *http.Request) {
 
 func getRecentRecordFunc(w http.ResponseWriter, r *http.Request) {
 	// /api/recent
-	logger.AccessInfoPrint("/mawinter/recent", "GET", r.Header.Get("X-Forwarded-For"))
+	l.Logger.Info("Web", "/mawinter/recent", "DELETE", r.Header.Get("X-Forwarded-For"))
 	err := handleBasicAuth(w, r)
 	if err != nil {
 		return
@@ -226,7 +222,6 @@ func getRecentRecordFunc(w http.ResponseWriter, r *http.Request) {
 
 	getRecentData, err := as.GetRecentRecord(20)
 	if err != nil {
-		logger.ErrorPrint(fmt.Sprintf("getRecentRecordFunc : %s", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
@@ -236,7 +231,6 @@ func getRecentRecordFunc(w http.ResponseWriter, r *http.Request) {
 
 	outputJson, err := json.Marshal(&getRecentData)
 	if err != nil {
-		logger.ErrorPrint(fmt.Sprintf("getRecentRecordFunc : %s", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 

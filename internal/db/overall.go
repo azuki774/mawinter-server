@@ -3,11 +3,12 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"mawinter-expense/internal/logger"
+	l "mawinter-expense/internal/logger"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	"go.uber.org/zap"
 )
 
 var DB *gorm.DB
@@ -17,11 +18,11 @@ func DBConnect(user string, password string, address string, dbName string) erro
 	nDB, err := gorm.Open("mysql", connectCmd)
 	if err != nil {
 		fmt.Println(err)
-		logger.FatalPrint("Failed to connect to the database")
+		l.Logger.Fatal("Failed to connect to the database", zap.Error(err))
 		return err
 	}
 	DB = nDB
-	logger.InfoPrint("Connect to the database")
+	l.Logger.Info("Connect to the database")
 	return nil
 }
 
@@ -49,7 +50,7 @@ func (dbR *dbRepository) OpenTx() *gorm.DB {
 
 func (dbR *dbRepository) CloseTx(tx *gorm.DB, err error) error {
 	if err != nil {
-		logger.ErrorPrint(fmt.Sprintf("CloseTx (Rollback): %s", err.Error()))
+		l.Logger.Error("CloseTx (Rollback): %s", zap.Error(err))
 		tx.Rollback()
 	} else {
 		tx.Commit()
