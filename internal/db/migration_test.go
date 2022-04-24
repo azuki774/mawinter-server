@@ -5,10 +5,10 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
 	httpdate "github.com/Songmu/go-httpdate"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	l "mawinter-expense/internal/logger"
 	"os"
 	"reflect"
 	"testing"
