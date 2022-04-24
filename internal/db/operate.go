@@ -7,7 +7,6 @@ import (
 	l "mawinter-expense/internal/logger"
 
 	"github.com/jinzhu/gorm"
-	"go.uber.org/zap"
 )
 
 func TransMonthToIndex(month int) (index int) {
@@ -25,19 +24,19 @@ func (dbR *dbRepository) GetYearSummaryDB(tx *gorm.DB, year int64) (yearSummary 
 	endDate := fmt.Sprintf("%d-03-31", year+1)
 	sqlText := "SELECT records.category_id , categories.name, DATE_FORMAT(records.date, '%Y%m'), sum(price) FROM records INNER JOIN categories ON categories.category_id = records.category_id WHERE records.date BETWEEN '" + beginDate + "' AND '" + endDate + "' GROUP BY records.category_id , DATE_FORMAT(records.date, '%Y%m') ORDER BY records.category_id;"
 
-	l.Logger.Info("SQL", "GetYearSummaryDB")
+	l.Logger.Infow("SQL published", "name", "GetYearSummaryDB")
 
 	rows, err := tx.Raw(sqlText).Rows()
 	defer rows.Close()
 	if err != nil {
-		l.Logger.Error("SQL", "GetYearSummaryDB", zap.Error(err))
+		l.Logger.Errorw(err.Error(), "name", "GetYearSummaryDB")
 		return nil, azerror.ErrInternal
 	}
 
 	for rows.Next() {
 		var newSummary GetYearSummaryDBStruct
 		if err := rows.Scan(&newSummary.CategoryId, &newSummary.Name, &newSummary.YearMonth, &newSummary.Price); err != nil {
-			l.Logger.Error("SQL", "GetYearSummaryDB", zap.Error(err))
+			l.Logger.Errorw(err.Error(), "name", "GetYearSummaryDB")
 			return nil, azerror.ErrInternal
 		}
 		yearSummary = append(yearSummary, newSummary)
@@ -47,12 +46,12 @@ func (dbR *dbRepository) GetYearSummaryDB(tx *gorm.DB, year int64) (yearSummary 
 }
 
 func (dbR *dbRepository) AddRecordDB(tx *gorm.DB, record Records) (retRecords Records, err error) {
-	l.Logger.Info("SQL", "AddRecordDB")
+	l.Logger.Infow("SQL published", "name", "AddRecordDB")
 	// Web API側でDateを埋めておく
 	res := tx.Select("CategoryId", "Price", "Date", "Memo").Create(&record)
 
 	if res.Error != nil {
-		l.Logger.Error("SQL", "AddRecordDB", zap.Error(res.Error))
+		l.Logger.Errorw(res.Error.Error(), "name", "AddRecordDB")
 		return Records{}, azerror.ErrInternal
 	}
 
@@ -60,11 +59,11 @@ func (dbR *dbRepository) AddRecordDB(tx *gorm.DB, record Records) (retRecords Re
 }
 
 func (dbR *dbRepository) DeleteRecordDB(tx *gorm.DB, id int64) (err error) {
-	l.Logger.Info("SQL", "DeleteRecordDB")
+	l.Logger.Infow("SQL published", "name", "DeleteRecordDB")
 	record := Records{Id: id}
 	res := tx.First(&record)
 	if res.Error != nil {
-		l.Logger.Error("SQL", "DeleteRecordDB", zap.Error(res.Error))
+		l.Logger.Errorw(res.Error.Error(), "name", "DeleteRecordDB")
 		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 			return azerror.ErrRecordNotFound
 		} else {
@@ -74,7 +73,7 @@ func (dbR *dbRepository) DeleteRecordDB(tx *gorm.DB, id int64) (err error) {
 
 	res = tx.Delete(&record)
 	if res.Error != nil {
-		l.Logger.Error("SQL", "DeleteRecordDB", zap.Error(res.Error))
+		l.Logger.Errorw(res.Error.Error(), "name", "DeleteRecordDB")
 		return azerror.ErrInternal
 	}
 
@@ -83,11 +82,11 @@ func (dbR *dbRepository) DeleteRecordDB(tx *gorm.DB, id int64) (err error) {
 
 // 直近n 個のレコードを取得するSQLを発行する。
 func (dbR *dbRepository) GetRecentRecord(tx *gorm.DB, n int64) (getRecentData []RecordsDetails, err error) {
-	l.Logger.Info("SQL", "GetRecentRecord")
+	l.Logger.Infow("SQL published", "name", "GetRecentRecord")
 	sqlText := "SELECT records.id, records.date, records.category_id, categories.name, records.price, records.memo FROM records LEFT OUTER JOIN categories ON records.category_id = categories.category_id ORDER BY records.id DESC LIMIT ?"
 	rows, err := tx.Raw(sqlText, n).Rows()
 	if err != nil {
-		l.Logger.Error("SQL", "GetRecentRecord", zap.Error(err))
+		l.Logger.Errorw(err.Error(), "name", "GetRecentRecord")
 		return nil, azerror.ErrInternal
 	}
 	defer rows.Close()
@@ -96,7 +95,7 @@ func (dbR *dbRepository) GetRecentRecord(tx *gorm.DB, n int64) (getRecentData []
 		var aRecentData RecordsDetails
 		err := rows.Scan(&aRecentData.Id, &aRecentData.Date, &aRecentData.CategoryId, &aRecentData.Name, &aRecentData.Price, &aRecentData.Memo)
 		if err != nil {
-			l.Logger.Error("SQL", "GetRecentRecord", zap.Error(err))
+			l.Logger.Errorw(err.Error(), "name", "GetRecentRecord")
 			return nil, azerror.ErrInternal
 		}
 		getRecentData = append(getRecentData, aRecentData)
