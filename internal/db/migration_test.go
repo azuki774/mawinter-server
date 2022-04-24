@@ -18,10 +18,12 @@ import (
 var dbR DBRepository
 
 func TestMain(m *testing.M) {
-	fmt.Println("--- DB Setup ---")
+	l.NewSugarLogger()
+
+	l.Logger.Info("DB Setup")
 	err := DBConnect("root", "password", "localhost", "mawinter-test")
 	if err != nil {
-		fmt.Println("DB Setup failed")
+		l.Logger.Fatal("DB Setup failed")
 		panic(err)
 	}
 
@@ -29,7 +31,7 @@ func TestMain(m *testing.M) {
 
 	// ローカル実行のため、records初期化
 	DB.Raw("TRUNCATE TABLE records")
-	fmt.Println("--- DB Setup End ---")
+	l.Logger.Info("DB Setup Completed")
 
 	code := m.Run()
 

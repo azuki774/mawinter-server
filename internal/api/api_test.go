@@ -3,6 +3,8 @@ package api
 import (
 	"database/sql"
 	"mawinter-expense/internal/db"
+	l "mawinter-expense/internal/logger"
+	"os"
 	"reflect"
 	"testing"
 	"time"
@@ -12,6 +14,11 @@ import (
 )
 
 // -------------------------------------
+func TestMain(m *testing.M) {
+	l.NewSugarLogger()
+	code := m.Run()
+	os.Exit(code)
+}
 
 // 正常系
 type mockDBRepositry1 struct{}

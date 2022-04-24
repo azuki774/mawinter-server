@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"mawinter-expense/internal/api"
 	"mawinter-expense/internal/db"
-	"mawinter-expense/internal/logger"
+	l "mawinter-expense/internal/logger"
 	"os"
 	"strconv"
 	"time"
@@ -13,16 +13,24 @@ import (
 )
 
 func main() {
-	logger.InfoPrint("Program Start")
+	err := l.NewSugarLogger()
+	defer l.Logger.Sync()
+	if err != nil {
+		fmt.Printf("logger failed")
+		os.Exit(1)
+	}
+
+	l.Logger.Info("Program Start")
+
 	if os.Getenv("BASIC_AUTH_PASSWORD") == "" {
-		logger.WarnPrint("No Basic Auth password set")
+		l.Logger.Warn("No Basic Auth password set")
 	} else {
 		logMessage := "Basic Authentication username : " + os.Getenv("BASIC_AUTH_USERNAME") + ", password : " + os.Getenv("BASIC_AUTH_PASSWORD")
-		logger.InfoPrint(logMessage)
+		l.Logger.Info(logMessage)
 	}
 
 	logMessage := "Using Database is " + os.Getenv("MYSQL_DATABASE")
-	logger.InfoPrint(logMessage)
+	l.Logger.Info(logMessage)
 
 	var DBSleepTime time.Duration
 	if os.Getenv("DB_WAITTIME") == "" {
@@ -43,5 +51,5 @@ func main() {
 	defer db.DB.Close()
 
 	api.ServerStart()
-	logger.InfoPrint("Program End")
+	l.Logger.Info("Program End")
 }
