@@ -46,7 +46,7 @@ func (inWebRecords *inWebRecords) inWebRecordToRecord() (record db.Records, err 
 	}
 
 	if err != nil {
-		l.Logger.Errorw("Translate error", "name", "inWebRecordToRecord", "error", zap.Error(err))
+		l.Logger.Info("BadRequest received", "Web", "inWebRecordToRecord")
 		return db.Records{}, azerror.ErrBadRequest
 	}
 
@@ -60,7 +60,7 @@ func ServerStart() {
 	router.Methods("GET").Path("/record/recent/").HandlerFunc(getRecentRecordFunc)
 	router.Methods("POST").Path("/record/").HandlerFunc(addRecordFunc)
 	router.Methods("DELETE").Path("/record/{id}").HandlerFunc(deleteRecordFunc)
-	l.Logger.Infow("WebServer Start")
+	l.Logger.Info("WebServer Start")
 	http.ListenAndServe(":80", router)
 }
 
@@ -73,7 +73,7 @@ func handleBasicAuth(w http.ResponseWriter, r *http.Request) error {
 		w.Header().Set("WWW-Authenticate", `Basic realm="SECRET AREA"`)
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		fmt.Fprintf(w, "%d Not authorized.", http.StatusUnauthorized)
-		l.Logger.Info("Web", "Not basic authorized")
+		l.Logger.Warnw("not authorized access (no basic auth access)", "Web", "Basic authorized password unmatched access")
 		return azerror.ErrAuthorized
 	}
 
@@ -81,20 +81,20 @@ func handleBasicAuth(w http.ResponseWriter, r *http.Request) error {
 		w.Header().Set("WWW-Authenticate", `Basic realm="SECRET AREA"`)
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		fmt.Fprintf(w, "%d Not authorized.\n", http.StatusUnauthorized)
-		l.Logger.Warn("Web", "Basic authorized password unmatched access")
+		l.Logger.Warnw("not authorized access", "Web", "Basic authorized password unmatched access")
 		return azerror.ErrAuthorized
 	}
 	return nil
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
-	l.Logger.Infow("Access", "url", "/mawinter", "method", "GET", "ip", r.Header.Get("X-Forwarded-For"))
+	l.Logger.Infow("access", "Web", "/mawinter", "GET", r.Header.Get("X-Forwarded-For"))
 	fmt.Fprintf(w, "It is the root page.\n")
 }
 
 func getYearSummaryFunc(w http.ResponseWriter, r *http.Request) {
 	// /api/summary/year/{year}
-	l.Logger.Infow("Access", "url", "/mawinter/summary/year/{year}", "method", "GET", "ip", r.Header.Get("X-Forwarded-For"))
+	l.Logger.Infow("access", "Web", "/mawinter/summary/year/{year}", "GET", r.Header.Get("X-Forwarded-For"))
 	err := handleBasicAuth(w, r)
 	if err != nil {
 		return
@@ -112,7 +112,7 @@ func getYearSummaryFunc(w http.ResponseWriter, r *http.Request) {
 
 	year, err := strconv.ParseInt(pathParam["year"], 10, 64)
 	if err != nil {
-		l.Logger.Infow("Access", "url", "/mawinter/summary/year/{year}", zap.Error(err))
+		l.Logger.Infow("access", "Web", "getYearSummaryFunc", "parameter parse error (year)", zap.Error(err))
 		w.WriteHeader(http.StatusBadRequest)
 	}
 

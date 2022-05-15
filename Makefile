@@ -1,4 +1,4 @@
-VERSION_API=nightly
+VERSION_API=develop
 container_name_api=mawinter-api
 .PHONY: build
 build:
