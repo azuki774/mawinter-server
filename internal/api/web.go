@@ -136,7 +136,7 @@ func getYearSummaryFunc(w http.ResponseWriter, r *http.Request) {
 
 func addRecordFunc(w http.ResponseWriter, r *http.Request) {
 	// /api/record/
-	l.Logger.Info("Web", "/mawinter/record/", "POST", r.Header.Get("X-Forwarded-For"))
+	l.Logger.Infow("Access", "url", "/mawinter/record/", "method", "POST", "ip", r.Header.Get("X-Forwarded-For"))
 	err := handleBasicAuth(w, r)
 	if err != nil {
 		return
@@ -173,7 +173,7 @@ func addRecordFunc(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteRecordFunc(w http.ResponseWriter, r *http.Request) {
-	l.Logger.Info("Web", "/mawinter/delete/{id}", "DELETE", r.Header.Get("X-Forwarded-For"))
+	l.Logger.Infow("Access", "url", "/mawinter/delete/{id}", "method", "DELETE", "ip", r.Header.Get("X-Forwarded-For"))
 	err := handleBasicAuth(w, r)
 	if err != nil {
 		return
@@ -205,7 +205,7 @@ func deleteRecordFunc(w http.ResponseWriter, r *http.Request) {
 
 func getRecentRecordFunc(w http.ResponseWriter, r *http.Request) {
 	// /api/recent
-	l.Logger.Info("Web", "/mawinter/recent", "DELETE", r.Header.Get("X-Forwarded-For"))
+	l.Logger.Infow("Access", "url", "/mawinter/recent", "method", "DELETE", "ip", r.Header.Get("X-Forwarded-For"))
 	err := handleBasicAuth(w, r)
 	if err != nil {
 		return

@@ -14,8 +14,8 @@ spec:
       resource:
       containers:
       - name: mawinter-api
-        image: ghcr.io/azuki774/mawinter-api:latest
-        imagePullPolicy: Always
+        image: ghcr.io/azuki774/mawinter-api:1.0.2
+        imagePullPolicy: IfNotPresent
         ports:  
         - containerPort: 80
         env: 
