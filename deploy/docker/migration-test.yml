@@ -18,4 +18,4 @@ services:
             - MYSQL_PASSWORD=pwd
             - TZ=Asia/Tokyo
         volumes:
-            - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+            - ../../build/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
