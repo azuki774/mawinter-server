@@ -18,10 +18,10 @@ services:
           - MYSQL_PASSWORD=pwd
           - TZ=Asia/Tokyo
       volumes:
-          - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+          - ../../build/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
   maw-api:
     build:
-      context: ../
+      context: ../../
       dockerfile: build/Dockerfile
     container_name: mawinter-api
     ports:

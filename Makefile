@@ -1,25 +1,29 @@
 VERSION_API=develop
 container_name_api=mawinter-api
-.PHONY: build
-build:
-	docker build -t ghcr.io/azuki774/$(container_name_api):$(VERSION_API) -f build/Dockerfile .
+.PHONY: build run push stop test overall-test overall-clean
 
-.PHONY: push
-push:	
+build:
+	docker build -t azuki774/$(container_name_api):$(VERSION_API) -f build/Dockerfile .
+
+run:
+	docker-compose -f deploy/docker/docker-compose.yml up -d
+
+stop:
+	docker-compose -f deploy/docker/docker-compose.yml down
+
+push:
+	docker tag $(container_name_api) ghcr.io/azuki774/$(container_name_api):develop
 	docker push ghcr.io/azuki774/$(container_name_api):$(VERSION_API)
 
-.PHONY: test
 test:
 	gofmt -l -w .
 	go test ./... -v -cover
 
-.PHONY: overall-test
 overall-test:
-	docker-compose -f build/overall-test.yml up --build -d
+	docker-compose -f deploy/docker/overall-test.yml up --build -d
 	sleep 25s
 	test/run.sh
-	docker-compose -f build/overall-test.yml down
+	docker-compose -f deploy/docker/overall-test.yml down
 
-.PHONY: overall-clean
 overall-clean:
-	docker-compose -f build/overall-test.yml down
+	docker-compose -f deploy/docker/overall-test.yml down
