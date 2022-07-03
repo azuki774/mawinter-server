@@ -1,6 +1,6 @@
 VERSION_API=develop
 container_name_api=mawinter-api
-.PHONY: build run push stop test overall-test overall-clean
+.PHONY: build run push stop test migration-test migration-clean
 
 build:
 	docker build -t azuki774/$(container_name_api):$(VERSION_API) -f build/Dockerfile .
@@ -19,11 +19,11 @@ test:
 	gofmt -l -w .
 	go test ./... -v -cover
 
-overall-test:
-	docker-compose -f deploy/docker/overall-test.yml up --build -d
+migration-test:
+	docker-compose -f deploy/docker/migration-test.yml up --build -d
 	sleep 25s
 	test/run.sh
-	docker-compose -f deploy/docker/overall-test.yml down
+	docker-compose -f deploy/docker/migration-test.yml down
 
-overall-clean:
-	docker-compose -f deploy/docker/overall-test.yml down
+migration-clean:
+	docker-compose -f deploy/docker/migration-test.yml down
