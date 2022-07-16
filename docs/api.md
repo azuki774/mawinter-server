@@ -9,14 +9,14 @@
 
     [
         {
-            "categoryID": 210,
-            "name": "種類",
+            "category_id": 210,
+            "category_name": "種類",
             "price": [4,5,6,7,8,9,10,11,12,1,2,3], // 4月から3月までの数値が配列で返る
             "total": 213912
         },
         {
-            "categoryID": 211,
-            "name": "種類",
+            "category_id": 211,
+            "category_name": "種類",
             "price": [4,5,6,7,8,9,10,11,12,1,2,3],
             "total": 4210
         },
@@ -28,8 +28,8 @@
 ### request:
 
     {
-        "categoryID" : 120,
-        "date" : "2021-01-01",
+        "category_id" : 120,
+        "date" : "20210101",
         "price" : 210
     }
 
@@ -37,8 +37,9 @@
 
     {
         "id" : 123, 
-        "categoryID" : 400, 
-        "date" : "2021-01-01",
+        "category_id" : 400,
+        "category_name" : "cat1", 
+        "date" : "2021-01-01T00:00:00Z",
         "price" : 1234,
         "memo": ""
     }
@@ -52,15 +53,17 @@
     [
         {
             "id" : 123, 
-            "categoryID" : 400, 
-            "date" : "2021-01-01",
+            "category_id" : 400,
+            "category_name" : "カテゴリ名",
+            "date" : "20210101",
             "price" : 1234,
             "memo": ""
         },
         {
             "id" : 124, 
-            "categoryID" : 410, 
-            "date" : "2021-01-02",
+            "category_id" : 410,
+            "category_name" : "カテゴリ名",
+            "date" : "20210102",
             "price" : 5678,
             "memo": "memotest"
         },

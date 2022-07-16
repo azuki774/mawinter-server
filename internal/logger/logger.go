@@ -4,11 +4,8 @@ import (
 	"go.uber.org/zap"
 )
 
-var Logger *zap.SugaredLogger
-
-func NewSugarLogger() (err error) {
+func NewSugarLogger() (Logger *zap.SugaredLogger, err error) {
 	l, err := zap.NewDevelopment()
 	ls := l.Sugar()
-	Logger = ls
-	return err
+	return ls, err
 }
