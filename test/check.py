@@ -112,10 +112,11 @@ def main():
     url = "http://localhost:8080/record/1"
     res = requests.delete(url, auth=auth)
     if res.status_code != 204:
-        print("3-1. delete record")
+        print("3-1. delete record failed")
         print(res.status_code)
         sys.exit(1)
 
+    print("3-1. delete record")
     sys.exit(0)
 
 
