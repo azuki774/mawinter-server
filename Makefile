@@ -22,7 +22,8 @@ test:
 migration-test:
 	docker-compose -f deploy/docker/migration-test.yml up --build -d
 	sleep 25s
-	test/run.sh
+	python3 test/check.py
+	# test/run.sh
 	docker-compose -f deploy/docker/migration-test.yml down
 
 migration-clean:

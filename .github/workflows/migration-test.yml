@@ -1,4 +1,4 @@
-name: OverallTest
+name: MigrationTest
 
 on:
   push:
@@ -30,4 +30,4 @@ jobs:
       run: chmod +x test/*.sh
 
     - name: Run Test
-      run: test/run.sh
+      run: python3 test/check.py
