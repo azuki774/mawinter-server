@@ -12,7 +12,7 @@ stop:
 	docker-compose -f deploy/docker/docker-compose.yml down
 
 push:
-	docker tag $(container_name_api) ghcr.io/azuki774/$(container_name_api):develop
+	docker tag azuki774/$(container_name_api):$(VERSION_API) ghcr.io/azuki774/$(container_name_api):develop
 	docker push ghcr.io/azuki774/$(container_name_api):$(VERSION_API)
 
 test:
@@ -22,8 +22,7 @@ test:
 migration-test:
 	docker-compose -f deploy/docker/migration-test.yml up --build -d
 	sleep 25s
-	python3 test/check.py
-	# test/run.sh
+	test/run.sh
 	docker-compose -f deploy/docker/migration-test.yml down
 
 migration-clean:
