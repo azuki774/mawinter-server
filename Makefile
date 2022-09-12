@@ -1,19 +1,15 @@
-VERSION_API=develop
+VERSION_API=latest
 container_name_api=mawinter-api
 .PHONY: build run push stop test migration-test migration-clean
 
 build:
-	docker build -t azuki774/$(container_name_api):$(VERSION_API) -f build/Dockerfile .
+	docker build -t $(container_name_api):$(VERSION_API) -f build/Dockerfile .
 
 run:
 	docker-compose -f deploy/docker/docker-compose.yml up -d
 
 stop:
 	docker-compose -f deploy/docker/docker-compose.yml down
-
-push:
-	docker tag azuki774/$(container_name_api):$(VERSION_API) ghcr.io/azuki774/$(container_name_api):develop
-	docker push ghcr.io/azuki774/$(container_name_api):$(VERSION_API)
 
 test:
 	gofmt -l -w .
