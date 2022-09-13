@@ -3,31 +3,30 @@ name: MigrationTest
 on:
   push:
     branches:
-    - master
+      - master
   pull_request:
     branches:
-    - '**' 
+      - "**"
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.17
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
 
-    - name: Setup DB and API for test
-      run: docker-compose -f deploy/docker/migration-test.yml up --build -d
+      - name: Setup DB and API for test
+        run: docker compose -f deployment/migration-test.yml up --build -d
 
-    - name: sleep (25s)
-      run: sleep 25s
-    
-    - name: chmod scripts
-      run: chmod +x test/*.sh
+      - name: sleep (25s)
+        run: sleep 25s
 
-    - name: Run Test
-      run: python3 test/check.py
+      - name: chmod scripts
+        run: chmod +x test/*.sh
+
+      - name: Run Test
+        run: python3 test/check.py
