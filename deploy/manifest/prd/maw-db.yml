@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: maw-pv
+  labels:
+    volume: maw-pv
+spec:
+  capacity:
+    storage: 2Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: slow
+  hostPath:
+    path: /data/maw-pv
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: maw-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: slow
+  selector:
+    matchLabels:
+      volume: maw-pv
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mawinter-db
+spec:
+  selector:
+    matchLabels:
+      app: mawinter-db
+  template:
+    metadata:
+      labels:
+        app: mawinter-db
+    spec:
+      containers:
+      - name: mawinter-db
+        image: mariadb:10.6.4
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3306
+        resources:
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        - name: MYSQL_DATABASE
+          value: mawinter
+        - name: TZ
+          value: Asia/Tokyo
+        - name: LANG
+          value: C.UTF-8
+        volumeMounts:
+        - name: maw-pv
+          mountPath: /var/lib/mysql
+        - name: mawinter-db-conf
+          mountPath: /etc/mysql/conf.d
+      volumes:
+      - name: maw-pv
+        persistentVolumeClaim:
+          claimName: maw-pv-claim
+      - name: mawinter-db-conf
+        configMap:
+          name: mawinter-db-config
+      imagePullSecrets:
+        - name: reg-user
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mawinter-db
+spec:
+  selector:
+    app: mawinter-db
+  ports:
+  - port: 3306
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mawinter-db-config
+data:
+  custom.cnf: |
+    [mysqld]
+    character_set_server=utf8
+    character_set_filesystem=utf8
+    collation-server=utf8_general_ci
+    init-connect='SET NAMES utf8'
+    init_connect='SET collation_connection = utf8_general_ci'
+    skip-character-set-client-handshake
+    innodb_buffer_pool_size=1G
+    innodb_log_file_size=50M
+
+    [client]
+    default-character-set=utf8
+    default-time-zone = 'Asia/Tokyo'
