@@ -21,24 +21,20 @@ func init() {
 	time.Local = jst
 }
 
-type APIService interface {
-	CreateRecord(addRecord model.CreateRecord) (retAddRecord model.ShowRecord, err error)
-	GetYearSummary(year int64) (yearSummary []model.YearSummary, err error)
+type DBRepository interface {
+	// category_id 順にその年の月ごとの合計を取得する
+	CreateRecordDB(record model.Records) (retAddRecord model.ShowRecord, err error)
+	GetYearSummaryDB(year int64) (yearSummaryInters []model.YearSummaryInter, err error)
 	GetRecentRecord(n int) (getRecentData []model.ShowRecord, err error)
-	DeleteRecord(id int64) (err error)
+	DeleteRecordDB(id int64) (err error)
 }
 
-type apiService struct {
-	dbR    repository.DBRepository
-	logger *zap.SugaredLogger
+type APIService struct {
+	Logger *zap.Logger
+	DBRepo DBRepository
 }
 
-func NewAPIService(dbR_in repository.DBRepository, l *zap.SugaredLogger) APIService {
-	return &apiService{dbR: dbR_in, logger: l}
-}
-
-func (ap *apiService) CreateRecord(addRecord model.CreateRecord) (retAddRecord model.ShowRecord, err error) {
-	ap.logger.Infow("API called", "func", "CreateRecord")
+func (ap *APIService) CreateRecord(addRecord model.CreateRecord) (retAddRecord model.ShowRecord, err error) {
 	var record model.Records = model.Records{
 		CategoryID: addRecord.CategoryID,
 		Price:      addRecord.Price,
@@ -67,22 +63,21 @@ func (ap *apiService) CreateRecord(addRecord model.CreateRecord) (retAddRecord m
 
 		record.Date = time.Date(YYYY, time.Month(MM), DD, 0, 0, 0, 0, time.Local)
 	}
-	
-	retAddRecord, err = ap.dbR.CreateRecordDB(record)
+
+	retAddRecord, err = ap.DBRepo.CreateRecordDB(record)
 	if err != nil {
-		ap.logger.Infow("API error", "func", "CreateRecord", "error", zap.Error(err))
+		ap.Logger.Info("API error", zap.Error(err))
 		return model.ShowRecord{}, err
 	}
 
 	return retAddRecord, nil
 }
 
-func (ap *apiService) GetYearSummary(year int64) (yearSummary []model.YearSummary, err error) {
-	ap.logger.Infow("API called", "func", "GetYearSummary")
+func (ap *APIService) GetYearSummary(year int64) (yearSummary []model.YearSummary, err error) {
 	var fetchDBData []model.YearSummaryInter
-	fetchDBData, err = ap.dbR.GetYearSummaryDB(year) // fetchDBData is sorted by category_id
+	fetchDBData, err = ap.DBRepo.GetYearSummaryDB(year) // fetchDBData is sorted by category_id
 	if err != nil {
-		ap.logger.Infow("API error", "func", "GetYearSummary", "error", zap.Error(err))
+		ap.Logger.Info("API error", zap.Error(err))
 		return nil, err
 	}
 
@@ -150,28 +145,26 @@ func posCompSlideint64(arr []int64) (indexes []int) {
 	return indexes
 }
 
-// 直近の Record データをdataNum 件分取得。
-func (ap *apiService) GetRecentRecord(n int) (getRecentData []model.ShowRecord, err error) {
-	ap.logger.Infow("API called", "func", "GetRecentRecord")
+// 直近の Record データを n 件分取得。
+func (ap *APIService) GetRecentRecord(n int) (getRecentData []model.ShowRecord, err error) {
 	if n == 0 {
 		n = 20 // default
 	}
 
-	getRecentData, err = ap.dbR.GetRecentRecord(n)
+	getRecentData, err = ap.DBRepo.GetRecentRecord(n)
 
 	if err != nil {
-		ap.logger.Errorw("API error", "func", "GetRecentRecord", "error", zap.Error(err))
+		ap.Logger.Error("API error", zap.Error(err))
 		return nil, err
 	}
 
 	return getRecentData, nil
 }
 
-func (ap *apiService) DeleteRecord(id int64) (err error) {
-	ap.logger.Infow("API called", "func", "DeleteRecord")
-	err = ap.dbR.DeleteRecordDB(id)
+func (ap *APIService) DeleteRecord(id int64) (err error) {
+	err = ap.DBRepo.DeleteRecordDB(id)
 	if err != nil {
-		ap.logger.Errorw("API error", "func", "DeleteRecord", "error", zap.Error(err))
+		ap.Logger.Error("API error", zap.Error(err))
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return azerror.ErrRecordNotFound
 		}

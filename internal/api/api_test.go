@@ -2,9 +2,7 @@ package api
 
 import (
 	"fmt"
-	"mawinter-server/internal/logger"
 	"mawinter-server/internal/model"
-	"mawinter-server/internal/repository"
 	"os"
 	"reflect"
 	"testing"
@@ -13,10 +11,22 @@ import (
 	"go.uber.org/zap"
 )
 
-var testLogger *zap.SugaredLogger
+var testLogger *zap.Logger
+
+func newLogger() (*zap.Logger, error) {
+	config := zap.NewProductionConfig()
+	// config.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+	l, err := config.Build()
+
+	l.WithOptions(zap.AddStacktrace(zap.ErrorLevel))
+	if err != nil {
+		fmt.Printf("failed to create logger: %v\n", err)
+	}
+	return l, err
+}
 
 func init() {
-	l, err := logger.NewSugarLogger()
+	l, err := newLogger()
 	defer l.Sync()
 	if err != nil {
 		fmt.Printf("logger failed")
@@ -85,7 +95,8 @@ func (dbR *mockDBRepositry1) DeleteRecordDB(id int64) (err error) {
 
 func Test_apiService_CreateRecord(t *testing.T) {
 	type fields struct {
-		dbR repository.DBRepository
+		Logger *zap.Logger
+		DBRepo DBRepository
 	}
 	type args struct {
 		addRecord model.CreateRecord
@@ -99,7 +110,7 @@ func Test_apiService_CreateRecord(t *testing.T) {
 	}{
 		{
 			name:             "success",
-			fields:           fields{&mockDBRepositry1{}},
+			fields:           fields{DBRepo: &mockDBRepositry1{}, Logger: testLogger},
 			args:             args{model.CreateRecord{CategoryID: 101, Date: "20000123", Price: 10000}},
 			wantRetAddRecord: model.ShowRecord{Id: 1001, CategoryID: 101, CategoryName: "cat1", Date: time.Date(2000, 1, 23, 0, 0, 0, 0, time.FixedZone("Asia/Tokyo", 9*60*60)), Price: 10000},
 			wantErr:          false,
@@ -107,9 +118,9 @@ func Test_apiService_CreateRecord(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ap := &apiService{
-				dbR:    tt.fields.dbR,
-				logger: testLogger,
+			ap := &APIService{
+				DBRepo: tt.fields.DBRepo,
+				Logger: testLogger,
 			}
 			gotRetAddRecord, err := ap.CreateRecord(tt.args.addRecord)
 			if (err != nil) != tt.wantErr {
@@ -144,14 +155,14 @@ func Test_apiService_GetYearSummary(t *testing.T) {
 	}
 	tests := []struct {
 		name            string
-		apis            *apiService
+		apis            *APIService
 		args            args
 		wantYearSummary []model.YearSummary
 		wantErr         bool
 	}{
 		{
 			name:            "test #1",
-			apis:            &apiService{dbR: &mockDBRepositry1{}, logger: testLogger},
+			apis:            &APIService{DBRepo: &mockDBRepositry1{}, Logger: testLogger},
 			args:            args{year: 2000},
 			wantYearSummary: collect1_GetYearSummary,
 			wantErr:         false,
@@ -177,13 +188,13 @@ func Test_apiService_DeleteRecord(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		apis    *apiService
+		apis    *APIService
 		args    args
 		wantErr bool
 	}{
 		{
 			name:    "success",
-			apis:    &apiService{dbR: &mockDBRepositry1{}, logger: testLogger},
+			apis:    &APIService{DBRepo: &mockDBRepositry1{}, Logger: testLogger},
 			args:    args{id: 1},
 			wantErr: false,
 		},

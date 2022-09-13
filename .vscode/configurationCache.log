@@ -1,0 +1,1 @@
+{"buildTargets":["build","migration-clean","migration-test","push","run","stop","test"],"launchTargets":[],"customConfigurationProvider":{"workspaceBrowse":{"browsePath":[],"compilerArgs":[]},"fileIndex":[]}}
