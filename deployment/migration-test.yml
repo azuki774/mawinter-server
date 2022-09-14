@@ -27,7 +27,8 @@ services:
     ports:
       - "8080:80"
     environment:
-      - MYSQL_DATABASE=mawinter-test
       - BASIC_AUTH_USERNAME=test
       - BASIC_AUTH_PASSWORD=test
-      - DB_WAITTIME=20
+    command:
+      - "--db-name"
+      - "mawinter-test"
