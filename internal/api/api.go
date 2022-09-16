@@ -27,6 +27,7 @@ type DBRepository interface {
 	GetYearSummaryDB(year int64) (yearSummaryInters []model.YearSummaryInter, err error)
 	GetRecentRecord(n int) (getRecentData []model.ShowRecord, err error)
 	DeleteRecordDB(id int64) (err error)
+	CloseDB() (err error)
 }
 
 type APIService struct {

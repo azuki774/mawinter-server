@@ -1,7 +1,6 @@
 package factory
 
 import (
-	"fmt"
 	"mawinter-server/internal/api"
 	"mawinter-server/internal/repository"
 	"mawinter-server/internal/server"
@@ -57,13 +56,4 @@ func NewServer(api *api.APIService) (*server.Server, error) {
 		User string
 		Pass string
 	}{os.Getenv("BASIC_AUTH_USERNAME"), os.Getenv("BASIC_AUTH_PASSWORD")}}, nil
-}
-
-func CloseDB(gormdb *gorm.DB) (err error) {
-	sqlDB, err := gormdb.DB()
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
-	return sqlDB.Close()
 }

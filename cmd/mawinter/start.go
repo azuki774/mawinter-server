@@ -61,57 +61,8 @@ func start(opts *StartOption) error {
 		return err
 	}
 
+	defer api.DBRepo.CloseDB()
 	return srv.Start()
-
-	// l, err := logger.NewSugarLogger()
-	// defer l.Sync()
-	// if err != nil {
-	// 	fmt.Printf("logger failed")
-	// 	os.Exit(1)
-	// }
-
-	// l.Infow("Program Start")
-
-	// if os.Getenv("BASIC_AUTH_PASSWORD") == "" {
-	// 	l.Warnw("No Basic Auth password set")
-	// } else {
-	// 	l.Infow("Basic Authentication info", "username", os.Getenv("BASIC_AUTH_USERNAME"), "password", os.Getenv("BASIC_AUTH_PASSWORD"))
-	// }
-
-	// l.Infow("database info", "name", os.Getenv("MYSQL_DATABASE"))
-
-	// var DBSleepTime time.Duration
-	// if os.Getenv("DB_WAITTIME") == "" {
-	// 	DBSleepTime = 0
-	// } else {
-	// 	t, err := strconv.Atoi(os.Getenv("DB_WAITTIME"))
-	// 	if err != nil {
-	// 		l.Errorw("DB_WAITTIME is invalid")
-	// 		DBSleepTime = 0
-	// 	} else {
-	// 		l.Infof("DB_WAITTIME is %d s", t)
-	// 		DBSleepTime = time.Duration(t)
-	// 	}
-	// }
-
-	// time.Sleep(time.Second * DBSleepTime)
-	// gormdb, err := repository.DBConnect("root", "password", "mawinter-db", os.Getenv("MYSQL_DATABASE"))
-	// if err != nil {
-	// 	l.Errorw(err.Error())
-	// 	os.Exit(1)
-	// }
-	// sqlDB, err := gormdb.DB()
-	// if err != nil {
-	// 	l.Error(err.Error())
-	// 	os.Exit(1)
-	// }
-	// defer sqlDB.Close()
-
-	// dbR := repository.NewDBRepository(gormdb)
-	// as := api.NewAPIService(dbR, l)
-	// server.Start(as, l)
-	// l.Info("Program End")
-
 }
 
 func init() {
@@ -122,13 +73,4 @@ func init() {
 	startCmd.Flags().StringVar(&startOpt.DBInfo.Name, "db-name", "mawinter", "DB Name")
 	startCmd.Flags().StringVar(&startOpt.DBInfo.User, "db-user", "root", "DB User")
 	startCmd.Flags().StringVar(&startOpt.DBInfo.Pass, "db-pass", "password", "DB Pass")
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// startCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
