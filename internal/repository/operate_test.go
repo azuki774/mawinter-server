@@ -13,7 +13,7 @@ import (
 
 func Test_dbRepository_CreateRecordDB(t *testing.T) {
 	type fields struct {
-		conn gorm.DB
+		Conn *gorm.DB
 	}
 	type args struct {
 		record model.Records
@@ -78,10 +78,10 @@ func Test_dbRepository_CreateRecordDB(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gormDB, mock, _ := NewDBMock()
-			tt.fields.conn = *gormDB
+			tt.fields.Conn = gormDB
 
-			dbR := &dbRepository{
-				conn: tt.fields.conn,
+			dbR := &DBRepository{
+				Conn: tt.fields.Conn,
 			}
 
 			tt.mockSetUp(mock, tt.args)
@@ -100,7 +100,7 @@ func Test_dbRepository_CreateRecordDB(t *testing.T) {
 
 func Test_dbRepository_GetYearSummaryDB(t *testing.T) {
 	type fields struct {
-		conn gorm.DB
+		Conn *gorm.DB
 	}
 	type args struct {
 		year int64
@@ -128,10 +128,10 @@ func Test_dbRepository_GetYearSummaryDB(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gormDB, mock, _ := NewDBMock()
-			tt.fields.conn = *gormDB
+			tt.fields.Conn = gormDB
 
-			dbR := &dbRepository{
-				conn: tt.fields.conn,
+			dbR := &DBRepository{
+				Conn: tt.fields.Conn,
 			}
 
 			tt.mockSetUp(mock, tt.args)
@@ -150,7 +150,7 @@ func Test_dbRepository_GetYearSummaryDB(t *testing.T) {
 
 func Test_dbRepository_GetRecentRecord(t *testing.T) {
 	type fields struct {
-		conn gorm.DB
+		Conn *gorm.DB
 	}
 	type args struct {
 		n int
@@ -197,10 +197,10 @@ func Test_dbRepository_GetRecentRecord(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gormDB, mock, _ := NewDBMock()
-			tt.fields.conn = *gormDB
+			tt.fields.Conn = gormDB
 
-			dbR := &dbRepository{
-				conn: tt.fields.conn,
+			dbR := &DBRepository{
+				Conn: tt.fields.Conn,
 			}
 
 			tt.mockSetUp(mock, tt.args)
@@ -219,7 +219,7 @@ func Test_dbRepository_GetRecentRecord(t *testing.T) {
 
 func Test_dbRepository_DeleteRecordDB(t *testing.T) {
 	type fields struct {
-		conn gorm.DB
+		Conn *gorm.DB
 	}
 	type args struct {
 		id int64
@@ -261,10 +261,10 @@ func Test_dbRepository_DeleteRecordDB(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gormDB, mock, _ := NewDBMock()
-			tt.fields.conn = *gormDB
+			tt.fields.Conn = gormDB
 
-			dbR := &dbRepository{
-				conn: tt.fields.conn,
+			dbR := &DBRepository{
+				Conn: tt.fields.Conn,
 			}
 
 			tt.mockSetUp(mock, tt.args)

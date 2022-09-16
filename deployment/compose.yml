@@ -18,9 +18,9 @@ services:
       - MYSQL_PASSWORD=pwd
       - TZ=Asia/Tokyo
     volumes:
-      - ../../build/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ../build/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
   maw-api:
-    image: azuki774/mawinter-api:latest
+    image: mawinter-api:latest
     container_name: mawinter-api
     ports:
       - "8080:80"

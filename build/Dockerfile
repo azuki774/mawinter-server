@@ -12,6 +12,6 @@ FROM alpine:3.16
 COPY --from=builder /app/bin/mawinter /usr/local/bin/mawinter
 RUN apk --no-cache add tzdata && \
     cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
-ENTRYPOINT ["/usr/local/bin/mawinter"]
+ENTRYPOINT ["/usr/local/bin/mawinter", "start"]
 
 EXPOSE 80

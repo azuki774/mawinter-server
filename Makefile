@@ -5,21 +5,21 @@ container_name_api=mawinter-api
 build:
 	docker build -t $(container_name_api):$(VERSION_API) -f build/Dockerfile .
 
-run:
-	docker-compose -f deploy/docker/docker-compose.yml up -d
+start:
+	docker compose -f deployment/compose.yml up -d
 
 stop:
-	docker-compose -f deploy/docker/docker-compose.yml down
+	docker compose -f deployment/compose.yml down
 
 test:
 	gofmt -l -w .
 	go test ./... -v -cover
 
 migration-test:
-	docker-compose -f deploy/docker/migration-test.yml up --build -d
+	docker compose -f deployment/migration-test.yml up --build -d
 	sleep 25s
 	test/run.sh
-	docker-compose -f deploy/docker/migration-test.yml down
+	docker compose -f deployment/migration-test.yml down
 
 migration-clean:
-	docker-compose -f deploy/docker/migration-test.yml down
+	docker compose -f deploy/docker/migration-test.yml down
