@@ -38,7 +38,7 @@ func (s *Server) Start() error {
 
 func (s *Server) addRecordFunc(r *mux.Router) {
 	r.HandleFunc("/", rootHandler)
-
+	r.Use(s.middlewareLogging)
 	// Required Basic Auth
 	br := r.PathPrefix("/").Subrouter()
 	br.Methods("GET").Path("/summary/year/{year}").HandlerFunc(s.getYearSummaryFunc)
@@ -68,6 +68,13 @@ func (s *Server) middlewareBasicAuth(h http.Handler) http.Handler {
 			return
 		}
 		// Basic Auth OK
+		h.ServeHTTP(w, r)
+	})
+}
+
+func (s *Server) middlewareLogging(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		s.Logger.Info("access", zap.String("url", r.URL.Path), zap.String("X-Forwarded-For", r.Header.Get("X-Forwarded-For")))
 		h.ServeHTTP(w, r)
 	})
 }
