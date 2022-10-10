@@ -45,9 +45,9 @@ func (s *Server) Start(ctx context.Context) error {
 	ctxIn, stop := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 
-	var err error
+	var errCh = make(chan error)
 	go func() {
-		err = server.ListenAndServe()
+		errCh <- server.ListenAndServe()
 	}()
 
 	<-ctxIn.Done()
@@ -56,6 +56,7 @@ func (s *Server) Start(ctx context.Context) error {
 		return nerr
 	}
 
+	err := <-errCh
 	if err != nil && err != http.ErrServerClosed {
 		s.Logger.Error("failed to close server", zap.Error(err))
 		return err
