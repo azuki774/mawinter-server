@@ -1,13 +1,17 @@
 package server
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"mawinter-server/internal/azerror"
 	"mawinter-server/internal/model"
 	"net/http"
+	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
 
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
@@ -29,11 +33,36 @@ type Server struct {
 	}
 }
 
-func (s *Server) Start() error {
+func (s *Server) Start(ctx context.Context) error {
 	router := mux.NewRouter()
 	s.addRecordFunc(router)
 
-	return http.ListenAndServe(":80", router)
+	server := &http.Server{
+		Addr:    ":80",
+		Handler: router,
+	}
+
+	ctxIn, stop := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+	defer stop()
+
+	var err error
+	go func() {
+		err = server.ListenAndServe()
+	}()
+
+	<-ctxIn.Done()
+	if nerr := server.Shutdown(ctx); nerr != nil {
+		s.Logger.Error("failed to shutdown server", zap.Error(nerr))
+		return nerr
+	}
+
+	if err != nil && err != http.ErrServerClosed {
+		s.Logger.Error("failed to close server", zap.Error(err))
+		return err
+	}
+
+	s.Logger.Info("http server close gracefully")
+	return nil
 }
 
 func (s *Server) addRecordFunc(r *mux.Router) {

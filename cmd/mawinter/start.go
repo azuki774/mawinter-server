@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"mawinter-server/internal/factory"
 
@@ -62,7 +63,8 @@ func start(opts *StartOption) error {
 	}
 
 	defer api.DBRepo.CloseDB()
-	return srv.Start()
+
+	return srv.Start(context.Background())
 }
 
 func init() {
