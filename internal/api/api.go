@@ -3,7 +3,6 @@ package api
 import (
 	"errors"
 	"fmt"
-	"mawinter-server/internal/azerror"
 	"mawinter-server/internal/model"
 	"mawinter-server/internal/repository"
 	"strconv"
@@ -167,7 +166,7 @@ func (ap *APIService) DeleteRecord(id int64) (err error) {
 	if err != nil {
 		ap.Logger.Error("API error", zap.Error(err))
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return azerror.ErrRecordNotFound
+			return model.ErrRecordNotFound
 		}
 	}
 

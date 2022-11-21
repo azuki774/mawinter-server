@@ -2,7 +2,6 @@ package repository
 
 import (
 	"fmt"
-	"mawinter-server/internal/azerror"
 	"mawinter-server/internal/model"
 )
 
@@ -46,13 +45,13 @@ func (dbR *DBRepository) GetYearSummaryDB(year int64) (yearSummaryInters []model
 	rows, err := dbR.Conn.Raw(sqlText).Rows()
 	defer rows.Close()
 	if err != nil {
-		return nil, azerror.ErrInternal
+		return nil, model.ErrInternal
 	}
 
 	for rows.Next() {
 		var newSummary model.YearSummaryInter
 		if err := rows.Scan(&newSummary.CategoryID, &newSummary.Name, &newSummary.YearMonth, &newSummary.Total); err != nil {
-			return nil, azerror.ErrInternal
+			return nil, model.ErrInternal
 		}
 		yearSummaryInters = append(yearSummaryInters, newSummary)
 	}
@@ -74,7 +73,7 @@ func (dbR *DBRepository) GetRecentRecord(n int) (getRecentData []model.ShowRecor
 
 	res := dbR.Conn.Table("records").Select("records.*, categories.category_id, categories.name").Joins("INNER JOIN categories ON records.category_id = categories.category_id").Order("date desc").Limit(n).Find(&catrecs)
 	if res.Error != nil {
-		return nil, azerror.ErrInternal
+		return nil, model.ErrInternal
 	}
 
 	for _, v := range catrecs {

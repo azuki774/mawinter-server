@@ -16,6 +16,12 @@ type YearSummary struct {
 	Total      int64   `json:"total"`
 }
 
+type MonthSummary struct {
+	CategoryID int64  `json:"category_id"`
+	Name       string `json:"category_name"`
+	Price      int64  `json:"price"`
+}
+
 type YearSummaryInter struct {
 	CategoryID int64
 	Name       string

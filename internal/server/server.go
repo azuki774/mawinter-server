@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"mawinter-server/internal/azerror"
 	"mawinter-server/internal/model"
 	"net/http"
 	"os"
@@ -149,7 +148,7 @@ func (s *Server) deleteRecordFunc(w http.ResponseWriter, r *http.Request) {
 	err = s.APIService.DeleteRecord(id)
 
 	if err != nil {
-		if errors.Is(err, azerror.ErrRecordNotFound) {
+		if errors.Is(err, model.ErrRecordNotFound) {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		} else {

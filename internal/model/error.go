@@ -1,4 +1,4 @@
-package azerror
+package model
 
 import "errors"
 
