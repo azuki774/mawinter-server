@@ -24,6 +24,7 @@ type DBRepository interface {
 	// category_id 順にその年の月ごとの合計を取得する
 	CreateRecordDB(record model.Records) (retAddRecord model.ShowRecord, err error)
 	GetYearSummaryDB(year int64) (yearSummaryInters []model.YearSummaryInter, err error)
+	GetMonthSummaryDB(yyyymm string) (sum []model.MonthSummary, err error)
 	GetRecentRecord(n int) (getRecentData []model.ShowRecord, err error)
 	DeleteRecordDB(id int64) (err error)
 	CloseDB() (err error)
@@ -66,7 +67,7 @@ func (ap *APIService) CreateRecord(addRecord model.CreateRecord) (retAddRecord m
 
 	retAddRecord, err = ap.DBRepo.CreateRecordDB(record)
 	if err != nil {
-		ap.Logger.Info("API error", zap.Error(err))
+		ap.Logger.Info("failed to insert data to DB", zap.Error(err))
 		return model.ShowRecord{}, err
 	}
 
@@ -108,6 +109,21 @@ func (ap *APIService) GetYearSummary(year int64) (yearSummary []model.YearSummar
 	}
 
 	return yearSummary, nil
+}
+
+func (ap *APIService) GetMonthSummary(yyyymm string) (sum []model.MonthSummary, err error) {
+	if err = isValidYearMonth(yyyymm); err != nil {
+		ap.Logger.Warn("invalid argument", zap.Error(err))
+		return []model.MonthSummary{}, model.ErrBadRequest
+	}
+
+	sum, err = ap.DBRepo.GetMonthSummaryDB(yyyymm)
+	if err != nil {
+		ap.Logger.Error("failed to get information from DB", zap.Error(err))
+		return []model.MonthSummary{}, err
+	}
+
+	return sum, nil
 }
 
 func getYearSummaryMakeIndex(yearSummary []model.YearSummaryInter) (indexes []int) {

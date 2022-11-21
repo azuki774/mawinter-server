@@ -3,7 +3,7 @@
 
 以下、すべてBasic認証が必要
 
-## GET /summary/year/{year}
+## GET /summary/year/YYYY
 - 年間サマリを取得する。
 ### response:
 
@@ -22,6 +22,25 @@
         },
     ]
 - price のところにはその年の 4,5,6,...,3月 の合計が入る。
+
+
+## GET /summary/month/YYYYMM
+- 月間サマリを取得する。
+
+### response:
+
+    [
+        {
+            "category_id": 210,
+            "category_name": "種類",
+            "price": 12345
+        },
+        {
+            "category_id": 211,
+            "category_name": "種類",
+            "price": 23456
+        },
+    ]
 
 ## POST /record/
 - データを追加する。

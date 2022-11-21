@@ -14,14 +14,14 @@ func TransMonthToIndex(month int) (index int) {
 	}
 }
 
-func (dbR *DBRepository) CreateRecordDB(record model.Records) (retAddRecord model.ShowRecord, err error) {
-	res := dbR.Conn.Select("category_id", "price", "date", "memo").Create(&record)
+func (d *DBRepository) CreateRecordDB(record model.Records) (retAddRecord model.ShowRecord, err error) {
+	res := d.Conn.Select("category_id", "price", "date", "memo").Create(&record)
 	if res.Error != nil {
 		return model.ShowRecord{}, res.Error
 	}
 
 	var catrecs model.CategoriesRecords
-	res = dbR.Conn.Table("records").Select("records.*, categories.category_id, categories.name").
+	res = d.Conn.Table("records").Select("records.*, categories.category_id, categories.name").
 		Joins("INNER JOIN categories ON records.category_id = categories.category_id").Order("date desc").Where("records.id = ?", record.Id).Take(&catrecs)
 	if res.Error != nil {
 		return model.ShowRecord{}, res.Error
@@ -38,11 +38,11 @@ func (dbR *DBRepository) CreateRecordDB(record model.Records) (retAddRecord mode
 }
 
 // GetYearSummaryDB : category_id, name, year-month, sum をidの昇順で返す
-func (dbR *DBRepository) GetYearSummaryDB(year int64) (yearSummaryInters []model.YearSummaryInter, err error) {
+func (d *DBRepository) GetYearSummaryDB(year int64) (yearSummaryInters []model.YearSummaryInter, err error) {
 	beginDate := fmt.Sprintf("%d-04-01", year)
 	endDate := fmt.Sprintf("%d-03-31", year+1)
 	sqlText := "SELECT records.category_id , categories.name, DATE_FORMAT(records.date, '%Y%m'), sum(price) FROM records INNER JOIN categories ON categories.category_id = records.category_id WHERE records.date BETWEEN '" + beginDate + "' AND '" + endDate + "' GROUP BY records.category_id , DATE_FORMAT(records.date, '%Y%m') ORDER BY records.category_id;"
-	rows, err := dbR.Conn.Raw(sqlText).Rows()
+	rows, err := d.Conn.Raw(sqlText).Rows()
 	defer rows.Close()
 	if err != nil {
 		return nil, model.ErrInternal
@@ -59,8 +59,13 @@ func (dbR *DBRepository) GetYearSummaryDB(year int64) (yearSummaryInters []model
 	return yearSummaryInters, nil
 }
 
-func (dbR *DBRepository) DeleteRecordDB(id int64) (err error) {
-	res := dbR.Conn.Where("id = ?", id).Delete(&model.Records{})
+func (d *DBRepository) GetMonthSummaryDB(yyyymm string) (sum []model.MonthSummary, err error) {
+	// TODO
+	return sum, nil
+}
+
+func (d *DBRepository) DeleteRecordDB(id int64) (err error) {
+	res := d.Conn.Where("id = ?", id).Delete(&model.Records{})
 	if res.Error != nil {
 		return res.Error
 	}
@@ -68,10 +73,10 @@ func (dbR *DBRepository) DeleteRecordDB(id int64) (err error) {
 }
 
 // 直近n 個のレコードを取得するSQLを発行する。
-func (dbR *DBRepository) GetRecentRecord(n int) (getRecentData []model.ShowRecord, err error) {
+func (d *DBRepository) GetRecentRecord(n int) (getRecentData []model.ShowRecord, err error) {
 	var catrecs []model.CategoriesRecords
 
-	res := dbR.Conn.Table("records").Select("records.*, categories.category_id, categories.name").Joins("INNER JOIN categories ON records.category_id = categories.category_id").Order("date desc").Limit(n).Find(&catrecs)
+	res := d.Conn.Table("records").Select("records.*, categories.category_id, categories.name").Joins("INNER JOIN categories ON records.category_id = categories.category_id").Order("date desc").Limit(n).Find(&catrecs)
 	if res.Error != nil {
 		return nil, model.ErrInternal
 	}

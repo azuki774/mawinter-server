@@ -52,7 +52,7 @@ func Test_apiService_CreateRecord(t *testing.T) {
 	}{
 		{
 			name:             "success",
-			fields:           fields{DBRepo: &mockDBRepositry1{}, Logger: testLogger},
+			fields:           fields{DBRepo: &mockDBRepositry{}, Logger: testLogger},
 			args:             args{model.CreateRecord{CategoryID: 101, Date: "20000123", Price: 10000}},
 			wantRetAddRecord: model.ShowRecord{Id: 1001, CategoryID: 101, CategoryName: "cat1", Date: time.Date(2000, 1, 23, 0, 0, 0, 0, time.FixedZone("Asia/Tokyo", 9*60*60)), Price: 10000},
 			wantErr:          false,
@@ -104,7 +104,7 @@ func Test_apiService_GetYearSummary(t *testing.T) {
 	}{
 		{
 			name:            "test #1",
-			apis:            &APIService{DBRepo: &mockDBRepositry1{}, Logger: testLogger},
+			apis:            &APIService{DBRepo: &mockDBRepositry{}, Logger: testLogger},
 			args:            args{year: 2000},
 			wantYearSummary: collect1_GetYearSummary,
 			wantErr:         false,
@@ -136,7 +136,7 @@ func Test_apiService_DeleteRecord(t *testing.T) {
 	}{
 		{
 			name:    "success",
-			apis:    &APIService{DBRepo: &mockDBRepositry1{}, Logger: testLogger},
+			apis:    &APIService{DBRepo: &mockDBRepositry{}, Logger: testLogger},
 			args:    args{id: 1},
 			wantErr: false,
 		},
@@ -146,6 +146,76 @@ func Test_apiService_DeleteRecord(t *testing.T) {
 
 			if err := tt.apis.DeleteRecord(tt.args.id); (err != nil) != tt.wantErr {
 				t.Errorf("apiService.DeleteRecord() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestAPIService_GetMonthSummary(t *testing.T) {
+	type fields struct {
+		Logger *zap.Logger
+		DBRepo DBRepository
+	}
+	type args struct {
+		yyyymm string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantSum []model.MonthSummary
+		wantErr bool
+	}{
+		{
+			name: "normal",
+			fields: fields{
+				Logger: testLogger,
+				DBRepo: &mockDBRepositry{},
+			},
+			args: args{"202101"},
+			wantSum: []model.MonthSummary{
+				{
+					CategoryID: 201,
+					Name:       "カテゴリ1",
+					Price:      10000,
+				},
+				{
+					CategoryID: 202,
+					Name:       "カテゴリ2",
+					Price:      20000,
+				},
+				{
+					CategoryID: 203,
+					Name:       "カテゴリ3",
+					Price:      30000,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "invalid args",
+			fields: fields{
+				Logger: testLogger,
+				DBRepo: &mockDBRepositry{},
+			},
+			args:    args{"2021012"},
+			wantSum: []model.MonthSummary{},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ap := &APIService{
+				Logger: tt.fields.Logger,
+				DBRepo: tt.fields.DBRepo,
+			}
+			gotSum, err := ap.GetMonthSummary(tt.args.yyyymm)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("APIService.GetMonthSummaryDB() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotSum, tt.wantSum) {
+				t.Errorf("APIService.GetMonthSummaryDB() = %v, want %v", gotSum, tt.wantSum)
 			}
 		})
 	}
