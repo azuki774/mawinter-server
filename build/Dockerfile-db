@@ -1,0 +1,2 @@
+FROM mariadb:10.7.3
+ADD build/docker-entrypoint-initdb.d /docker-entrypoint-initdb.d
