@@ -1,10 +1,6 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"mawinter-server/internal/factory"
-
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -39,32 +35,8 @@ to quickly create a Cobra application.`,
 	SilenceErrors: true,
 	SilenceUsage:  true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return start(&startOpt)
+		return nil
 	},
-}
-
-func start(opts *StartOption) error {
-	l, err := factory.NewLogger()
-	if err != nil {
-		fmt.Printf("failed to create logger: %v\n", err)
-		return err
-	}
-
-	api, err := factory.NewAPIService(opts.DBInfo.User, opts.DBInfo.Pass, opts.DBInfo.Host, opts.DBInfo.Port, opts.DBInfo.Name)
-	if err != nil {
-		return err
-	}
-	l.Info("loaded api service")
-
-	srv, err := factory.NewServer(api)
-	if err != nil {
-		l.Error("failed to load server", zap.Error(err))
-		return err
-	}
-
-	defer api.DBRepo.CloseDB()
-
-	return srv.Start(context.Background())
 }
 
 func init() {
