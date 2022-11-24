@@ -1,9 +1,10 @@
 module mawinter-server
 
-go 1.17
+go 1.19
 
 require (
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
+	github.com/gorilla/mux v1.8.0
 	github.com/spf13/cobra v1.6.1
 	go.uber.org/zap v1.23.0
 )

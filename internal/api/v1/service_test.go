@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"context"
 	"mawinter-server/internal/model"
 	"reflect"
 	"testing"
@@ -127,7 +128,7 @@ func TestAPIService_GetYearCategorySummary(t *testing.T) {
 				Logger: tt.fields.Logger,
 				Repo:   tt.fields.Repo,
 			}
-			gotSum, err := a.GetYearCategorySummary(tt.args.categoryID, tt.args.yyyy)
+			gotSum, err := a.GetYearCategorySummary(context.Background(), tt.args.categoryID, tt.args.yyyy)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("APIService.GetYearCategorySummary() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"context"
 	"errors"
 	"mawinter-server/internal/model"
 	"time"
@@ -29,12 +30,14 @@ type APIService struct {
 	Repo   DBRepository
 }
 
-func (a *APIService) AddRecord(req *model.RecordRequest) (res *model.Record_YYYYMM, err error) {
+func (a *APIService) AddRecord(ctx context.Context, req *model.RecordRequest) (res *model.Record_YYYYMM, err error) {
 	err = model.ValidRecordRequest(req)
 	if err != nil {
 		a.Logger.Warn("invalid value detected", zap.Error(err))
 		return nil, err
 	}
+
+	// TODO: デフォルト値挿入
 
 	res, err = a.Repo.InsertRecord(req)
 	if err != nil {
@@ -45,7 +48,7 @@ func (a *APIService) AddRecord(req *model.RecordRequest) (res *model.Record_YYYY
 	return res, nil
 }
 
-func (a *APIService) GetYearCategorySummary(categoryID int, yyyy string) (sum *model.CategoryYearSummary, err error) {
+func (a *APIService) GetYearCategorySummary(ctx context.Context, categoryID int, yyyy string) (sum *model.CategoryYearSummary, err error) {
 	yyyyint, err := model.ValidYYYY(yyyy)
 	if err != nil {
 		a.Logger.Warn("invalid value detected", zap.Error(err))
