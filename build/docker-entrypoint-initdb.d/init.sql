@@ -40,10 +40,12 @@ INSERT INTO `Category` (`id`, `category_id`, `name`) VALUES
 create table `Record_YYYYMM` (
   `id` int NOT NULL AUTO_INCREMENT,
   `category_id` int NOT NULL,
+  `datetime` datetime NOT NULL default current_timestamp,
   `from` varchar(64) NOT NULL,
   `type` varchar(64) NOT NULL,
-  `created_at` datetime  default current_timestamp,
+  `created_at` datetime default current_timestamp,
   `updated_at` timestamp default current_timestamp on update current_timestamp,
   PRIMARY KEY (`id`),
-  index `idx_cat` (`category_id`)
+  index `idx_cat` (`category_id`),
+  index `idx_date` (`datetime`)
 );
