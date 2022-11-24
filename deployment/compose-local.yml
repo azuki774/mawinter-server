@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  mawinter-db:
+    image: mawinter-db
+    restart: always
+    container_name: mawinter-db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=mawinter
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pwd
+      - TZ=Asia/Tokyo
