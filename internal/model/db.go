@@ -2,10 +2,14 @@ package model
 
 import "time"
 
+func (Category) TableName() string {
+	return "Category"
+}
+
 type Category struct {
 	ID         int64  `gorm:"id"`
 	CategoryID int64  `gorm:"column:category_id"`
-	Name       string `gorm:"column:id"`
+	Name       string `gorm:"column:name"`
 }
 
 type Record_YYYYMM struct {
@@ -20,7 +24,7 @@ type Record_YYYYMM struct {
 }
 
 type SumPriceCategoryID struct {
-	CategoryID int64 `gorm:"column:category_id"`
-	Count      int64 `gorm:"column:count(*)"`
-	Sum        int64 `gorm:"column:sum(price)"`
+	CategoryID int64
+	Count      int64
+	Sum        int64
 }

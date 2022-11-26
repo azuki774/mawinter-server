@@ -151,21 +151,6 @@ func TestAPIService_GetYearSummary(t *testing.T) {
 			wantSum: nil,
 			wantErr: true,
 		},
-		{
-			name: "get sum table error",
-			fields: fields{
-				Logger: l,
-				Repo: &mockRepo{
-					errSumPriceForEachCatID: fmt.Errorf("error"),
-				},
-			},
-			args: args{
-				ctx:  context.Background(),
-				yyyy: "2021",
-			},
-			wantSum: nil,
-			wantErr: true,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
