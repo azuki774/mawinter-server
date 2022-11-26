@@ -22,6 +22,33 @@ type DBRepository struct {
 	Conn *gorm.DB
 }
 
+func (d *DBRepository) CloseDB() (err error) {
+	dbconn, err := d.Conn.DB()
+	if err != nil {
+		return err
+	}
+	return dbconn.Close()
+}
+
+func (d *DBRepository) CreateRecordTable(yyyymm string) (err error) {
+	sql := fmt.Sprintf(`CREATE TABLE Record_%s (
+		id int NOT NULL AUTO_INCREMENT,
+		category_id int NOT NULL,
+		datetime datetime NOT NULL default current_timestamp,
+		from varchar(64) NOT NULL,
+		type varchar(64) NOT NULL,
+		price int NOT NULL,
+		created_at datetime default current_timestamp,
+		updated_at timestamp default current_timestamp on update current_timestamp,
+		PRIMARY KEY (id),
+		index idx_cat (category_id),
+		index idx_date (datetime)
+	  )`, yyyymm)
+
+	err = d.Conn.Debug().Raw(sql).Error
+	return err
+}
+
 func getRecordTable(t time.Time) string {
 	YYYYMM := t.Format("200601")
 	return fmt.Sprintf("Record_%s", YYYYMM)
