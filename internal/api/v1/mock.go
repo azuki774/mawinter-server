@@ -5,10 +5,18 @@ import (
 )
 
 type mockRepo struct {
+	errCreateRecordTable       error
 	errGetCategoryInfo         error
 	errSumPriceForEachCatID    error
 	RecordYYYYMMNum            int
 	sumPriceForEachCatIDOffset int
+}
+
+func (m *mockRepo) CreateRecordTable(yyyymm string) (err error) {
+	if m.errCreateRecordTable != nil {
+		return m.errCreateRecordTable
+	}
+	return nil
 }
 
 func (m *mockRepo) InsertRecord(req model.Recordstruct) (res model.Recordstruct, err error) {

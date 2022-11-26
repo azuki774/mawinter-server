@@ -7,7 +7,9 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/go-sql-driver/mysql"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 var l *zap.Logger
@@ -165,6 +167,79 @@ func TestAPIService_GetYearSummary(t *testing.T) {
 			}
 			if !reflect.DeepEqual(gotSum, tt.wantSum) {
 				t.Errorf("APIService.GetYearSummary() = %v, want %v", gotSum, tt.wantSum)
+			}
+		})
+	}
+}
+
+func TestAPIService_CreateRecordTableYear(t *testing.T) {
+	type fields struct {
+		Logger *zap.Logger
+		Repo   DBRepository
+	}
+	type args struct {
+		yyyy string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "OK",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args:    args{yyyy: "2022"},
+			wantErr: false,
+		},
+		{
+			name: "invalid args",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args:    args{yyyy: "20221"},
+			wantErr: true,
+		},
+		{
+			name: "gorm error",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{errCreateRecordTable: gorm.ErrInvalidDB},
+			},
+			args:    args{yyyy: "2022"},
+			wantErr: true,
+		},
+		{
+			name: "already table",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{errCreateRecordTable: &mysql.MySQLError{Number: 1050}},
+			},
+			args:    args{yyyy: "2022"},
+			wantErr: false,
+		},
+		{
+			name: "mysql error",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{errCreateRecordTable: &mysql.MySQLError{Number: 1}},
+			},
+			args:    args{yyyy: "2022"},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := &APIService{
+				Logger: tt.fields.Logger,
+				Repo:   tt.fields.Repo,
+			}
+			if err := a.CreateRecordTableYear(tt.args.yyyy); (err != nil) != tt.wantErr {
+				t.Errorf("APIService.CreateRecordTableYear() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

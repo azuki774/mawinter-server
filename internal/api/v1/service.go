@@ -2,9 +2,11 @@ package v1
 
 import (
 	"context"
+	"errors"
 	"mawinter-server/internal/model"
 	"time"
 
+	"github.com/go-sql-driver/mysql"
 	"go.uber.org/zap"
 )
 
@@ -19,6 +21,7 @@ func init() {
 }
 
 type DBRepository interface {
+	CreateRecordTable(yyyymm string) (err error)
 	InsertRecord(req model.Recordstruct) (res model.Recordstruct, err error)
 	GetCategoryInfo() (info []model.Category, err error)
 	SumPriceForEachCatID(yyyymm string) (sum []model.SumPriceCategoryID, err error) // SELECT category_id, count(*), sum(price) FROM Record_202211 GROUP BY category_id;
@@ -27,6 +30,34 @@ type DBRepository interface {
 type APIService struct {
 	Logger *zap.Logger
 	Repo   DBRepository
+}
+
+func (a *APIService) CreateRecordTableYear(yyyy string) (err error) {
+	yyyyint, err := model.ValidYYYY(yyyy)
+	if err != nil {
+		a.Logger.Warn("invalid value detected", zap.Error(err))
+		return err
+	}
+	yyyymmList := fyInterval(yyyyint)
+	for _, yyyymm := range yyyymmList {
+		err = a.Repo.CreateRecordTable(yyyymm)
+		var mysqlError *mysql.MySQLError
+		if err != nil && errors.As(err, &mysqlError) {
+			if err.(*mysql.MySQLError).Number == 1050 {
+				// already exitsts, not error
+				a.Logger.Info("already existed Record_YYYYMM table", zap.String("YYYYMM", yyyymm))
+				continue
+			}
+			// other MySQL error
+			a.Logger.Error("failed to create Record_YYYYMM table (MySQL)", zap.String("YYYYMM", yyyymm), zap.Error(err))
+			return err
+		} else if err != nil {
+			// internal error
+			a.Logger.Error("failed to create Record_YYYYMM table (gorm)", zap.String("YYYYMM", yyyymm), zap.Error(err))
+			return err
+		}
+	}
+	return nil
 }
 
 func (a *APIService) AddRecord(ctx context.Context, req model.RecordRequest) (res model.Recordstruct, err error) {
