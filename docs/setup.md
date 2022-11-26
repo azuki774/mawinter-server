@@ -1,11 +1,7 @@
-## 必要なkubernetesリソース
-### 初回DBセットアップ
+### DBセットアップ
 ```
-kubectl exec --stdin --it <db-pod-name>  -- bash
-mysql -u root -ppassword
-use mawinter
-
-build/docker-entrypoint-initdb.d/init.sql の中身をコピペして入れる
+build/docker-entrypoint-initdb.d の `init.sql` にある、`Record_YYYYMM` テーブルをテンプレートに、
+使う年月(YYYYMM)分、`Record_YYYYMM` テーブルを作っておく。
 ```
 
 ### Basic認証

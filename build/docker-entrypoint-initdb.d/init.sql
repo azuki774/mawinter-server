@@ -43,6 +43,7 @@ create table `Record_YYYYMM` (
   `datetime` datetime NOT NULL default current_timestamp,
   `from` varchar(64) NOT NULL,
   `type` varchar(64) NOT NULL,
+  `price` int NOT NULL,
   `created_at` datetime default current_timestamp,
   `updated_at` timestamp default current_timestamp on update current_timestamp,
   PRIMARY KEY (`id`),

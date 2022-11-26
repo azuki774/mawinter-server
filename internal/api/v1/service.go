@@ -2,7 +2,6 @@ package v1
 
 import (
 	"context"
-	"errors"
 	"mawinter-server/internal/model"
 	"time"
 
@@ -20,9 +19,9 @@ func init() {
 }
 
 type DBRepository interface {
-	InsertRecord(req *model.RecordRequest) (res *model.Record_YYYYMM, err error)
-	GetCategoryInfo(categoryID int) (info *model.Category, err error)
-	GetCategoryMonthSummary(categoryID int, yyyymm string) (sum *model.CategoryMonthSummary, err error)
+	InsertRecord(req model.Recordstruct) (res model.Recordstruct, err error)
+	GetCategoryInfo() (info []model.Category, err error)
+	SumPriceForEachCatID(yyyymm string) (sum []model.SumPriceCategoryID, err error) // SELECT category_id, count(*), sum(price) FROM Record_202211 GROUP BY category_id;
 }
 
 type APIService struct {
@@ -30,65 +29,67 @@ type APIService struct {
 	Repo   DBRepository
 }
 
-func (a *APIService) AddRecord(ctx context.Context, req *model.RecordRequest) (res *model.Record_YYYYMM, err error) {
+func (a *APIService) AddRecord(ctx context.Context, req model.RecordRequest) (res model.Recordstruct, err error) {
 	err = model.ValidRecordRequest(req)
 	if err != nil {
 		a.Logger.Warn("invalid value detected", zap.Error(err))
-		return nil, err
+		return model.Recordstruct{}, err
 	}
 
-	// TODO: デフォルト値挿入
+	// デフォルト値挿入
+	record, err := model.NewRecordFromReq(req)
+	if err != nil {
+		a.Logger.Warn("failed to create request", zap.Error(err))
+		return model.Recordstruct{}, err
+	}
 
-	res, err = a.Repo.InsertRecord(req)
+	res, err = a.Repo.InsertRecord(record)
 	if err != nil {
 		a.Logger.Error("failed to insert record", zap.Error(err))
-		return nil, err
+		return model.Recordstruct{}, err
 	}
 
 	return res, nil
 }
 
-func (a *APIService) GetYearCategorySummary(ctx context.Context, categoryID int, yyyy string) (sum *model.CategoryYearSummary, err error) {
+func (a *APIService) GetYearSummary(ctx context.Context, yyyy string) (sum []*model.CategoryYearSummary, err error) {
 	yyyyint, err := model.ValidYYYY(yyyy)
 	if err != nil {
 		a.Logger.Warn("invalid value detected", zap.Error(err))
 		return nil, err
 	}
 
-	yyyymmList := fyInterval(yyyyint)
-
-	catInfo, err := a.Repo.GetCategoryInfo(categoryID)
+	cats, err := a.Repo.GetCategoryInfo()
 	if err != nil {
-		a.Logger.Error("failed to category info", zap.Error(err))
 		return nil, err
 	}
 
-	var monthPrice []int
-	var total int
+	sum = model.NewCategoryYearSummary(cats)
 
-	for _, yyyymm := range yyyymmList { // yyyymm
-		monthInfo, err := a.Repo.GetCategoryMonthSummary(categoryID, yyyymm)
-		if err != nil && !errors.Is(err, model.ErrTableNotFound) {
+	yyyymmList := fyInterval(yyyyint)
+	for _, yyyymm := range yyyymmList {
+		monthSums, err := a.Repo.SumPriceForEachCatID(yyyymm)
+		if err != nil {
 			a.Logger.Error("failed to get info from DB", zap.Error(err))
 			return nil, err
 		}
-		if errors.Is(err, model.ErrTableNotFound) {
-			// TableNotFound
-			monthPrice = append(monthPrice, 0)
-		} else {
-			// Got Month information
-			monthPrice = append(monthPrice, monthInfo.Total)
-			total = total + monthInfo.Total
+
+		f := loadSumPriceForEachCatID(monthSums)
+
+		for _, s := range sum {
+			s.AddMonthPrice(f[s.CategoryID]) // Refresh MonthPrice and Total
 		}
 	}
 
-	sum = &model.CategoryYearSummary{
-		CategoryID:   categoryID,
-		CategoryName: catInfo.Name,
-		MonthPrice:   monthPrice,
-		Total:        total,
-	}
 	return sum, nil
+}
+
+func loadSumPriceForEachCatID(sum []model.SumPriceCategoryID) (f map[int]int) {
+	f = make(map[int]int)
+	for _, v := range sum {
+		f[int(v.CategoryID)] = int(v.Sum)
+	}
+	return
 }
 
 // FYyyyy の yyyymm をリストで返す

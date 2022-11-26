@@ -9,7 +9,7 @@ import (
 )
 
 // ValidRecordRequest
-func ValidRecordRequest(req *RecordRequest) (err error) {
+func ValidRecordRequest(req RecordRequest) (err error) {
 	// req : YYYYMMDD or ""
 	if req.Datetime != "" || validation.Validate(req.Datetime, validation.Length(6, 6), is.Digit) != nil {
 		return fmt.Errorf("%s: %w", err.Error(), ErrInvalidValue)

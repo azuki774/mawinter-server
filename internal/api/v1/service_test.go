@@ -2,6 +2,7 @@ package v1
 
 import (
 	"context"
+	"fmt"
 	"mawinter-server/internal/model"
 	"reflect"
 	"testing"
@@ -51,75 +52,119 @@ func Test_fyInterval(t *testing.T) {
 	}
 }
 
-func TestAPIService_GetYearCategorySummary(t *testing.T) {
+func TestAPIService_GetYearSummary(t *testing.T) {
 	type fields struct {
 		Logger *zap.Logger
 		Repo   DBRepository
 	}
 	type args struct {
-		categoryID int
-		yyyy       string
+		ctx  context.Context
+		yyyy string
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		args    args
-		wantSum *model.CategoryYearSummary
+		wantSum []*model.CategoryYearSummary
 		wantErr bool
 	}{
 		{
-			name: "2022-101",
+			name: "full",
 			fields: fields{
 				Logger: l,
 				Repo: &mockRepo{
-					CategoryMonthSummaryMonthTotal: []int{40, 50, 60, 70, 80, 90, 100, 110, 120, 10, 20, 30},
-					CategoryMonthSummaryMonthCount: []int{4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3},
+					RecordYYYYMMNum: 12,
 				},
 			},
-			args: args{categoryID: 101, yyyy: "2022"},
-			wantSum: &model.CategoryYearSummary{
-				CategoryID:   101,
-				CategoryName: "カテゴリ1",
-				MonthPrice:   []int{40, 50, 60, 70, 80, 90, 100, 110, 120, 10, 20, 30},
-				Total:        780,
+			args: args{
+				ctx:  context.Background(),
+				yyyy: "2021",
+			},
+			wantSum: []*model.CategoryYearSummary{
+				{
+					CategoryID:   100,
+					CategoryName: "カテゴリ1",
+					MonthPrice:   []int{10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10},
+					Total:        120,
+				},
+				{
+					CategoryID:   200,
+					CategoryName: "カテゴリ2",
+					MonthPrice:   []int{100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+					Total:        1200,
+				},
+				{
+					CategoryID:   300,
+					CategoryName: "カテゴリ3",
+					MonthPrice:   []int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+					Total:        0,
+				},
 			},
 			wantErr: false,
 		},
 		{
-			name: "2022-102",
+			name: "half",
 			fields: fields{
 				Logger: l,
 				Repo: &mockRepo{
-					CategoryMonthSummaryMonthTotal: []int{40, 50, 60, 70, 80, 90, 0, 110, 120, 10, 20, 30}, // 途中 0
-					CategoryMonthSummaryMonthCount: []int{4, 5, 6, 7, 8, 9, 0, 11, 12, 1, 2, 3},
+					RecordYYYYMMNum: 6,
 				},
 			},
-			args: args{categoryID: 102, yyyy: "2022"},
-			wantSum: &model.CategoryYearSummary{
-				CategoryID:   102,
-				CategoryName: "カテゴリ1",
-				MonthPrice:   []int{40, 50, 60, 70, 80, 90, 0, 110, 120, 10, 20, 30},
-				Total:        680,
+			args: args{
+				ctx:  context.Background(),
+				yyyy: "2022",
+			},
+			wantSum: []*model.CategoryYearSummary{
+				{
+					CategoryID:   100,
+					CategoryName: "カテゴリ1",
+					MonthPrice:   []int{10, 10, 10, 10, 10, 10, 0, 0, 0, 0, 0, 0},
+					Total:        60,
+				},
+				{
+					CategoryID:   200,
+					CategoryName: "カテゴリ2",
+					MonthPrice:   []int{100, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, 0},
+					Total:        600,
+				},
+				{
+					CategoryID:   300,
+					CategoryName: "カテゴリ3",
+					MonthPrice:   []int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+					Total:        0,
+				},
 			},
 			wantErr: false,
 		},
 		{
-			name: "2022-103",
+			name: "get category error",
 			fields: fields{
 				Logger: l,
 				Repo: &mockRepo{
-					CategoryMonthSummaryMonthTotal: []int{40, 50, 60, 70, 80, 90}, // 途中からテーブルなし
-					CategoryMonthSummaryMonthCount: []int{4, 5, 6, 7, 8, 9},
+					errGetCategoryInfo: fmt.Errorf("error"),
 				},
 			},
-			args: args{categoryID: 103, yyyy: "2022"},
-			wantSum: &model.CategoryYearSummary{
-				CategoryID:   103,
-				CategoryName: "カテゴリ1",
-				MonthPrice:   []int{40, 50, 60, 70, 80, 90, 0, 0, 0, 0, 0, 0},
-				Total:        390,
+			args: args{
+				ctx:  context.Background(),
+				yyyy: "2021",
 			},
-			wantErr: false,
+			wantSum: nil,
+			wantErr: true,
+		},
+		{
+			name: "get sum table error",
+			fields: fields{
+				Logger: l,
+				Repo: &mockRepo{
+					errSumPriceForEachCatID: fmt.Errorf("error"),
+				},
+			},
+			args: args{
+				ctx:  context.Background(),
+				yyyy: "2021",
+			},
+			wantSum: nil,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -128,13 +173,13 @@ func TestAPIService_GetYearCategorySummary(t *testing.T) {
 				Logger: tt.fields.Logger,
 				Repo:   tt.fields.Repo,
 			}
-			gotSum, err := a.GetYearCategorySummary(context.Background(), tt.args.categoryID, tt.args.yyyy)
+			gotSum, err := a.GetYearSummary(tt.args.ctx, tt.args.yyyy)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("APIService.GetYearCategorySummary() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("APIService.GetYearSummary() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(gotSum, tt.wantSum) {
-				t.Errorf("APIService.GetYearCategorySummary() = %v, want %v", gotSum, tt.wantSum)
+				t.Errorf("APIService.GetYearSummary() = %v, want %v", gotSum, tt.wantSum)
 			}
 		})
 	}
