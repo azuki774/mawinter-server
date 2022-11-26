@@ -1,6 +1,10 @@
 package main
 
 import (
+	"context"
+	"fmt"
+	"mawinter-server/internal/factory"
+
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -35,8 +39,20 @@ to quickly create a Cobra application.`,
 	SilenceErrors: true,
 	SilenceUsage:  true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return nil
+		return start()
 	},
+}
+
+func start() (err error) {
+	l, err := factory.NewLogger()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer l.Sync()
+	srv := factory.NewServer(l)
+	ctx := context.Background()
+	return srv.Start(ctx)
 }
 
 func init() {

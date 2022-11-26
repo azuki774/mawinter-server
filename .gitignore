@@ -7,3 +7,4 @@ migration.txt
 migration.sql
 sync.*
 *secret*
+bin/*

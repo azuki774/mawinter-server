@@ -36,8 +36,11 @@
     +-------------+-------------+------+-----+---------------------+-------------------------------+
     | id          | int(11)     | NO   | PRI | NULL                | auto_increment                |
     | category_id | int(11)     | NO   | MUL | NULL                |                               |
+    | datetime    | datetime    | NO   | MUL | current_timestamp() |                               |
     | from        | varchar(64) | NO   |     | NULL                |                               |
     | type        | varchar(64) | NO   |     | NULL                |                               |
+    | memo        | varchar(255)| NO   |     | NULL                |                               |
     | created_at  | datetime    | YES  |     | current_timestamp() |                               |
-    | updated_at  | timestamp   | NO   |     | current_timestamp() | on update current_timestamp() |
+    | updated_at  | timestamp   | YES  |     | current_timestamp() | on update current_timestamp() |
     +-------------+-------------+------+-----+---------------------+-------------------------------+
+
