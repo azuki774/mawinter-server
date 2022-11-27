@@ -68,4 +68,5 @@ func (s *Server) addRecordFunc(r *mux.Router) {
 	br.Use(s.middlewareBasicAuth)
 	br.HandleFunc("/table/{year}", s.createRecordTableHandler).Methods("POST")
 	br.HandleFunc("/record/", s.addRecordHandler).Methods("POST")
+	br.HandleFunc("/record/year/{year}", s.yearSummaryHandler).Methods("GET")
 }

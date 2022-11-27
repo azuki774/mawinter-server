@@ -3,7 +3,7 @@
 
 以下、すべてBasic認証が必要
 
-## GET /summary/year/{year}
+## GET /record/year/{year}
 - 年間サマリを取得する。
 ### response:
 
