@@ -39,32 +39,27 @@ to quickly create a Cobra application.`,
 	SilenceErrors: true,
 	SilenceUsage:  true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return start(&startOpt)
+		return start()
 	},
 }
 
-func start(opts *StartOption) error {
+func start() (err error) {
 	l, err := factory.NewLogger()
 	if err != nil {
-		fmt.Printf("failed to create logger: %v\n", err)
+		fmt.Println(err)
 		return err
 	}
-
-	api, err := factory.NewAPIService(opts.DBInfo.User, opts.DBInfo.Pass, opts.DBInfo.Host, opts.DBInfo.Port, opts.DBInfo.Name)
+	defer l.Sync()
+	db, err := factory.NewDBRepository(startOpt.DBInfo.Host, startOpt.DBInfo.Port, startOpt.DBInfo.User, startOpt.DBInfo.Pass, startOpt.DBInfo.Name)
 	if err != nil {
+		l.Error("failed to connect DB", zap.Error(err))
 		return err
 	}
-	l.Info("loaded api service")
-
-	srv, err := factory.NewServer(api)
-	if err != nil {
-		l.Error("failed to load server", zap.Error(err))
-		return err
-	}
-
-	defer api.DBRepo.CloseDB()
-
-	return srv.Start(context.Background())
+	defer db.CloseDB()
+	ap := factory.NewService(l, db)
+	srv := factory.NewServer(l, ap)
+	ctx := context.Background()
+	return srv.Start(ctx)
 }
 
 func init() {
