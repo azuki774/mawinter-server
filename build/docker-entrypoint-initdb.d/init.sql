@@ -44,6 +44,7 @@ create table `Record_YYYYMM` (
   `from` varchar(64) NOT NULL,
   `type` varchar(64) NOT NULL,
   `price` int NOT NULL,
+  `memo` varchar(255) NOT NULL,
   `created_at` datetime default current_timestamp,
   `updated_at` timestamp default current_timestamp on update current_timestamp,
   PRIMARY KEY (`id`),

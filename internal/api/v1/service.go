@@ -75,6 +75,7 @@ func (a *APIService) AddRecord(ctx context.Context, req model.RecordRequest) (re
 		return model.Recordstruct{}, err
 	}
 
+	a.Logger.Info("add record sucessfully", zap.Int("ID", res.ID))
 	return res, nil
 }
 
@@ -107,6 +108,7 @@ func (a *APIService) GetYearSummary(ctx context.Context, yyyy string) (sum []*mo
 		}
 	}
 
+	a.Logger.Info("get year summary sucessfully", zap.String("yyyy", yyyy))
 	return sum, nil
 }
 

@@ -31,21 +31,21 @@ func (d *DBRepository) CloseDB() (err error) {
 }
 
 func (d *DBRepository) CreateRecordTable(yyyymm string) (err error) {
-	sql := fmt.Sprintf(`CREATE TABLE Record_%s (
-		id int NOT NULL AUTO_INCREMENT,
-		category_id int NOT NULL,
-		datetime datetime NOT NULL default current_timestamp,
-		from varchar(64) NOT NULL,
-		type varchar(64) NOT NULL,
-		price int NOT NULL,
-		created_at datetime default current_timestamp,
-		updated_at timestamp default current_timestamp on update current_timestamp,
-		PRIMARY KEY (id),
-		index idx_cat (category_id),
-		index idx_date (datetime)
-	  )`, yyyymm)
+	sql := fmt.Sprintf("CREATE TABLE `Record_%s` (", yyyymm)
+	sql = sql + "`id` int NOT NULL AUTO_INCREMENT,"
+	sql = sql + "`category_id`  int NOT NULL,"
+	sql = sql + "`datetime` datetime NOT NULL default current_timestamp,"
+	sql = sql + "`from` varchar(64) NOT NULL,"
+	sql = sql + "`type` varchar(64) NOT NULL,"
+	sql = sql + "`price` int NOT NULL,"
+	sql = sql + "`memo` varchar(255) NOT NULL,"
+	sql = sql + "`created_at` datetime default current_timestamp,"
+	sql = sql + "`updated_at` timestamp default current_timestamp on update current_timestamp,"
+	sql = sql + "PRIMARY KEY (`id`),"
+	sql = sql + "index idx_cat (`category_id`),"
+	sql = sql + "index idx_date (`datetime`) )"
 
-	err = d.Conn.Debug().Raw(sql).Error
+	err = d.Conn.Exec(sql).Error
 	return err
 }
 

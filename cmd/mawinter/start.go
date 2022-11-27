@@ -50,7 +50,14 @@ func start() (err error) {
 		return err
 	}
 	defer l.Sync()
-	srv := factory.NewServer(l)
+	db, err := factory.NewDBRepository(startOpt.DBInfo.Host, startOpt.DBInfo.Port, startOpt.DBInfo.User, startOpt.DBInfo.Pass, startOpt.DBInfo.Name)
+	if err != nil {
+		l.Error("failed to connect DB", zap.Error(err))
+		return err
+	}
+	defer db.CloseDB()
+	ap := factory.NewService(l, db)
+	srv := factory.NewServer(l, ap)
 	ctx := context.Background()
 	return srv.Start(ctx)
 }

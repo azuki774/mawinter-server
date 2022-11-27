@@ -13,7 +13,9 @@ import (
 )
 
 type APIService interface {
-	GetYearCategorySummary(ctx context.Context, categoryID int, yyyy string) (sum *model.CategoryYearSummary, err error)
+	CreateRecordTableYear(yyyy string) (err error)
+	AddRecord(ctx context.Context, req model.RecordRequest) (res model.Recordstruct, err error)
+	GetYearSummary(ctx context.Context, yyyy string) (sum []*model.CategoryYearSummary, err error)
 }
 
 type Server struct {
@@ -59,9 +61,11 @@ func (s *Server) Start(ctx context.Context) error {
 }
 
 func (s *Server) addRecordFunc(r *mux.Router) {
-	r.HandleFunc("/", rootHandler)
+	r.HandleFunc("/", s.rootHandler)
 	r.Use(s.middlewareLogging)
 	// Required Basic Auth
 	br := r.PathPrefix("/").Subrouter()
 	br.Use(s.middlewareBasicAuth)
+	br.HandleFunc("/table/{year}", s.createRecordTableHandler).Methods("POST")
+	br.HandleFunc("/record/", s.addRecordHandler).Methods("POST")
 }
