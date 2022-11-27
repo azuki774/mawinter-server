@@ -100,3 +100,31 @@ func (s *Server) addRecordHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprint(w, string(outputJson))
 }
+
+func (s *Server) yearSummaryHandler(w http.ResponseWriter, r *http.Request) {
+	pathParam := mux.Vars(r)
+
+	ctx := context.Background()
+	yearSummary, err := s.APIService.GetYearSummary(ctx, pathParam["year"])
+	if err != nil {
+		if errors.Is(err, model.ErrInvalidValue) {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprint(w, err.Error())
+			return
+		}
+
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	outputJson, err := json.Marshal(&yearSummary)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(outputJson))
+}

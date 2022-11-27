@@ -46,10 +46,10 @@ type CategoryMonthSummary struct {
 }
 
 type CategoryYearSummary struct {
-	CategoryID   int
-	CategoryName string
-	MonthPrice   []int // 4月から3月までの数値が配列で返る
-	Total        int
+	CategoryID   int    `json:"category_id"`
+	CategoryName string `json:"category_name"`
+	MonthPrice   []int  `json:"price"` // 4月から3月までの数値が配列で返る
+	Total        int    `json:"total"`
 }
 
 func NewCategoryYearSummary(cats []Category) (caty []*CategoryYearSummary) {
