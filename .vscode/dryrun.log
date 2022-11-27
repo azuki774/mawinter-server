@@ -1,5 +1,0 @@
-make --dry-run --always-make --keep-going --print-directory
-make: Entering directory '/home/azuki/work/mawinter-server'
-docker build -t mawinter-api:latest -f build/Dockerfile .
-make: Leaving directory '/home/azuki/work/mawinter-server'
- 
