@@ -85,7 +85,7 @@ func NewRecordFromReq(req RecordRequest) (record Recordstruct, err error) {
 			return Recordstruct{}, err
 		}
 	} else {
-		// RFC3339
+		// 2022-11-22T13:54:08+09:00
 		record.Datetime, err = time.ParseInLocation(time.RFC3339, req.Datetime, jst)
 		if err != nil {
 			return Recordstruct{}, err

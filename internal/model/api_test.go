@@ -39,7 +39,7 @@ func TestNewRecordFromReq(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "fix time (RFC3339)",
+			name: "fix time (2022-11-22T13:54:08+09:00)",
 			args: args{
 				req: RecordRequest{
 					CategoryID: 100,
