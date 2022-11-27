@@ -56,18 +56,13 @@ func (a *APIService) CreateRecordTableYear(yyyy string) (err error) {
 			a.Logger.Error("failed to create Record_YYYYMM table (gorm)", zap.String("YYYYMM", yyyymm), zap.Error(err))
 			return err
 		}
+		a.Logger.Info("create Record_YYYYMM table", zap.String("YYYYMM", yyyymm))
 	}
 	return nil
 }
 
 func (a *APIService) AddRecord(ctx context.Context, req model.RecordRequest) (res model.Recordstruct, err error) {
-	err = model.ValidRecordRequest(req)
-	if err != nil {
-		a.Logger.Warn("invalid value detected", zap.Error(err))
-		return model.Recordstruct{}, err
-	}
-
-	// デフォルト値挿入
+	// デフォルト値挿入 + validation
 	record, err := model.NewRecordFromReq(req)
 	if err != nil {
 		a.Logger.Warn("failed to create request", zap.Error(err))

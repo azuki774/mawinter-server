@@ -2,6 +2,9 @@ package model
 
 import (
 	"time"
+
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 )
 
 var jst *time.Location
@@ -74,9 +77,16 @@ func NewRecordFromReq(req RecordRequest) (record Recordstruct, err error) {
 	if req.Datetime == "" {
 		// now time
 		record.Datetime = time.Now()
-	} else {
+
+	} else if validation.Validate(req.Datetime, validation.Length(8, 8), is.Digit) == nil {
 		// YYYYMMDD
 		record.Datetime, err = time.ParseInLocation("20060102", req.Datetime, jst)
+		if err != nil {
+			return Recordstruct{}, err
+		}
+	} else {
+		// RFC3339
+		record.Datetime, err = time.ParseInLocation(time.RFC3339, req.Datetime, jst)
 		if err != nil {
 			return Recordstruct{}, err
 		}

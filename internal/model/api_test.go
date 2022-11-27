@@ -17,7 +17,7 @@ func TestNewRecordFromReq(t *testing.T) {
 		wantErr    bool
 	}{
 		{
-			name: "fix time",
+			name: "fix time (YYYYMMDD)",
 			args: args{
 				req: RecordRequest{
 					CategoryID: 100,
@@ -31,6 +31,28 @@ func TestNewRecordFromReq(t *testing.T) {
 			wantRecord: Recordstruct{
 				CategoryID: 100,
 				Datetime:   time.Date(2022, 03, 01, 0, 0, 0, 0, jst),
+				From:       "fromtest",
+				Type:       "typetest",
+				Price:      2345,
+				Memo:       "memo",
+			},
+			wantErr: false,
+		},
+		{
+			name: "fix time (RFC3339)",
+			args: args{
+				req: RecordRequest{
+					CategoryID: 100,
+					Datetime:   "2022-11-22T13:54:08+09:00",
+					From:       "fromtest",
+					Type:       "typetest",
+					Price:      2345,
+					Memo:       "memo",
+				},
+			},
+			wantRecord: Recordstruct{
+				CategoryID: 100,
+				Datetime:   time.Date(2022, 11, 22, 13, 54, 8, 0, jst),
 				From:       "fromtest",
 				Type:       "typetest",
 				Price:      2345,
