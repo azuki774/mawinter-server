@@ -287,3 +287,170 @@ func TestDBRepository_SumPriceForEachCatID(t *testing.T) {
 		})
 	}
 }
+
+func TestDBRepository_GetMonthlyFixDone(t *testing.T) {
+	type fields struct {
+		Conn *gorm.DB
+	}
+	type args struct {
+		yyyymm string
+	}
+	tests := []struct {
+		name      string
+		fields    fields
+		args      args
+		wantFlag  bool
+		wantErr   bool
+		mockSetUp func(mock sqlmock.Sqlmock)
+	}{
+		{
+			name:     "not processed (not found)",
+			fields:   fields{},
+			args:     args{yyyymm: "202210"},
+			wantFlag: false,
+			wantErr:  false,
+			mockSetUp: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(`SELECT`).
+					WillReturnError(gorm.ErrRecordNotFound)
+			},
+		},
+		{
+			name:     "done",
+			fields:   fields{},
+			args:     args{yyyymm: "202210"},
+			wantFlag: true,
+			wantErr:  false,
+			mockSetUp: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(`SELECT`).
+					WillReturnRows(sqlmock.NewRows([]string{"yyyymm", "done"}).
+						AddRow("202210", 1))
+			},
+		},
+		{
+			name:     "unknown error",
+			fields:   fields{},
+			args:     args{yyyymm: "202210"},
+			wantFlag: false,
+			wantErr:  true,
+			mockSetUp: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(`SELECT`).
+					WillReturnError(gorm.ErrInvalidData)
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gormDB, mock, _ := NewDBMock()
+			tt.fields.Conn = gormDB
+
+			d := &DBRepository{
+				Conn: tt.fields.Conn,
+			}
+
+			tt.mockSetUp(mock)
+
+			gotFlag, err := d.GetMonthlyFixDone(tt.args.yyyymm)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("DBRepository.GetMonthlyFixDone() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if gotFlag != tt.wantFlag {
+				t.Errorf("DBRepository.GetMonthlyFixDone() = %v, want %v", gotFlag, tt.wantFlag)
+			}
+		})
+	}
+}
+
+func TestDBRepository_InsertMonthlyFixBilling(t *testing.T) {
+	type fields struct {
+		Conn *gorm.DB
+	}
+	type args struct {
+		yyyymm   string
+		fixBills []model.MonthlyFixBilling
+	}
+	tests := []struct {
+		name      string
+		fields    fields
+		args      args
+		wantErr   bool
+		mockSetUp func(mock sqlmock.Sqlmock)
+	}{
+		{
+			name:   "ok",
+			fields: fields{},
+			args: args{
+				yyyymm: "202210",
+				fixBills: []model.MonthlyFixBilling{
+					{
+						CategoryID: 100,
+						Day:        2,
+						Type:       "type1",
+						Memo:       "memo1",
+					},
+					{
+						CategoryID: 101,
+						Day:        4,
+						Type:       "type2",
+						Memo:       "memo2",
+					},
+				},
+			},
+			wantErr: false,
+			mockSetUp: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+				mock.ExpectExec(regexp.QuoteMeta(
+					"INSERT INTO `Monthly_Fix_Done`")).
+					WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectExec(regexp.QuoteMeta(
+					"INSERT INTO `Monthly_Fix_Billing`")).
+					WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectCommit()
+			},
+		},
+		{
+			name:   "done insert error",
+			fields: fields{},
+			args: args{
+				yyyymm: "202210",
+				fixBills: []model.MonthlyFixBilling{
+					{
+						CategoryID: 100,
+						Day:        2,
+						Type:       "type1",
+						Memo:       "memo1",
+					},
+					{
+						CategoryID: 101,
+						Day:        4,
+						Type:       "type2",
+						Memo:       "memo2",
+					},
+				},
+			},
+			wantErr: true,
+			mockSetUp: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+				mock.ExpectExec(regexp.QuoteMeta(
+					"INSERT INTO `Monthly_Fix_Done`")).
+					WillReturnError(gorm.ErrRegistered)
+				mock.ExpectRollback()
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gormDB, mock, _ := NewDBMock()
+			tt.fields.Conn = gormDB
+
+			d := &DBRepository{
+				Conn: tt.fields.Conn,
+			}
+
+			tt.mockSetUp(mock)
+			if err := d.InsertMonthlyFixBilling(tt.args.yyyymm, tt.args.fixBills); (err != nil) != tt.wantErr {
+				t.Errorf("DBRepository.InsertMonthlyFixBilling() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}

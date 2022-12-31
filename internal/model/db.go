@@ -6,11 +6,11 @@ func (Category) TableName() string {
 	return "Category"
 }
 
-func (MonthlyFixBilling) TableName() string {
+func (MonthlyFixBillingDB) TableName() string {
 	return "Monthly_Fix_Billing"
 }
 
-func (MonthlyFixDone) TableName() string {
+func (MonthlyFixDoneDB) TableName() string {
 	return "Monthly_Fix_Done"
 }
 
@@ -31,7 +31,7 @@ type Record_YYYYMM struct {
 	UpdatedAt  time.Time `gorm:"column:updated_at"`
 }
 
-type MonthlyFixBilling struct {
+type MonthlyFixBillingDB struct {
 	ID         int64     `gorm:"id;primaryKey"`
 	CategoryID int64     `gorm:"column:category_id"`
 	Day        int64     `gorm:"column:day"`
@@ -41,7 +41,7 @@ type MonthlyFixBilling struct {
 	UpdatedAt  time.Time `gorm:"column:updated_at"`
 }
 
-type MonthlyFixDone struct {
+type MonthlyFixDoneDB struct {
 	YYYYMM    string    `gorm:"column:yyyymm;primaryKey"`
 	Done      uint8     `gorm:"column:done"`
 	CreatedAt time.Time `gorm:"column:created_at"`
