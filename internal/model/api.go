@@ -52,6 +52,13 @@ type CategoryYearSummary struct {
 	Total        int    `json:"total"`
 }
 
+type MonthlyFixBilling struct {
+	CategoryID int
+	Day        int
+	Type       string
+	Memo       string
+}
+
 func NewCategoryYearSummary(cats []Category) (caty []*CategoryYearSummary) {
 	for _, cat := range cats {
 		n := &CategoryYearSummary{
@@ -98,4 +105,13 @@ func NewRecordFromReq(req RecordRequest) (record Recordstruct, err error) {
 func (c *CategoryYearSummary) AddMonthPrice(price int) {
 	c.MonthPrice = append(c.MonthPrice, price)
 	c.Total = c.Total + price
+}
+
+func (m *MonthlyFixBilling) ConvDBModel() MonthlyFixBillingDB {
+	return MonthlyFixBillingDB{
+		CategoryID: int64(m.CategoryID),
+		Day:        int64(m.Day),
+		Type:       m.Type,
+		Memo:       m.Memo,
+	}
 }

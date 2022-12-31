@@ -25,6 +25,8 @@ type DBRepository interface {
 	InsertRecord(req model.Recordstruct) (res model.Recordstruct, err error)
 	GetCategoryInfo() (info []model.Category, err error)
 	SumPriceForEachCatID(yyyymm string) (sum []model.SumPriceCategoryID, err error) // SELECT category_id, count(*), sum(price) FROM Record_202211 GROUP BY category_id;
+	GetMonthlyFixDone(yyyymm string) (flag bool, err error)
+	InsertMonthlyFixBilling(yyyymm string, fixBills []model.MonthlyFixBilling) (err error)
 }
 
 type APIService struct {
