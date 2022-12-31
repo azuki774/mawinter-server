@@ -49,36 +49,18 @@
     }
 - `date` フィールドが空のときは現在時刻が入る。
 
-## GET /record/recent/
-- 最新20件のレコードを表示する。
-### response:
-    [
-        {
-            "id" : 123, 
-            "category_id" : 400,
-            "category_name" : "cat1", 
-            "date" : "2021-01-01T00:00:00Z",
-            "from" : "discord",
-            "type" : "",
-            "price" : 1234,
-            "memo": ""
-        },
-        {
-            "id" : 124, 
-            "category_id" : 500,
-            "category_name" : "cat2", 
-            "date" : "2021-01-01T00:00:00Z",
-            "from" : "discord",
-            "type" : "",
-            "price" : 1234,
-            "memo": ""
-        }
-    ]
+## POST /record/fixmonth/
+- テーブル `Fix_Monthly_Billing` のデータを `Record_YYYYMM` データに追加する。
 
-## DELETE /record/{id}
-- id の record を削除する
+### request:
+None
+
+### response
+- 201 Created 成功した場合
+- 400 Bad Request その月がすでに追加済の場合
+
+## POST /table/{year}
+- FY{year} 用のテーブルを生成する。
+- すでに生成済の場合は何もしない
 ### response:
-- 成功 .. 204 No Contents
-- 失敗
-    - データがない場合 .. 404
-    - 何らかの場合で失敗 .. 500
+- 201 Created
