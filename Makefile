@@ -1,3 +1,4 @@
+SHELL=/bin/bash
 VERSION_API=latest
 container_name_api=mawinter-api
 container_name_db=mawinter-db
@@ -18,3 +19,9 @@ start:
 
 stop:
 	docker compose -f deployment/compose-local.yml down
+
+test: 
+	gofmt -l .
+	go vet ./...
+	staticcheck ./...
+	go test -v ./...
