@@ -1,9 +1,10 @@
 VERSION_API=latest
+container_name_api=mawinter-api
 container_name_db=mawinter-db
 .PHONY: build run push stop test migration-test migration-clean
 
 build:
-	go build -a -tags "netgo" -installsuffix netgo  -ldflags="-s -w -extldflags \"-static\"" -o bin/ ./...
+	docker build -t $(container_name_api):$(VERSION_API) -f build/Dockerfile .
 	docker build -t $(container_name_db):$(VERSION_API) -f build/Dockerfile-db .
 
 bin:

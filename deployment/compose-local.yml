@@ -2,8 +2,7 @@ version: '3'
 
 services:
   mawinter-db:
-    image: mawinter-db
-    restart: always
+    image: mawinter-db:latest
     container_name: mawinter-db
     ports:
       - "3306:3306"
@@ -13,3 +12,11 @@ services:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=pwd
       - TZ=Asia/Tokyo
+  mawinter-api:
+    image: mawinter-api:latest
+    container_name: mawinter-api
+    ports:
+      - "8080:80"
+    environment:
+      - BASIC_AUTH_USERNAME=user
+      - BASIC_AUTH_PASSWORD=pass
