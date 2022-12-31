@@ -94,7 +94,7 @@ func (d *DBRepository) SumPriceForEachCatID(yyyymm string) (sum []model.SumPrice
 // GetMonthlyFixDone は yyyymm 月のレコードがあれば true を返す
 func (d *DBRepository) GetMonthlyFixDone(yyyymm string) (flag bool, err error) {
 	var doneRec model.MonthlyFixDoneDB
-	err = d.Conn.Where("yyyyymm = ?", yyyymm).First(&doneRec).Error
+	err = d.Conn.Where("yyyyymm = ?", yyyymm).Take(&doneRec).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return false, err
 	} else if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -104,6 +104,25 @@ func (d *DBRepository) GetMonthlyFixDone(yyyymm string) (flag bool, err error) {
 
 	// 処理済
 	return true, nil
+}
+
+func (d *DBRepository) GetMonthlyFixBilling() (fixBills []model.MonthlyFixBilling, err error) {
+	var recs []model.MonthlyFixBillingDB
+	err = d.Conn.Find(&recs).Error
+	if err != nil {
+		return []model.MonthlyFixBilling{}, err
+	}
+	for _, v := range recs {
+		fixBills = append(fixBills,
+			model.MonthlyFixBilling{
+				CategoryID: int(v.CategoryID),
+				Day:        int(v.Day),
+				Type:       v.Type,
+				Memo:       v.Memo,
+			},
+		)
+	}
+	return fixBills, nil
 }
 
 func (d *DBRepository) InsertMonthlyFixBilling(yyyymm string, fixBills []model.MonthlyFixBilling) (err error) {

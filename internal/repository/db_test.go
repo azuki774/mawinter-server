@@ -454,3 +454,81 @@ func TestDBRepository_InsertMonthlyFixBilling(t *testing.T) {
 		})
 	}
 }
+
+func TestDBRepository_GetMonthlyFixBilling(t *testing.T) {
+	type fields struct {
+		Conn *gorm.DB
+	}
+	tests := []struct {
+		name         string
+		fields       fields
+		wantFixBills []model.MonthlyFixBilling
+		wantErr      bool
+		mockSetUp    func(mock sqlmock.Sqlmock)
+	}{
+		{
+			name:   "ok",
+			fields: fields{},
+			wantFixBills: []model.MonthlyFixBilling{
+				{
+					CategoryID: 100,
+					Day:        2,
+					Type:       "type1",
+					Memo:       "memo1",
+				},
+				{
+					CategoryID: 101,
+					Day:        4,
+					Type:       "type2",
+					Memo:       "memo2",
+				},
+			},
+			wantErr: false,
+			mockSetUp: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(`SELECT`).
+					WillReturnRows(sqlmock.NewRows(
+						[]string{
+							"id",
+							"category_id",
+							"day",
+							"type",
+							"memo",
+							"created_at",
+							"updated_at",
+						}).
+						AddRow(1, 100, 2, "type1", "memo1", time.Now(), time.Now()).
+						AddRow(2, 101, 4, "type2", "memo2", time.Now(), time.Now()))
+			},
+		},
+		{
+			name:         "error",
+			fields:       fields{},
+			wantFixBills: []model.MonthlyFixBilling{},
+			wantErr:      true,
+			mockSetUp: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(`SELECT`).
+					WillReturnError(gorm.ErrInvalidDB)
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gormDB, mock, _ := NewDBMock()
+			tt.fields.Conn = gormDB
+
+			d := &DBRepository{
+				Conn: tt.fields.Conn,
+			}
+
+			tt.mockSetUp(mock)
+			gotFixBills, err := d.GetMonthlyFixBilling()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("DBRepository.GetMonthlyFixBilling() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotFixBills, tt.wantFixBills) {
+				t.Errorf("DBRepository.GetMonthlyFixBilling() = %v, want %v", gotFixBills, tt.wantFixBills)
+			}
+		})
+	}
+}

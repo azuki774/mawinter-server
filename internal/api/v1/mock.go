@@ -87,6 +87,22 @@ func (m *mockRepo) GetMonthlyFixDone(yyyymm string) (flag bool, err error) {
 	return m.monthlyFixDone, nil
 }
 
+func (m *mockRepo) GetMonthlyFixBilling() (fixBills []model.MonthlyFixBilling, err error) {
+	return []model.MonthlyFixBilling{
+		{
+			CategoryID: 100,
+			Day:        2,
+			Type:       "type1",
+			Memo:       "memo1",
+		},
+		{
+			CategoryID: 101,
+			Day:        4,
+			Type:       "type2",
+			Memo:       "memo2",
+		},
+	}, nil
+}
 func (m *mockRepo) InsertMonthlyFixBilling(yyyymm string, fixBills []model.MonthlyFixBilling) (err error) {
 	return m.errGetMonthly
 }
