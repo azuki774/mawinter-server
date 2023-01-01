@@ -123,7 +123,8 @@ func (m *MonthlyFixBilling) ConvAddDBModel(yyyymm string) (Record_YYYYMM, error)
 	return Record_YYYYMM{
 		CategoryID: int64(m.CategoryID),
 		Datetime:   time.Date(yyyynum, time.Month(mmnum), m.Day, 0, 0, 0, 0, jst),
-		From:       "fix-monthly", // 固定値
+		From:       "fixmonth", // 固定値
+		Price:      int64(m.Price),
 		Type:       m.Type,
 		Memo:       m.Memo,
 	}, nil

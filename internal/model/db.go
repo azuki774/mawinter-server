@@ -22,8 +22,9 @@ type Category struct {
 
 type Record_YYYYMM struct {
 	ID         int64     `gorm:"id;primaryKey"`
-	CategoryID int64     `gorm:"column:category_id,index,not null"`
-	Datetime   time.Time `gorm:"column:datetime,autoCreateTime,index,not null"`
+	CategoryID int64     `gorm:"column:category_id;index;not null"`
+	Datetime   time.Time `gorm:"column:datetime;autoCreateTime;index;not null"`
+	Price      int64     `gorm:"column:price"`
 	From       string    `gorm:"column:from"`
 	Type       string    `gorm:"column:type"`
 	Memo       string    `gorm:"column:memo"`

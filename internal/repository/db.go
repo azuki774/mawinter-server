@@ -94,7 +94,7 @@ func (d *DBRepository) SumPriceForEachCatID(yyyymm string) (sum []model.SumPrice
 // GetMonthlyFixDone は yyyymm 月のレコードがあれば true を返す
 func (d *DBRepository) GetMonthlyFixDone(yyyymm string) (flag bool, err error) {
 	var doneRec model.MonthlyFixDoneDB
-	err = d.Conn.Where("yyyyymm = ?", yyyymm).Take(&doneRec).Error
+	err = d.Conn.Where("yyyymm = ?", yyyymm).Take(&doneRec).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return false, err
 	} else if errors.Is(err, gorm.ErrRecordNotFound) {

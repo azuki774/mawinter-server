@@ -1,3 +1,5 @@
+# ./mawinter start
+
 ## GET /
 - healthCheck 用
 
@@ -49,37 +51,13 @@
     }
 - `date` フィールドが空のときは現在時刻が入る。
 
-## POST /record/fixmonth/
-- テーブル `Fix_Monthly_Billing` のデータを `Record_YYYYMM` データに追加する。
-
-### request:
-None
-
-### response
-- 201 Created 成功した場合
-    ```
-    [
-        {
-            "category_id" : 100, 
-            "day" : 2,
-            "type" : "type1",
-            "price" : 1234,
-            "memo" : "memo1",
-        },
-        {
-            "category_id" : 101, 
-            "day" : 4,
-            "type" : "type2",
-            "price" : 10000,
-            "memo" : "memo2",
-        },
-    ]
-
-    ```
-- 400 Bad Request その月がすでに追加済の場合
-
 ## POST /table/{year}
 - FY{year} 用のテーブルを生成する。
 - すでに生成済の場合は何もしない
 ### response:
 - 201 Created
+
+---
+# ./mawinter fixmonth
+- テーブル `Fix_Monthly_Billing` のデータを `Record_YYYYMM` データに追加する。
+
