@@ -55,6 +55,7 @@ type CategoryYearSummary struct {
 type MonthlyFixBilling struct {
 	CategoryID int
 	Day        int
+	Price      int
 	Type       string
 	Memo       string
 }

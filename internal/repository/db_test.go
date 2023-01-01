@@ -385,12 +385,14 @@ func TestDBRepository_InsertMonthlyFixBilling(t *testing.T) {
 					{
 						CategoryID: 100,
 						Day:        2,
+						Price:      1234,
 						Type:       "type1",
 						Memo:       "memo1",
 					},
 					{
 						CategoryID: 101,
 						Day:        4,
+						Price:      2345,
 						Type:       "type2",
 						Memo:       "memo2",
 					},
@@ -417,12 +419,14 @@ func TestDBRepository_InsertMonthlyFixBilling(t *testing.T) {
 					{
 						CategoryID: 100,
 						Day:        2,
+						Price:      1212,
 						Type:       "type1",
 						Memo:       "memo1",
 					},
 					{
 						CategoryID: 101,
 						Day:        4,
+						Price:      2345,
 						Type:       "type2",
 						Memo:       "memo2",
 					},
@@ -473,12 +477,14 @@ func TestDBRepository_GetMonthlyFixBilling(t *testing.T) {
 				{
 					CategoryID: 100,
 					Day:        2,
+					Price:      1212,
 					Type:       "type1",
 					Memo:       "memo1",
 				},
 				{
 					CategoryID: 101,
 					Day:        4,
+					Price:      2345,
 					Type:       "type2",
 					Memo:       "memo2",
 				},
@@ -491,13 +497,14 @@ func TestDBRepository_GetMonthlyFixBilling(t *testing.T) {
 							"id",
 							"category_id",
 							"day",
+							"price",
 							"type",
 							"memo",
 							"created_at",
 							"updated_at",
 						}).
-						AddRow(1, 100, 2, "type1", "memo1", time.Now(), time.Now()).
-						AddRow(2, 101, 4, "type2", "memo2", time.Now(), time.Now()))
+						AddRow(1, 100, 2, 1212, "type1", "memo1", time.Now(), time.Now()).
+						AddRow(2, 101, 4, 2345, "type2", "memo2", time.Now(), time.Now()))
 			},
 		},
 		{

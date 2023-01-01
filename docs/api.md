@@ -57,6 +57,25 @@ None
 
 ### response
 - 201 Created 成功した場合
+    ```
+    [
+        {
+            "category_id" : 100, 
+            "day" : 2,
+            "type" : "type1",
+            "price" : 1234,
+            "memo" : "memo1",
+        },
+        {
+            "category_id" : 101, 
+            "day" : 4,
+            "type" : "type2",
+            "price" : 10000,
+            "memo" : "memo2",
+        },
+    ]
+
+    ```
 - 400 Bad Request その月がすでに追加済の場合
 
 ## POST /table/{year}

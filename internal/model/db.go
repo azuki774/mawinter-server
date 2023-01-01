@@ -35,6 +35,7 @@ type MonthlyFixBillingDB struct {
 	ID         int64     `gorm:"id;primaryKey"`
 	CategoryID int64     `gorm:"column:category_id"`
 	Day        int64     `gorm:"column:day"`
+	Price      int64     `gorm:"column:price"`
 	Type       string    `gorm:"column:type"`
 	Memo       string    `gorm:"column:memo"`
 	CreatedAt  time.Time `gorm:"column:created_at"`

@@ -117,6 +117,7 @@ func (d *DBRepository) GetMonthlyFixBilling() (fixBills []model.MonthlyFixBillin
 			model.MonthlyFixBilling{
 				CategoryID: int(v.CategoryID),
 				Day:        int(v.Day),
+				Price:      int(v.Price),
 				Type:       v.Type,
 				Memo:       v.Memo,
 			},
