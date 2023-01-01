@@ -132,3 +132,35 @@ func fyInterval(yyyy int) (yyyymm []string) {
 	}
 	return yyyymm
 }
+
+func (a *APIService) InsertMonthlyFixBilling(ctx context.Context, yyyymm string) (err error) {
+	// すでに処理済なら skip
+	done, err := a.Repo.GetMonthlyFixDone(yyyymm)
+	if err != nil {
+		a.Logger.Error("failed to get done status", zap.Error(err))
+		return err
+	}
+
+	if done {
+		a.Logger.Warn("this month is processed")
+		return model.ErrAlreadyRecorded
+	}
+	lg := a.Logger.With(zap.String("yyyymm", yyyymm))
+
+	// Record テーブルに挿入するデータを取得
+	fixBills, err := a.Repo.GetMonthlyFixBilling()
+	if err != nil {
+		lg.Error("failed to get fix billing recoreds", zap.Error(err))
+		return err
+	}
+
+	// Insert
+	err = a.Repo.InsertMonthlyFixBilling(yyyymm, fixBills)
+	if err != nil {
+		lg.Error("failed to insert fix billing records", zap.Error(err))
+		return err
+	}
+
+	lg.Info("insert fix billing records to DB")
+	return nil
+}
