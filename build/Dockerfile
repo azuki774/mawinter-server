@@ -14,4 +14,4 @@ RUN apk --no-cache add tzdata && \
     cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 ENTRYPOINT ["/usr/local/bin/mawinter", "start"]
 
-EXPOSE 80
+EXPOSE 8080

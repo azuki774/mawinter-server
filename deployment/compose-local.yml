@@ -16,7 +16,7 @@ services:
     image: mawinter-api:latest
     container_name: mawinter-api
     ports:
-      - "8080:80"
+      - "8080:8080"
     environment:
       - BASIC_AUTH_USERNAME=user
       - BASIC_AUTH_PASSWORD=pass
