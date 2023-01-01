@@ -132,10 +132,14 @@ func (d *DBRepository) InsertMonthlyFixBilling(yyyymm string, fixBills []model.M
 		Done:   1,
 	}
 
-	var insRec []model.MonthlyFixBillingDB
+	var insRecs []model.Record_YYYYMM
 
 	for _, v := range fixBills {
-		insRec = append(insRec, v.ConvDBModel())
+		addrec, err := v.ConvAddDBModel(yyyymm)
+		if err != nil {
+			return err
+		}
+		insRecs = append(insRecs, addrec)
 	}
 
 	err = d.Conn.Transaction(func(tx *gorm.DB) error {
@@ -144,7 +148,7 @@ func (d *DBRepository) InsertMonthlyFixBilling(yyyymm string, fixBills []model.M
 			return nerr
 		}
 
-		nerr = tx.Create(&insRec).Error
+		nerr = tx.Table(fmt.Sprintf("Record_%s", yyyymm)).Create(&insRecs).Error
 		if nerr != nil {
 			return nerr
 		}

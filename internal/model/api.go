@@ -1,6 +1,7 @@
 package model
 
 import (
+	"strconv"
 	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation"
@@ -108,11 +109,22 @@ func (c *CategoryYearSummary) AddMonthPrice(price int) {
 	c.Total = c.Total + price
 }
 
-func (m *MonthlyFixBilling) ConvDBModel() MonthlyFixBillingDB {
-	return MonthlyFixBillingDB{
+func (m *MonthlyFixBilling) ConvAddDBModel(yyyymm string) (Record_YYYYMM, error) {
+	yyyynum, err := strconv.Atoi(yyyymm[0:4])
+	if err != nil {
+		return Record_YYYYMM{}, err
+	}
+
+	mmnum, err := strconv.Atoi(yyyymm[5:6])
+	if err != nil {
+		return Record_YYYYMM{}, err
+	}
+
+	return Record_YYYYMM{
 		CategoryID: int64(m.CategoryID),
-		Day:        int64(m.Day),
+		Datetime:   time.Date(yyyynum, time.Month(mmnum), m.Day, 0, 0, 0, 0, jst),
+		From:       "fix-monthly", // 固定値
 		Type:       m.Type,
 		Memo:       m.Memo,
-	}
+	}, nil
 }

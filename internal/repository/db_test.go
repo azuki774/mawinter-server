@@ -405,8 +405,8 @@ func TestDBRepository_InsertMonthlyFixBilling(t *testing.T) {
 					"INSERT INTO `Monthly_Fix_Done`")).
 					WillReturnResult(sqlmock.NewResult(1, 1))
 				mock.ExpectExec(regexp.QuoteMeta(
-					"INSERT INTO `Monthly_Fix_Billing`")).
-					WillReturnResult(sqlmock.NewResult(1, 1))
+					"INSERT INTO")).
+					WillReturnResult(sqlmock.NewResult(1, 2))
 				mock.ExpectCommit()
 			},
 		},
