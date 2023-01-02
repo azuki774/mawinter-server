@@ -1,6 +1,7 @@
 package model
 
 import (
+	"strconv"
 	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation"
@@ -52,6 +53,14 @@ type CategoryYearSummary struct {
 	Total        int    `json:"total"`
 }
 
+type MonthlyFixBilling struct {
+	CategoryID int
+	Day        int
+	Price      int
+	Type       string
+	Memo       string
+}
+
 func NewCategoryYearSummary(cats []Category) (caty []*CategoryYearSummary) {
 	for _, cat := range cats {
 		n := &CategoryYearSummary{
@@ -98,4 +107,25 @@ func NewRecordFromReq(req RecordRequest) (record Recordstruct, err error) {
 func (c *CategoryYearSummary) AddMonthPrice(price int) {
 	c.MonthPrice = append(c.MonthPrice, price)
 	c.Total = c.Total + price
+}
+
+func (m *MonthlyFixBilling) ConvAddDBModel(yyyymm string) (Record_YYYYMM, error) {
+	yyyynum, err := strconv.Atoi(yyyymm[0:4])
+	if err != nil {
+		return Record_YYYYMM{}, err
+	}
+
+	mmnum, err := strconv.Atoi(yyyymm[5:6])
+	if err != nil {
+		return Record_YYYYMM{}, err
+	}
+
+	return Record_YYYYMM{
+		CategoryID: int64(m.CategoryID),
+		Datetime:   time.Date(yyyynum, time.Month(mmnum), m.Day, 0, 0, 0, 0, jst),
+		From:       "fixmonth", // 固定値
+		Price:      int64(m.Price),
+		Type:       m.Type,
+		Memo:       m.Memo,
+	}, nil
 }

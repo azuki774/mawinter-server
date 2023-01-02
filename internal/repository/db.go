@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 	"mawinter-server/internal/model"
 	"time"
@@ -88,4 +89,73 @@ func (d *DBRepository) SumPriceForEachCatID(yyyymm string) (sum []model.SumPrice
 	}
 
 	return sum, nil
+}
+
+// GetMonthlyFixDone は yyyymm 月のレコードがあれば true を返す
+func (d *DBRepository) GetMonthlyFixDone(yyyymm string) (flag bool, err error) {
+	var doneRec model.MonthlyFixDoneDB
+	err = d.Conn.Where("yyyymm = ?", yyyymm).Take(&doneRec).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return false, err
+	} else if errors.Is(err, gorm.ErrRecordNotFound) {
+		// 未処理
+		return false, nil
+	}
+
+	// 処理済
+	return true, nil
+}
+
+func (d *DBRepository) GetMonthlyFixBilling() (fixBills []model.MonthlyFixBilling, err error) {
+	var recs []model.MonthlyFixBillingDB
+	err = d.Conn.Find(&recs).Error
+	if err != nil {
+		return []model.MonthlyFixBilling{}, err
+	}
+	for _, v := range recs {
+		fixBills = append(fixBills,
+			model.MonthlyFixBilling{
+				CategoryID: int(v.CategoryID),
+				Day:        int(v.Day),
+				Price:      int(v.Price),
+				Type:       v.Type,
+				Memo:       v.Memo,
+			},
+		)
+	}
+	return fixBills, nil
+}
+
+func (d *DBRepository) InsertMonthlyFixBilling(yyyymm string, fixBills []model.MonthlyFixBilling) (err error) {
+	doneRec := model.MonthlyFixDoneDB{
+		YYYYMM: yyyymm,
+		Done:   1,
+	}
+
+	var insRecs []model.Record_YYYYMM
+
+	for _, v := range fixBills {
+		addrec, err := v.ConvAddDBModel(yyyymm)
+		if err != nil {
+			return err
+		}
+		insRecs = append(insRecs, addrec)
+	}
+
+	err = d.Conn.Transaction(func(tx *gorm.DB) error {
+		nerr := tx.Create(&doneRec).Error
+		if nerr != nil {
+			return nerr
+		}
+
+		nerr = tx.Table(fmt.Sprintf("Record_%s", yyyymm)).Create(&insRecs).Error
+		if nerr != nil {
+			return nerr
+		}
+
+		// commit
+		return nil
+	})
+
+	return err
 }

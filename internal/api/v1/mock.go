@@ -10,6 +10,8 @@ type mockRepo struct {
 	errSumPriceForEachCatID    error
 	RecordYYYYMMNum            int
 	sumPriceForEachCatIDOffset int
+	monthlyFixDone             bool
+	errGetMonthly              error
 }
 
 func (m *mockRepo) CreateRecordTable(yyyymm string) (err error) {
@@ -76,4 +78,34 @@ func (m *mockRepo) SumPriceForEachCatID(yyyymm string) (sum []model.SumPriceCate
 	}
 	m.sumPriceForEachCatIDOffset = m.sumPriceForEachCatIDOffset + 1
 	return sum, nil
+}
+
+func (m *mockRepo) GetMonthlyFixDone(yyyymm string) (flag bool, err error) {
+	if m.errGetMonthly != nil {
+		return false, m.errGetMonthly
+	}
+	return m.monthlyFixDone, nil
+}
+
+func (m *mockRepo) GetMonthlyFixBilling() (fixBills []model.MonthlyFixBilling, err error) {
+	if m.errGetMonthly != nil {
+		return []model.MonthlyFixBilling{}, m.errGetMonthly
+	}
+	return []model.MonthlyFixBilling{
+		{
+			CategoryID: 100,
+			Day:        2,
+			Type:       "type1",
+			Memo:       "memo1",
+		},
+		{
+			CategoryID: 101,
+			Day:        4,
+			Type:       "type2",
+			Memo:       "memo2",
+		},
+	}, nil
+}
+func (m *mockRepo) InsertMonthlyFixBilling(yyyymm string, fixBills []model.MonthlyFixBilling) (err error) {
+	return m.errGetMonthly
 }

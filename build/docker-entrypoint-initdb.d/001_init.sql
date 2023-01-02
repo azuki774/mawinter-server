@@ -1,7 +1,7 @@
 USE mawinter;
 grant all privileges on *.* to root@"%";
 
-CREATE TABLE `Category` (
+CREATE TABLE IF NOT EXISTS `Category` (
   `id` int NOT NULL AUTO_INCREMENT,
   `category_id` int NOT NULL,
   `name` varchar(255) DEFAULT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE `Category` (
 );
 
 
-INSERT INTO `Category` (`id`, `category_id`, `name`) VALUES
+INSERT IGNORE INTO `Category` (`id`, `category_id`, `name`) VALUES
 (1,100,'月給'),
 (2,101,'ボーナス'),
 (3,110,'雑所得'),
@@ -37,7 +37,7 @@ INSERT INTO `Category` (`id`, `category_id`, `name`) VALUES
 (22,700,'NISA入出金'),
 (23,701,'NISA変動');
 
-create table `Record_YYYYMM` (
+create table IF NOT EXISTS `Record_YYYYMM` (
   `id` int NOT NULL AUTO_INCREMENT,
   `category_id` int NOT NULL,
   `datetime` datetime NOT NULL default current_timestamp,
