@@ -1,7 +1,6 @@
-USE mawinter;
-grant all privileges on *.* to root@"%";
+-- +migrate Up
 
-CREATE TABLE IF NOT EXISTS `Category` (
+CREATE TABLE `Category` (
   `id` int NOT NULL AUTO_INCREMENT,
   `category_id` int NOT NULL,
   `name` varchar(255) DEFAULT NULL,
@@ -37,7 +36,7 @@ INSERT IGNORE INTO `Category` (`id`, `category_id`, `name`) VALUES
 (22,700,'NISA入出金'),
 (23,701,'NISA変動');
 
-create table IF NOT EXISTS `Record_YYYYMM` (
+create table `Record_YYYYMM` (
   `id` int NOT NULL AUTO_INCREMENT,
   `category_id` int NOT NULL,
   `datetime` datetime NOT NULL default current_timestamp,
@@ -51,3 +50,8 @@ create table IF NOT EXISTS `Record_YYYYMM` (
   index `idx_cat` (`category_id`),
   index `idx_date` (`datetime`)
 );
+
+
+-- +migrate Down
+DROP TABLE `Category`;
+DROP TABLE `Record_YYYYMM`;

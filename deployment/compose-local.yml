@@ -2,7 +2,7 @@ version: '3'
 
 services:
   mawinter-db:
-    image: mawinter-db:latest
+    image: mariadb:10.9
     container_name: mawinter-db
     ports:
       - "3306:3306"
