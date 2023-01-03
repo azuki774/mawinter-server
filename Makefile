@@ -1,12 +1,11 @@
 SHELL=/bin/bash
 VERSION_API=latest
 container_name_api=mawinter-api
-container_name_db=mawinter-db
-.PHONY: build run push stop test migration-test migration-clean
+
+.PHONY: build run push stop test migration
 
 build:
 	docker build -t $(container_name_api):$(VERSION_API) -f build/Dockerfile .
-	docker build -t $(container_name_db):$(VERSION_API) -f build/Dockerfile-db .
 
 bin:
 	go build -a -tags "netgo" -installsuffix netgo  -ldflags="-s -w -extldflags \"-static\"" -o bin/ ./...
@@ -19,6 +18,11 @@ start:
 
 stop:
 	docker compose -f deployment/compose-local.yml down
+
+migration:
+	cd migration; \
+	sql-migrate up -env=local; \
+	cd ../
 
 test: 
 	gofmt -l .
