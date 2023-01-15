@@ -1,15 +1,21 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"mawinter-server/internal/factory"
+	"time"
 
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
 
 type billOption struct {
-	Logger *zap.Logger
+	Logger      *zap.Logger
+	BillAPIInfo struct {
+		Host string
+		Port string
+	}
 	DBInfo struct {
 		Host string
 		Port string
@@ -17,6 +23,7 @@ type billOption struct {
 		Pass string
 		Name string
 	}
+	Date string // YYYYMM
 }
 
 var billOpt billOption
@@ -45,12 +52,24 @@ func start() (err error) {
 		return err
 	}
 	defer l.Sync()
-	return nil
+	db, err := factory.NewDBRepository(billOpt.DBInfo.Host, billOpt.DBInfo.Port, billOpt.DBInfo.User, billOpt.DBInfo.Pass, billOpt.DBInfo.Name)
+	if err != nil {
+		l.Error("failed to connect DB", zap.Error(err))
+		return err
+	}
+	defer db.CloseDB()
+	fet := factory.NewFetcherBill(billOpt.BillAPIInfo.Host, billOpt.BillAPIInfo.Port)
+	ap := factory.NewRegisterService(l, db, fet)
+	ctx := context.Background()
+	return ap.MonthlyRegistBill(ctx, billOpt.Date)
 }
 
 func init() {
 	rootCmd.AddCommand(billCmd)
 	billCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	billCmd.Flags().StringVar(&billOpt.BillAPIInfo.Host, "bill-host", "bill-manager-api", "bill-mangager API host")
+	billCmd.Flags().StringVar(&billOpt.BillAPIInfo.Port, "bill-port", "80", "bill-mangager API port")
+	billCmd.Flags().StringVar(&billOpt.Date, "date", time.Now().Local().Format("200601"), "YYYYMM")
 	billCmd.Flags().StringVar(&billOpt.DBInfo.Host, "db-host", "mawinter-db", "DB Host")
 	billCmd.Flags().StringVar(&billOpt.DBInfo.Port, "db-port", "3306", "DB Port")
 	billCmd.Flags().StringVar(&billOpt.DBInfo.Name, "db-name", "mawinter", "DB Name")

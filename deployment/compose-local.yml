@@ -20,3 +20,13 @@ services:
     environment:
       - BASIC_AUTH_USERNAME=user
       - BASIC_AUTH_PASSWORD=pass
+  # mawinter-register:
+  #   image: mawinter-register:latest
+  #   container_name: mawinter-register
+  #   ports:
+  #     - "8080:8080"
+  #   command:
+  #   - bill-host
+  #   - localhost
+  #   - bill-port
+  #   - "8080"
