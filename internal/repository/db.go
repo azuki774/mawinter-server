@@ -65,6 +65,8 @@ func (d *DBRepository) InsertRecord(req model.Recordstruct) (res model.Recordstr
 	return res, err
 }
 
+
+
 func (d *DBRepository) GetCategoryInfo() (info []model.Category, err error) {
 	info = []model.Category{}
 	err = d.Conn.Find(&info).Error
