@@ -9,7 +9,7 @@ RUN go mod tidy
 RUN go build -a -tags "netgo" -installsuffix netgo  -ldflags="-s -w -extldflags \"-static\"" -o bin/ ./...
 
 FROM alpine:3.16
-COPY --from=builder /app/bin/mawinter /usr/local/bin/mawinter
+COPY --from=builder /app/bin/mawinter-register /usr/local/bin/mawinter-register
 RUN apk --no-cache add tzdata && \
     cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 ENTRYPOINT ["/usr/local/bin/mawinter-register", "bill"]
