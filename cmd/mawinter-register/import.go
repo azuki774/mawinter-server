@@ -12,12 +12,9 @@ import (
 )
 
 type billOption struct {
-	Logger      *zap.Logger
-	BillAPIInfo struct {
-		Host string
-		Port string
-	}
-	DBInfo struct {
+	Logger          *zap.Logger
+	BillAPIEndpoint string
+	DBInfo          struct {
 		Host string
 		Port string
 		User string
@@ -61,7 +58,7 @@ func start() (err error) {
 		return err
 	}
 	defer db.CloseDB()
-	fet := factory.NewFetcherBill(billOpt.BillAPIInfo.Host, billOpt.BillAPIInfo.Port)
+	fet := factory.NewFetcherBill(billOpt.BillAPIEndpoint)
 	ap := factory.NewRegisterService(l, db, fet)
 	ctx := context.Background()
 	return ap.MonthlyRegistBill(ctx, billOpt.Date)
