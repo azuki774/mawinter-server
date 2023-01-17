@@ -11,12 +11,9 @@ import (
 )
 
 type billOption struct {
-	Logger      *zap.Logger
-	BillAPIInfo struct {
-		Host string
-		Port string
-	}
-	DBInfo struct {
+	Logger          *zap.Logger
+	BillAPIEndpoint string
+	DBInfo          struct {
 		Host string
 		Port string
 		User string
@@ -58,7 +55,7 @@ func start() (err error) {
 		return err
 	}
 	defer db.CloseDB()
-	fet := factory.NewFetcherBill(billOpt.BillAPIInfo.Host, billOpt.BillAPIInfo.Port)
+	fet := factory.NewFetcherBill(billOpt.BillAPIEndpoint)
 	ap := factory.NewRegisterService(l, db, fet)
 	ctx := context.Background()
 	return ap.MonthlyRegistBill(ctx, billOpt.Date)
@@ -67,8 +64,7 @@ func start() (err error) {
 func init() {
 	rootCmd.AddCommand(billCmd)
 	billCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	billCmd.Flags().StringVar(&billOpt.BillAPIInfo.Host, "bill-host", "bill-manager-api", "bill-mangager API host")
-	billCmd.Flags().StringVar(&billOpt.BillAPIInfo.Port, "bill-port", "80", "bill-mangager API port")
+	billCmd.Flags().StringVar(&billOpt.BillAPIEndpoint, "bill-endpoint", "http://localhost/bill/", "bill-mangager API endpoint")
 	billCmd.Flags().StringVar(&billOpt.Date, "date", time.Now().Local().Format("200601"), "YYYYMM")
 	billCmd.Flags().StringVar(&billOpt.DBInfo.Host, "db-host", "mawinter-db", "DB Host")
 	billCmd.Flags().StringVar(&billOpt.DBInfo.Port, "db-port", "3306", "DB Port")

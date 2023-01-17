@@ -37,8 +37,8 @@ func NewService(l *zap.Logger, db *repository.DBRepository) (ap *v1.APIService) 
 	return &v1.APIService{Logger: l, Repo: db}
 }
 
-func NewFetcherBill(host string, port string) *client.BillFetcher {
-	return &client.BillFetcher{Host: host, Port: port}
+func NewFetcherBill(billEndpoint string) *client.BillFetcher {
+	return &client.BillFetcher{BillEndpoint: billEndpoint}
 }
 
 func NewRegisterService(l *zap.Logger, db *repository.DBRepository, fet *client.BillFetcher) (ap *register.RegisterService) {
