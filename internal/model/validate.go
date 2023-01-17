@@ -20,3 +20,10 @@ func ValidYYYY(yyyy string) (yyyyint int, err error) {
 
 	return yyyyint, err
 }
+
+func ValidYYYYMM(yyyymm string) (err error) {
+	if err := validation.Validate(yyyymm, validation.Length(6, 6), is.Digit); err != nil {
+		return fmt.Errorf("invalid YYYYMM")
+	}
+	return nil
+}
