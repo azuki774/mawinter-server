@@ -17,7 +17,9 @@ type BillFetcher struct {
 }
 
 func (b *BillFetcher) FetchBills(ctx context.Context, yyyymm string) (ress []model.BillAPIResponse, err error) {
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: httpTimeout,
+	}
 
 	req, err := http.NewRequest("GET", b.BillEndpoint+yyyymm, nil)
 	if err != nil {
