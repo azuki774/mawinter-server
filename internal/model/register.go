@@ -1,6 +1,9 @@
 package model
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type BillAPIResponse struct {
 	BillName string `json:"bill_name"`
@@ -9,8 +12,9 @@ type BillAPIResponse struct {
 
 func (b *BillAPIResponse) NewRecordstruct() (req Recordstruct, err error) {
 	req = Recordstruct{
-		From:  "bill-manager-api",
-		Price: b.Price,
+		Datetime: time.Now().Local(),
+		From:     "bill-manager-api",
+		Price:    b.Price,
 	}
 
 	switch b.BillName {
