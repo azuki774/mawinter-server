@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"mawinter-server/internal/factory"
+	"os"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -43,6 +44,8 @@ to quickly create a Cobra application.`,
 }
 
 func start() (err error) {
+	setInfoFromEnv()
+
 	l, err := factory.NewLogger()
 	if err != nil {
 		fmt.Println(err)
@@ -64,11 +67,19 @@ func start() (err error) {
 func init() {
 	rootCmd.AddCommand(billCmd)
 	billCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	billCmd.Flags().StringVar(&billOpt.BillAPIEndpoint, "bill-endpoint", "http://localhost/bill/", "bill-mangager API endpoint")
 	billCmd.Flags().StringVar(&billOpt.Date, "date", time.Now().Local().Format("200601"), "YYYYMM")
 	billCmd.Flags().StringVar(&billOpt.DBInfo.Host, "db-host", "mawinter-db", "DB Host")
 	billCmd.Flags().StringVar(&billOpt.DBInfo.Port, "db-port", "3306", "DB Port")
 	billCmd.Flags().StringVar(&billOpt.DBInfo.Name, "db-name", "mawinter", "DB Name")
 	billCmd.Flags().StringVar(&billOpt.DBInfo.User, "db-user", "root", "DB User")
 	billCmd.Flags().StringVar(&billOpt.DBInfo.Pass, "db-pass", "password", "DB Pass")
+}
+
+func setInfoFromEnv() {
+	// bill-mangager API endpoint
+	billOpt.BillAPIEndpoint = "http://localhost:8080/bill/"
+	dbpass, ok := os.LookupEnv("BILL_ENDPOINT")
+	if ok {
+		billOpt.BillAPIEndpoint = dbpass
+	}
 }
