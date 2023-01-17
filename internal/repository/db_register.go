@@ -16,9 +16,9 @@ func (d *DBRepository) InsertUniqueCatIDRecord(req model.Recordstruct) (res mode
 	if err == nil {
 		// already recorded
 		return model.Recordstruct{}, register.ErrAlreadyRegisted
-	} else if errors.Is(err, gorm.ErrRecordNotFound) {
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		// unknown error
-		return model.Recordstruct{}, nil
+		return model.Recordstruct{}, err
 	}
 	dbres := d.Conn.Table(getRecordTable(req.Datetime)).Create(&req)
 	if dbres.Error != nil {
