@@ -11,7 +11,7 @@ import (
 // InsertUniqueCatIDRecord は 同一のカテゴリIDがない場合ときに挿入、既にあればエラーを返す
 func (d *DBRepository) InsertUniqueCatIDRecord(req model.Recordstruct) (res model.Recordstruct, err error) {
 	err = d.Conn.Table(getRecordTable(req.Datetime)).
-		Where("category_id = ?", req.CategoryID).Take(model.Record_YYYYMM{}).Error
+		Where("category_id = ?", req.CategoryID).Take(&model.Record_YYYYMM{}).Error
 
 	if err == nil {
 		// already recorded
