@@ -30,3 +30,17 @@ func (b *BillAPIResponse) NewRecordstruct() (req Recordstruct, err error) {
 
 	return req, nil
 }
+
+func NewMailMonthlyFixBilling(fbs []MonthlyFixBilling) (text string) {
+	for _, fb := range fbs {
+		text += fmt.Sprintf("%d,%d,%d,%s,%s\n", fb.CategoryID, fb.Day, fb.Price, fb.Type, fb.Memo)
+	}
+	return text
+}
+
+func NewMailMonthlyRegistBill(ress []BillAPIResponse) (text string) {
+	for _, res := range ress {
+		text += fmt.Sprintf("%s,%d\n", res.BillName, res.Price)
+	}
+	return text
+}

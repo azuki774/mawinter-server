@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"mawinter-server/internal/model"
 	"net/http"
 	"time"
@@ -34,7 +34,7 @@ func (b *BillFetcher) FetchBills(ctx context.Context, yyyymm string) (ress []mod
 		return []model.BillAPIResponse{}, fmt.Errorf("unexpected status code: %v", resp.StatusCode)
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []model.BillAPIResponse{}, err
 	}
