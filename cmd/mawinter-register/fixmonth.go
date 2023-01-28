@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"mawinter-server/internal/client"
 	"mawinter-server/internal/factory"
 	"time"
 
@@ -53,7 +54,8 @@ func startFixMonthly() (err error) {
 		return err
 	}
 	defer db.CloseDB()
-	ap := factory.NewService(l, db)
+	mc := factory.NewMailClient()
+	ap := factory.NewRegisterService(l, db, &client.BillFetcher{}, mc)
 	ctx := context.Background()
 	return ap.InsertMonthlyFixBilling(ctx, time.Now().Local().Format("200601"))
 }

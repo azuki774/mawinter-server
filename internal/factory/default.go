@@ -41,8 +41,8 @@ func NewFetcherBill(billEndpoint string) *client.BillFetcher {
 	return &client.BillFetcher{BillEndpoint: billEndpoint}
 }
 
-func NewRegisterService(l *zap.Logger, db *repository.DBRepository, fet *client.BillFetcher) (ap *register.RegisterService) {
-	return &register.RegisterService{Logger: l, DB: db, BillFetcher: fet}
+func NewRegisterService(l *zap.Logger, db *repository.DBRepository, fet *client.BillFetcher, mc *client.MailClient) (ap *register.RegisterService) {
+	return &register.RegisterService{Logger: l, DB: db, BillFetcher: fet, MailClient: mc}
 }
 
 func NewServer(l *zap.Logger, ap *v1.APIService) *server.Server {
@@ -50,4 +50,17 @@ func NewServer(l *zap.Logger, ap *v1.APIService) *server.Server {
 		User string
 		Pass string
 	}{os.Getenv("BASIC_AUTH_USERNAME"), os.Getenv("BASIC_AUTH_PASSWORD")}}
+}
+
+func NewMailClient() *client.MailClient {
+	host := os.Getenv("MAIL_HOST")
+	port := os.Getenv("MAIL_PORT")
+	user := os.Getenv("MAIL_USER")
+	pass := os.Getenv("MAIL_PASS")
+	return &client.MailClient{
+		SMTPHost: host,
+		SMTPPort: port,
+		SMTPUser: user,
+		SMTPPass: pass,
+	}
 }
