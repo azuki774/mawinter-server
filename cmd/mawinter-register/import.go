@@ -59,7 +59,8 @@ func start() (err error) {
 	}
 	defer db.CloseDB()
 	fet := factory.NewFetcherBill(billOpt.BillAPIEndpoint)
-	ap := factory.NewRegisterService(l, db, fet)
+	mc := factory.NewMailClient()
+	ap := factory.NewRegisterService(l, db, fet, mc)
 	ctx := context.Background()
 	return ap.MonthlyRegistBill(ctx, billOpt.Date)
 }
