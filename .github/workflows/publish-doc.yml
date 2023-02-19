@@ -1,10 +1,11 @@
-name: Build and Publish
+name: Build and Publish Docs
 
 on:
   push:
     branches:
       - master
 
+jobs:
   build_doc:
     runs-on: ubuntu-latest
     steps:
