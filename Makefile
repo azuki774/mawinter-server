@@ -33,5 +33,6 @@ test:
 	go test -v ./...
 
 doc:
-	./docs/build_md.sh
+	# req: create doc by tbls
+	./docs/build_md.sh 2> /dev/null
 	cp -a docs/schema/*.svg docs/build/
