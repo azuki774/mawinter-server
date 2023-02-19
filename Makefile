@@ -3,7 +3,7 @@ VERSION_API=latest
 container_name_api=mawinter-api
 container_name_register=mawinter-register
 
-.PHONY: build run push stop test migration
+.PHONY: build run push stop test migration doc
 
 build:
 	docker build -t $(container_name_api):$(VERSION_API) -f build/Dockerfile .
@@ -31,3 +31,8 @@ test:
 	go vet ./...
 	staticcheck ./...
 	go test -v ./...
+
+doc:
+	# req: create doc by tbls
+	./docs/build_md.sh 2> /dev/null
+	cp -a docs/schema/*.svg docs/build/
