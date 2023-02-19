@@ -47,4 +47,4 @@ jobs:
         env:
           DOC_FILES: "./docs/build/*"
           REMOTE_HOST: "azuki@sage.azk774.net"
-          CONTENTS_DIR: "/var/nginx/contents/mawinter-server/scheme/"
+          CONTENTS_DIR: "/var/nginx/contents/mawinter/scheme/"
