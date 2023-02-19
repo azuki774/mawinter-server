@@ -41,5 +41,19 @@ jobs:
           name: docs-artifacts
           path: docs/docs.tar.gz
 
-      - name: test print
-        run: ls -la docs/docs.tar.gz
+      - name: delete unnecessary file
+        run: rm -f build/*
+
+      - name: untar artifacts
+        run: tar -zxvf docs/docs.tar.gz
+
+      - name: Set Secret Key for Document Host
+        run: echo "${SSH_KEY}" > id_for_sync && chmod 600 id_for_sync
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+      - name: rsync Build Documents
+        run: rsync -avz -e "ssh -i id_for_sync -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${DOC_FILES} ${REMOTE_HOST}:${CONTENTS_DIR}
+        env:
+          DOC_FILES: "./build/*"
+          REMOTE_HOST: "azuki@sage.azk774.net"
+          CONTENTS_DIR: "/var/nginx/contents/mawinter-server/scheme/"
