@@ -21,13 +21,10 @@ jobs:
       - name: Build doc scripts
         run: make doc
 
-      - name: Prepare docs-artifacts
-        run: cd docs && tar -cvzf docs.tar.gz build && cd ..
-
       - uses: actions/upload-artifact@v3
         with:
           name: docs-artifacts
-          path: docs/docs.tar.gz
+          path: docs/build/
           retention-days: 1
 
   build_sync:
@@ -39,13 +36,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: docs-artifacts
-          path: docs/docs.tar.gz
-
-      - name: delete unnecessary file
-        run: rm -f build/*
-
-      - name: untar artifacts
-        run: tar -zxvf docs/docs.tar.gz
+          path: docs/build/
 
       - name: Set Secret Key for Document Host
         run: echo "${SSH_KEY}" > id_for_sync && chmod 600 id_for_sync
@@ -54,6 +45,6 @@ jobs:
       - name: rsync Build Documents
         run: rsync -avz -e "ssh -i id_for_sync -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${DOC_FILES} ${REMOTE_HOST}:${CONTENTS_DIR}
         env:
-          DOC_FILES: "./build/*"
+          DOC_FILES: "./docs/build/*"
           REMOTE_HOST: "azuki@sage.azk774.net"
           CONTENTS_DIR: "/var/nginx/contents/mawinter-server/scheme/"
