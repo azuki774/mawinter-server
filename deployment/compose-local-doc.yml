@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  mawinter-doc:
+    image: mawinter-doc:latest
+    container_name: mawinter-doc
+    volumes:
+      - ../docs/:/docs/

@@ -8,5 +8,3 @@ migration.sql
 sync.*
 *secret*
 bin/*
-docs/build/*.svg
-docs/build/*.htm
