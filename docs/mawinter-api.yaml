@@ -17,7 +17,7 @@ paths:
       description: |-
         health check
         always return 'It is the root page'
-  /record:
+  /record/:
     post:
       summary: post new a record
       tags: []
