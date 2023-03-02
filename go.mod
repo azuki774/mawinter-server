@@ -4,6 +4,8 @@ go 1.19
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/deepmap/oapi-codegen v1.12.4
+	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gorilla/mux v1.8.0
@@ -15,7 +17,9 @@ require (
 )
 
 require (
+	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect

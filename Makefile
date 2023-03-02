@@ -39,3 +39,7 @@ doc:
 	# req: create doc by tbls
 	./docs/build_md.sh 2> /dev/null
 	cp -a docs/schema/*.svg docs/build/
+
+generate:
+	oapi-codegen -package "server" -generate "chi-server" docs/mawinter-api.yaml > internal/server/openapi.gen.go
+	oapi-codegen -package "model" -generate "types" docs/mawinter-api.yaml > internal/model/openapi.gen.go
