@@ -1,6 +1,7 @@
 SHELL=/bin/bash
 VERSION_API=latest
 container_name_api=mawinter-api
+container_name_doc=mawinter-doc
 container_name_register=mawinter-register
 
 .PHONY: build run push stop test migration doc
@@ -33,6 +34,12 @@ test:
 	go test -v ./...
 
 doc:
+	docker build -t $(container_name_doc):$(VERSION_API) -f build/Dockerfile-doc .
+	docker compose -f deployment/compose-local-doc.yml up
 	# req: create doc by tbls
 	./docs/build_md.sh 2> /dev/null
 	cp -a docs/schema/*.svg docs/build/
+
+generate:
+	oapi-codegen -package "server" -generate "chi-server,spec" docs/mawinter-api.yaml > internal/server/openapi.gen.go
+	oapi-codegen -package "model" -generate "types" docs/mawinter-api.yaml > internal/model/openapi.gen.go

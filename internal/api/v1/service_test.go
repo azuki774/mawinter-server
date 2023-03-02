@@ -81,7 +81,7 @@ func TestAPIService_GetYearSummary(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		wantSum []*model.CategoryYearSummary
+		wantSum []*model.CategoryYearSummaryStruct
 		wantErr bool
 	}{
 		{
@@ -96,7 +96,7 @@ func TestAPIService_GetYearSummary(t *testing.T) {
 				ctx:  context.Background(),
 				yyyy: "2021",
 			},
-			wantSum: []*model.CategoryYearSummary{
+			wantSum: []*model.CategoryYearSummaryStruct{
 				{
 					CategoryID:   100,
 					CategoryName: "カテゴリ1",
@@ -130,7 +130,7 @@ func TestAPIService_GetYearSummary(t *testing.T) {
 				ctx:  context.Background(),
 				yyyy: "2022",
 			},
-			wantSum: []*model.CategoryYearSummary{
+			wantSum: []*model.CategoryYearSummaryStruct{
 				{
 					CategoryID:   100,
 					CategoryName: "カテゴリ1",

@@ -1,0 +1,6 @@
+FROM node
+
+RUN apt-get -y update && rm -rf /var/lib/apt/lists/*
+RUN npm i -g npm
+RUN npm i -g redoc-cli
+ENTRYPOINT ["/usr/local/bin/redoc-cli", "bundle", "/docs/mawinter-api.yaml", "--output", "/docs/build/mawinter-api.html"]

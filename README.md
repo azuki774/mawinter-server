@@ -5,3 +5,9 @@
 
 - 家計簿 API サーバ
 - Usage: docs/ ディレクトリ参照
+
+
+## API Information
+See https://azuki774.github.io/mawinter-server/build/mawinter-api.html
+## DB Schema
+See https://azuki774.github.io/mawinter-server/build/README.htm
