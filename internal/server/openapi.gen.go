@@ -23,15 +23,15 @@ type ServerInterface interface {
 	// health check
 	// (GET /)
 	Get(w http.ResponseWriter, r *http.Request)
+	// post new a record
+	// (POST /record)
+	PostRecord(w http.ResponseWriter, r *http.Request)
+	// get year records
+	// (GET /record/year/{year})
+	GetRecordYearYear(w http.ResponseWriter, r *http.Request, year string)
 	// create new YYYYMM table
 	// (POST /table/{year})
 	PostTableYear(w http.ResponseWriter, r *http.Request, year float32)
-	// post new a record
-	// (POST /v1/record)
-	PostRecord(w http.ResponseWriter, r *http.Request)
-	// get year records
-	// (GET /v1/record/year/{year})
-	GetRecordYearYear(w http.ResponseWriter, r *http.Request, year string)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -49,32 +49,6 @@ func (siw *ServerInterfaceWrapper) Get(w http.ResponseWriter, r *http.Request) {
 
 	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.Get(w, r)
-	})
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
-// PostTableYear operation middleware
-func (siw *ServerInterfaceWrapper) PostTableYear(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	var err error
-
-	// ------------- Path parameter "year" -------------
-	var year float32
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "year", runtime.ParamLocationPath, chi.URLParam(r, "year"), &year)
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "year", Err: err})
-		return
-	}
-
-	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostTableYear(w, r, year)
 	})
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -116,6 +90,32 @@ func (siw *ServerInterfaceWrapper) GetRecordYearYear(w http.ResponseWriter, r *h
 
 	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetRecordYearYear(w, r, year)
+	})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostTableYear operation middleware
+func (siw *ServerInterfaceWrapper) PostTableYear(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "year" -------------
+	var year float32
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "year", runtime.ParamLocationPath, chi.URLParam(r, "year"), &year)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "year", Err: err})
+		return
+	}
+
+	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostTableYear(w, r, year)
 	})
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -242,13 +242,13 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Get(options.BaseURL+"/", wrapper.Get)
 	})
 	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/record", wrapper.PostRecord)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/record/year/{year}", wrapper.GetRecordYearYear)
+	})
+	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/table/{year}", wrapper.PostTableYear)
-	})
-	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/v1/record", wrapper.PostRecord)
-	})
-	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/v1/record/year/{year}", wrapper.GetRecordYearYear)
 	})
 
 	return r
@@ -257,24 +257,23 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7RWT4sjRRT/Kk0p7MHKdlcnM870UdFlkEUZ9hLHYah0XpJau7sqVdWZZIeAmzkoehBW",
-	"WPGy6G3xMHhQQVDnwzTD7n4LedVJ51+PjjoLTejqqnp/fu/3fi9nJJapkhlk1pDojJh4ACl3r4cwbGiI",
-	"pe7iSmmpQFsBbq/LLViRAr7DmKcqARKRMAh2AxaEhBLFrQWdkYgcBY3947cIJXai8JCxWmR9MqWkp2WK",
-	"BrY2Ukhl7YbSIoaVHZFZ6IPGrfLL1h3cEdZFV+ZyomGYg7HLgGTnIcS4HjeMlSoR/YFFS6JLItLLhrnK",
-	"h7udId/PnblDMNfCEnMLfaknJ6JbH2V1IOMp1KaIyG6iGrJGgM+DIIjc8/G/gnMtmCxPO2Usrxllo2Rm",
-	"4IYwSzaKVat1utfhZuLsVUhNgOsTk6cp15ObIr5M8p8Br7IVFtKS3NDjeWJJFNBlGZpBQGsw5OOD8hoL",
-	"KUlFtrKaH+Za84nDTlqe1AS5Al590jeDsBmrgRr3RvzRpLNDplO0K7JeWeK5/ZSfYjF1gytBKBmBNkJi",
-	"k7K7AYYoFWS4FZHmXfzk+njgQPHxpw+2BMjEWihb3h0AT+zAiwcQf/pJxpNTPjGeBpvrzLtzYD1hPDsA",
-	"T0tpPcX7cIc4R5rj/QMM/R5gUgvKoLspJVXJ1xw4uHzLOwn4Z4jS1HGCa56CBW1IdHRGBIaFkRNKyroT",
-	"POp8DHOhoUsiq3Ogc7mrK8oxJUqaebpKA5amurYe/kfS2AcYUXvh5JpEYg3cgpfBqddut9v373sukTKn",
-	"EfNXZKVyvYr01cWvL59/8eKny+L88+L892J2WcyevLz84+rL74vH3xWzr4rPZqQuusPScJk/GPuO7Lpe",
-	"imVmIXOeuFKJiN01/6FBd5UGufq/V757DBcjnuSw1X4sDOjKZHDCFbCAkYU2ka4w80BK8SGk6r+QLfuL",
-	"OPIua/Omhh6JyBv+clb580Hlr0ypkvOr6ONE2obxww+Q62HAbh+CFqrEhubgGjEolf06Od9CqES0WQMV",
-	"C5ut/4iVWcGKbsDyrmNn17FxyVlkomMs9/SCReOGU5EM5azHEwPrBPax2Va6s1Y13m+XB7zi8YV39dvP",
-	"r55+U8x+Kc6fFec/FrMnV18/vfrz2+tZfQ/mpMaeq+m7ReX/Z3mPNurrWLpZ3xfPL1798GxZn6MW3aG7",
-	"9G26R/cpCyhjlIWU0ZA2j6sxELLmPgundMsBuyUHrZAF0+N1clQj7u9YUj+EppsDbZtA2Fdr3OmD9dDI",
-	"nDnGjdtbk+rqz0eZJOjRwmiuExwb1qrI9xMZ82QgjY32gr2AoLDXjU/BJ2MxaIZhON55RKbTvwIAAP//",
-	"HrCzixkLAAA=",
+	"H4sIAAAAAAAC/7RVz28bRRT+V1YDUg+M65m1E5I9gqCKUAWKejEhisbrZ3vK7s54ZjaxG1mizgEEB6Qi",
+	"FXGp4FZxiDgAEhKQP2YVtf0v0Jt17LW9gQCpZFs7np3343vf980piVWqVQaZsyQ6JTYeQir84z6MGgZi",
+	"ZXq40kZpME6C3+sJB06mgM8wFqlOgEQkZGybcRYSSrRwDkxGInLAGruHbxFK3ETjS9YZmQ3IlJK+USkG",
+	"2NhIIVW1G9rIGCo7MnMwAINb5T8bZ3BHOl9d2cuRgVEO1i0LUt2HEON63LBO6UQOhg4jyR6JSD8b5Tof",
+	"bXdHYjf34fbBXgtLLBwMlJkcyV59lYsXMpFCbYuI7DqqIW8w/DxgLPKfj/8VnCvFZHnaLWt5zShbrTIL",
+	"N4RZ8eNYt9snO11hJz7eAqkJCHNk8zQVZnJTxJdN/jPgi26lg7QkN/RFnjgSMbocQ4sxWoOhGO+Vx3hI",
+	"SSqzymr+sjBGTDx2yomkpsgKePVN3wzCVqyHetw/Fo8m3S0ynWJcmfXLEc/jp+IEh2kaQktCyTEYKxWK",
+	"lN9lWKLSkOFWRFp38S+v46EHpYk/A3AlQDY2Urvy7BBE4oZBPIT4008ykZyIiQ0MuNxkwZ09F0gbuCEE",
+	"RikXaDGAO8QnMgLP72Hp9wCbuqIMpptSshj5SgIPV7OiP2VrSro8//Xl8y9e/HRRnH1enP1ezC6K2ZOX",
+	"F39cfvl98fi7YvZV8dlso4qPlHX7ZWAsxrvEO6rnSRerzEHmMwmtExn7Y82HFtMtxOqBeq98DjgujkWS",
+	"wwZPechoxUK9whlnnFyJmPSknRdSqpSQBVFDviQi8VMuPRuzvGmgTyLyRnNp6s25ozcrdl6So4o3Wvcm",
+	"jB9+gKQIGb99CNoopzVx4hoxKC3wOt/bQKhEtFUDFQ9b7f+Ila1gRddgedeAcNDzVFyyFJkYZHASiMBc",
+	"sWjc8HLLUPd9kViosLeJGm+e4u/0Wm293ylfCIrH58Hlbz+/evpNMfulOHtWnP1YzJ5cfv308s9vr6f0",
+	"PZgzugPC4JfUj/1/zvZgbbieouvDffH8/NUPz5bDOWjTLbpN36Y7dJdyRjmnPKSchrR1uDDLkLd2eTil",
+	"Gwn4LSVoh5xND1eZsbgI/o4i9VY9Xbf9TfagqFaIMwAXYJA5bay/lIQRKTgw1qMr8SBaMaFk3u3kapqj",
+	"XBrokciZHKpdrF/Rh0g9J7oJVEh3e3kWt9khrZiyNhB7rcyPbTruA6yohporEMVecV5dnU6nc/9+4BuZ",
+	"SxrM8VUDuUnwwnBOR81momKRDJV10Q7bYQQrq7s4pZiM5bAVhuF46xGZTv8KAAD//1ecr7MTCwAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

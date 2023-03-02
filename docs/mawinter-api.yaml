@@ -17,7 +17,7 @@ paths:
       description: |-
         health check
         always return 'It is the root page'
-  /v1/record:
+  /record:
     post:
       summary: post new a record
       tags: []
@@ -59,7 +59,7 @@ paths:
                   price: 210
                   memo: ''
     parameters: []
-  '/v1/record/year/{year}':
+  '/record/year/{year}':
     parameters:
       - schema:
           type: string
