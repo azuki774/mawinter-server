@@ -46,7 +46,7 @@ type CategoryMonthSummary struct {
 	Total        int
 }
 
-type CategoryYearSummary struct {
+type CategoryYearSummaryStruct struct {
 	CategoryID   int    `json:"category_id"`
 	CategoryName string `json:"category_name"`
 	MonthPrice   []int  `json:"price"` // 4月から3月までの数値が配列で返る
@@ -61,9 +61,9 @@ type MonthlyFixBilling struct {
 	Memo       string
 }
 
-func NewCategoryYearSummary(cats []Category) (caty []*CategoryYearSummary) {
+func NewCategoryYearSummary(cats []Category) (caty []*CategoryYearSummaryStruct) {
 	for _, cat := range cats {
-		n := &CategoryYearSummary{
+		n := &CategoryYearSummaryStruct{
 			CategoryID:   int(cat.CategoryID),
 			CategoryName: cat.Name,
 			MonthPrice:   make([]int, 0),
@@ -104,7 +104,7 @@ func NewRecordFromReq(req RecordRequest) (record Recordstruct, err error) {
 	return record, nil
 }
 
-func (c *CategoryYearSummary) AddMonthPrice(price int) {
+func (c *CategoryYearSummaryStruct) AddMonthPrice(price int) {
 	c.MonthPrice = append(c.MonthPrice, price)
 	c.Total = c.Total + price
 }

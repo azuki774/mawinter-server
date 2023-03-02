@@ -79,7 +79,7 @@ func (a *APIService) AddRecord(ctx context.Context, req model.RecordRequest) (re
 	return res, nil
 }
 
-func (a *APIService) GetYearSummary(ctx context.Context, yyyy string) (sum []*model.CategoryYearSummary, err error) {
+func (a *APIService) GetYearSummary(ctx context.Context, yyyy string) (sum []*model.CategoryYearSummaryStruct, err error) {
 	yyyyint, err := model.ValidYYYY(yyyy)
 	if err != nil {
 		a.Logger.Warn("invalid value detected", zap.Error(err))
