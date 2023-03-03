@@ -28,9 +28,15 @@ type ServerInterface interface {
 
 	// (POST /v2/record)
 	PostV2Record(w http.ResponseWriter, r *http.Request)
+
+	// (POST /v2/record/fixmonth)
+	PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request)
 	// Your GET endpoint
-	// (GET /v2/record/{year})
-	GetV2RecordFromFromName(w http.ResponseWriter, r *http.Request, year int, params GetV2RecordFromFromNameParams)
+	// (GET /v2/record/summary/{year})
+	GetV2RecordYear(w http.ResponseWriter, r *http.Request, year int)
+	// Your GET endpoint
+	// (GET /v2/record/{yyyymm})
+	GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request, yyyymm string, params GetV2RecordYyyymmParams)
 
 	// (POST /v2/table/{year})
 	PostV2TableYear(w http.ResponseWriter, r *http.Request, year int)
@@ -142,8 +148,23 @@ func (siw *ServerInterfaceWrapper) PostV2Record(w http.ResponseWriter, r *http.R
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// GetV2RecordFromFromName operation middleware
-func (siw *ServerInterfaceWrapper) GetV2RecordFromFromName(w http.ResponseWriter, r *http.Request) {
+// PostV2RecordFixmonth operation middleware
+func (siw *ServerInterfaceWrapper) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostV2RecordFixmonth(w, r)
+	})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetV2RecordYear operation middleware
+func (siw *ServerInterfaceWrapper) GetV2RecordYear(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -157,8 +178,34 @@ func (siw *ServerInterfaceWrapper) GetV2RecordFromFromName(w http.ResponseWriter
 		return
 	}
 
+	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetV2RecordYear(w, r, year)
+	})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetV2RecordYyyymm operation middleware
+func (siw *ServerInterfaceWrapper) GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "yyyymm" -------------
+	var yyyymm string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "yyyymm", runtime.ParamLocationPath, chi.URLParam(r, "yyyymm"), &yyyymm)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "yyyymm", Err: err})
+		return
+	}
+
 	// Parameter object where we will unmarshal all parameters from the context
-	var params GetV2RecordFromFromNameParams
+	var params GetV2RecordYyyymmParams
 
 	// ------------- Optional query parameter "from" -------------
 
@@ -169,7 +216,7 @@ func (siw *ServerInterfaceWrapper) GetV2RecordFromFromName(w http.ResponseWriter
 	}
 
 	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetV2RecordFromFromName(w, r, year, params)
+		siw.Handler.GetV2RecordYyyymm(w, r, yyyymm, params)
 	})
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -334,7 +381,13 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/v2/record", wrapper.PostV2Record)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/v2/record/{year}", wrapper.GetV2RecordFromFromName)
+		r.Post(options.BaseURL+"/v2/record/fixmonth", wrapper.PostV2RecordFixmonth)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/v2/record/summary/{year}", wrapper.GetV2RecordYear)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/v2/record/{yyyymm}", wrapper.GetV2RecordYyyymm)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/v2/table/{year}", wrapper.PostV2TableYear)

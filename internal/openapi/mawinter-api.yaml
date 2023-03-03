@@ -1,0 +1,321 @@
+openapi: 3.1.0
+x-stoplight:
+  id: iayxih3222x5z
+info:
+  title: mawinter-api
+  version: '1.0'
+  description: ''
+servers:
+  - url: 'http://localhost:8080'
+paths:
+  /:
+    get:
+      summary: health check
+      tags: []
+      responses: {}
+      operationId: get
+      description: |-
+        health check
+        always return 'It is the root page'
+  /record/:
+    post:
+      summary: post new a record
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/record'
+              examples:
+                Example 1:
+                  value:
+                    id: 123
+                    category_id: 400
+                    category_name: cat1
+                    date: '2021-01-01T00:00:00Z'
+                    from: discord
+                    type: ''
+                    price: 1234
+                    memo: ''
+      operationId: post-record
+      description: 家計簿データを追加する。
+      x-internal: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+            examples:
+              Example 1:
+                value:
+                  category_id: 120
+                  datetime: '20210101'
+                  from: discord
+                  type: ''
+                  price: 210
+                  memo: ''
+    parameters: []
+  '/record/year/{year}':
+    parameters:
+      - schema:
+          type: string
+        name: year
+        in: path
+        required: true
+    get:
+      summary: get year records
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/category_year_summary'
+              examples:
+                Example 1:
+                  value:
+                    - category_id: 210
+                      category_name: 種類
+                      price:
+                        - 4
+                        - 5
+                        - 6
+                        - 7
+                        - 8
+                        - 9
+                        - 10
+                        - 11
+                        - 12
+                        - 1
+                        - 2
+                        - 3
+                      total: 213912
+                    - category_id: 211
+                      category_name: 種類
+                      price:
+                        - 4
+                        - 5
+                        - 6
+                        - 7
+                        - 8
+                        - 9
+                        - 10
+                        - 11
+                        - 12
+                        - 1
+                        - 2
+                        - 3
+                      total: 4210
+      operationId: get-record-year-year
+      description: 'FY{year} の 年間サマリを取得する。'
+  '/table/{year}':
+    parameters:
+      - schema:
+          type: number
+        name: year
+        in: path
+        required: true
+    post:
+      summary: create new YYYYMM table
+      tags: []
+      responses: {}
+      operationId: post-table-year
+      deprecated: true
+  '/v2/table/{year}':
+    parameters:
+      - schema:
+          type: integer
+        name: year
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-v2-table-year
+      responses:
+        '201':
+          description: Created
+  /v2/record:
+    post:
+      summary: ''
+      operationId: post-v2-record
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/record'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/record'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/req_record'
+      description: レコードを1つ追加する
+  /v2/record/fixmonth:
+    post:
+      summary: ''
+      operationId: post-v2-record-fixmonth
+      responses:
+        '200':
+          description: OK
+      description: DBに登録している固定費テーブルの内容を、当月のRecord_YYYYMMに追加する
+  '/v2/record/{yyyymm}':
+    parameters:
+      - schema:
+          type: string
+        name: yyyymm
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-v2-record-yyyymm
+      description: yyyymm のレコードをすべて表示する。パスパラメータで条件を絞ることができる。
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: from
+  '/v2/record/summary/{year}':
+    parameters:
+      - schema:
+          type: integer
+        name: year
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-v2-record-year
+      description: year 年度のサマリーを表示する
+components:
+  schemas:
+    category_year_summary:
+      title: category_year_summary
+      x-stoplight:
+        id: 3cphpxfvazyb5
+      type: object
+      properties:
+        category_id:
+          type: integer
+        category_name:
+          type: string
+        price:
+          type: array
+          maxItems: 12
+          minItems: 12
+          items:
+            type: number
+            default: 0
+            example: 300
+        total:
+          type: integer
+    record:
+      title: record
+      x-stoplight:
+        id: 4wwkw77fk5ukt
+      type: object
+      examples:
+        - category_id: 270
+          category_name: 交通費
+          price:
+            - 2044
+            - 1603
+            - 1135
+            - 524
+            - 772
+            - 272
+            - 1633
+            - 272
+            - 0
+            - 0
+            - 0
+            - 0
+          total: 8255
+      properties:
+        id:
+          type: integer
+        category_id:
+          type: integer
+          x-stoplight:
+            id: fm5qc6s76y2qn
+        category_name:
+          type: string
+          x-stoplight:
+            id: xqd1g63fc9869
+        datetime:
+          type: string
+          x-stoplight:
+            id: sf70dr6dud4dp
+          format: date-time
+        from:
+          type: string
+          x-stoplight:
+            id: 6f2ix36jzus3z
+        type:
+          type: string
+          x-stoplight:
+            id: 0rvnym8g6sjrv
+        price:
+          type: integer
+          x-stoplight:
+            id: g1bepmv8ntfni
+        memo:
+          type: string
+          x-stoplight:
+            id: pm4447zn0fze1
+    req_record:
+      title: req_record
+      x-stoplight:
+        id: fa50bs6wli9ep
+      type: object
+      examples:
+        - category_id: 120
+          datetime: '20230101'
+          from: discord
+          type: ''
+          price: 210
+          memo: ''
+      properties:
+        category_id:
+          type: integer
+          x-stoplight:
+            id: 6wkcobddru2tu
+        price:
+          type: integer
+          x-stoplight:
+            id: d8ma692tpj8k4
+        datetime:
+          type: string
+          x-stoplight:
+            id: hms0ndadqlb2c
+          pattern: '[0-9]'
+          example: '20060102'
+        from:
+          type: string
+          x-stoplight:
+            id: ghw9bhhguntyj
+        type:
+          type: string
+          x-stoplight:
+            id: aenvvejre3h3q
+        memo:
+          type: string
+          x-stoplight:
+            id: zwb411cvei6bn
+      required:
+        - category_id
+        - price
+  requestBodies: {}

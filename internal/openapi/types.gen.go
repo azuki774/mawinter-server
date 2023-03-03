@@ -40,9 +40,8 @@ type ReqRecord struct {
 // PostRecordJSONBody defines parameters for PostRecord.
 type PostRecordJSONBody = map[string]interface{}
 
-// GetV2RecordFromFromNameParams defines parameters for GetV2RecordFromFromName.
-type GetV2RecordFromFromNameParams struct {
-	// From search from name
+// GetV2RecordYyyymmParams defines parameters for GetV2RecordYyyymm.
+type GetV2RecordYyyymmParams struct {
 	From *string `form:"from,omitempty" json:"from,omitempty"`
 }
 

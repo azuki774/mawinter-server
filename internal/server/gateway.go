@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"mawinter-server/internal/model"
-	"mawinter-server/internal/openapi"
 	"net/http"
 	"strconv"
 
@@ -97,20 +96,4 @@ func (a *apigateway) GetRecordYearYear(w http.ResponseWriter, r *http.Request, y
 
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, string(outputJson))
-}
-
-// (POST /v2/record)
-func (a *apigateway) PostV2Record(w http.ResponseWriter, r *http.Request) {
-
-}
-
-// Your GET endpoint
-// (GET /v2/record/{year})
-func (a *apigateway) GetV2RecordFromFromName(w http.ResponseWriter, r *http.Request, year int, params openapi.GetV2RecordFromFromNameParams) {
-
-}
-
-// (POST /v2/table/{year})
-func (a *apigateway) PostV2TableYear(w http.ResponseWriter, r *http.Request, year int) {
-
 }
