@@ -5,4 +5,4 @@ services:
     image: mawinter-doc:latest
     container_name: mawinter-doc
     volumes:
-      - ../docs/:/docs/
+      - ../:/docs/
