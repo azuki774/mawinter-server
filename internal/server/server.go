@@ -3,29 +3,37 @@ package server
 import (
 	"context"
 	"mawinter-server/internal/model"
+	"mawinter-server/internal/openapi"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
 )
 
-type APIService interface {
+// V1
+type APIServiceV1 interface {
 	CreateRecordTableYear(yyyy string) (err error)
 	AddRecord(ctx context.Context, req model.RecordRequest) (res model.Recordstruct, err error)
 	GetYearSummary(ctx context.Context, yyyy string) (sum []*model.CategoryYearSummaryStruct, err error)
 }
 
+// V2
+type APIServiceV2 interface {
+	// V2
+
+}
 type Server struct {
-	Logger     *zap.Logger
-	APIService APIService
-	BasicAuth  struct {
+	Logger    *zap.Logger
+	Ap1       APIServiceV1
+	Ap2       APIServiceV2
+	BasicAuth struct {
 		User string
 		Pass string
 	}
 }
 
 func (s *Server) Start(ctx context.Context) error {
-	swagger, err := GetSwagger()
+	swagger, err := openapi.GetSwagger()
 	if err != nil {
 		s.Logger.Error("failed to get swagger spec", zap.Error(err))
 		return err
@@ -34,7 +42,7 @@ func (s *Server) Start(ctx context.Context) error {
 	r := chi.NewRouter()
 	r.Use(s.middlewareLogging)
 
-	HandlerFromMux(&apigateway{Logger: s.Logger, APIService: s.APIService}, r)
+	openapi.HandlerFromMux(&apigateway{Logger: s.Logger, ap1: s.Ap1, ap2: s.Ap2}, r)
 	addr := ":8080"
 	if err := http.ListenAndServe(addr, r); err != nil {
 		s.Logger.Error("failed to listen and serve", zap.Error(err))

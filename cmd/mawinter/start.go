@@ -56,8 +56,9 @@ func start() (err error) {
 		return err
 	}
 	defer db.CloseDB()
-	ap := factory.NewService(l, db)
-	srv := factory.NewServer(l, ap)
+	ap1 := factory.NewServiceV1(l, db)
+	ap2 := factory.NewServiceV2(l, db)
+	srv := factory.NewServer(l, ap1, ap2)
 	ctx := context.Background()
 	return srv.Start(ctx)
 }

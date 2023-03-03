@@ -29,7 +29,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Res-record'
+                $ref: '#/components/schemas/record'
               examples:
                 Example 1:
                   value:
@@ -48,7 +48,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Req-record'
+              type: object
             examples:
               Example 1:
                 value:
@@ -128,6 +128,66 @@ paths:
       responses: {}
       operationId: post-table-year
       deprecated: true
+  '/v2/table/{year}':
+    parameters:
+      - schema:
+          type: integer
+        name: year
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-v2-table-year
+      responses:
+        '201':
+          description: Created
+  /v2/record:
+    post:
+      summary: ''
+      operationId: post-v2-record
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/record'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/record'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/req_record'
+  '/v2/record/{year}':
+    parameters:
+      - schema:
+          type: integer
+        name: year
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/record'
+                  x-stoplight:
+                    id: zub1cfswb0lj0
+      operationId: get-v2-record-from-from_name
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: from
+          description: search from name
 components:
   schemas:
     category_year_summary:
@@ -137,7 +197,7 @@ components:
       type: object
       properties:
         category_id:
-          type: number
+          type: integer
         category_name:
           type: string
         price:
@@ -149,46 +209,101 @@ components:
             default: 0
             example: 300
         total:
-          type: number
-    Req-record:
-      title: record_request
-      x-stoplight:
-        id: fnqupuq6bqa9u
-      type: object
-      properties:
-        datetime:
-          type: string
-          example: '20060102'
-          pattern: '[0-9]+'
-        from:
-          type: string
-        type:
-          type: string
-        price:
           type: integer
-        memo:
-          type: string
-    Res-record:
-      title: record_response
+    record:
+      title: record
       x-stoplight:
-        id: o1vcp44w8basy
+        id: 4wwkw77fk5ukt
       type: object
+      examples:
+        - category_id: 270
+          category_name: 交通費
+          price:
+            - 2044
+            - 1603
+            - 1135
+            - 524
+            - 772
+            - 272
+            - 1633
+            - 272
+            - 0
+            - 0
+            - 0
+            - 0
+          total: 8255
       properties:
         id:
-          type: number
+          type: integer
         category_id:
           type: integer
+          x-stoplight:
+            id: fm5qc6s76y2qn
         category_name:
           type: string
-        date:
+          x-stoplight:
+            id: xqd1g63fc9869
+        datetime:
           type: string
-          example: '2021-01-01T00:00:00Z'
+          x-stoplight:
+            id: sf70dr6dud4dp
+          format: date-time
         from:
           type: string
+          x-stoplight:
+            id: 6f2ix36jzus3z
         type:
           type: string
+          x-stoplight:
+            id: 0rvnym8g6sjrv
         price:
           type: integer
+          x-stoplight:
+            id: g1bepmv8ntfni
         memo:
           type: string
+          x-stoplight:
+            id: pm4447zn0fze1
+    req_record:
+      title: req_record
+      x-stoplight:
+        id: fa50bs6wli9ep
+      type: object
+      examples:
+        - category_id: 120
+          datetime: '20230101'
+          from: discord
+          type: ''
+          price: 210
+          memo: ''
+      properties:
+        category_id:
+          type: integer
+          x-stoplight:
+            id: 6wkcobddru2tu
+        price:
+          type: integer
+          x-stoplight:
+            id: d8ma692tpj8k4
+        datetime:
+          type: string
+          x-stoplight:
+            id: hms0ndadqlb2c
+          pattern: '[0-9]'
+          example: '20060102'
+        from:
+          type: string
+          x-stoplight:
+            id: ghw9bhhguntyj
+        type:
+          type: string
+          x-stoplight:
+            id: aenvvejre3h3q
+        memo:
+          type: string
+          x-stoplight:
+            id: zwb411cvei6bn
+      required:
+        - category_id
+        - price
   requestBodies: {}
