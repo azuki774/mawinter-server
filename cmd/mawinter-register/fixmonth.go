@@ -48,7 +48,7 @@ func startFixMonthly() (err error) {
 		return err
 	}
 	defer l.Sync()
-	db, err := factory.NewDBRepository(fixMonthlyOpt.DBInfo.Host, fixMonthlyOpt.DBInfo.Port, fixMonthlyOpt.DBInfo.User, fixMonthlyOpt.DBInfo.Pass, fixMonthlyOpt.DBInfo.Name)
+	db, err := factory.NewDBRepositoryV1(fixMonthlyOpt.DBInfo.Host, fixMonthlyOpt.DBInfo.Port, fixMonthlyOpt.DBInfo.User, fixMonthlyOpt.DBInfo.Pass, fixMonthlyOpt.DBInfo.Name)
 	if err != nil {
 		l.Error("failed to connect DB", zap.Error(err))
 		return err

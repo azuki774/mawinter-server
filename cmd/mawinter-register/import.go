@@ -52,7 +52,7 @@ func start() (err error) {
 		return err
 	}
 	defer l.Sync()
-	db, err := factory.NewDBRepository(billOpt.DBInfo.Host, billOpt.DBInfo.Port, billOpt.DBInfo.User, billOpt.DBInfo.Pass, billOpt.DBInfo.Name)
+	db, err := factory.NewDBRepositoryV1(billOpt.DBInfo.Host, billOpt.DBInfo.Port, billOpt.DBInfo.User, billOpt.DBInfo.Pass, billOpt.DBInfo.Name)
 	if err != nil {
 		l.Error("failed to connect DB", zap.Error(err))
 		return err

@@ -1,4 +1,4 @@
-package v1
+package api
 
 import (
 	"mawinter-server/internal/model"

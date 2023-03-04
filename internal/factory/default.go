@@ -6,7 +6,8 @@ import (
 	v2 "mawinter-server/internal/api/v2"
 	"mawinter-server/internal/client"
 	"mawinter-server/internal/register"
-	"mawinter-server/internal/repository"
+	v1db "mawinter-server/internal/repository/v1"
+	v2db "mawinter-server/internal/repository/v2"
 	"mawinter-server/internal/server"
 	"os"
 	"time"
@@ -34,11 +35,11 @@ func JSTTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.In(jst).Format(layout))
 }
 
-func NewServiceV1(l *zap.Logger, db *repository.DBRepository) (ap *v1.APIService) {
+func NewServiceV1(l *zap.Logger, db *v1db.DBRepository) (ap *v1.APIService) {
 	return &v1.APIService{Logger: l, Repo: db}
 }
 
-func NewServiceV2(l *zap.Logger, db *repository.DBRepository) (ap *v2.APIService) {
+func NewServiceV2(l *zap.Logger, db *v2db.DBRepository) (ap *v2.APIService) {
 	return &v2.APIService{Logger: l, Repo: db}
 }
 
@@ -46,7 +47,7 @@ func NewFetcherBill(billEndpoint string) *client.BillFetcher {
 	return &client.BillFetcher{BillEndpoint: billEndpoint}
 }
 
-func NewRegisterService(l *zap.Logger, db *repository.DBRepository, fet *client.BillFetcher, mc *client.MailClient) (ap *register.RegisterService) {
+func NewRegisterService(l *zap.Logger, db *v1db.DBRepository, fet *client.BillFetcher, mc *client.MailClient) (ap *register.RegisterService) {
 	return &register.RegisterService{Logger: l, DB: db, BillFetcher: fet, MailClient: mc}
 }
 

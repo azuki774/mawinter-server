@@ -25,19 +25,19 @@ type ServerInterface interface {
 	// create new YYYYMM table
 	// (POST /table/{year})
 	PostTableYear(w http.ResponseWriter, r *http.Request, year float32)
-
+	// create record
 	// (POST /v2/record)
 	PostV2Record(w http.ResponseWriter, r *http.Request)
-
+	// create fixmonth record
 	// (POST /v2/record/fixmonth)
 	PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request)
-	// Your GET endpoint
+	// get year summary
 	// (GET /v2/record/summary/{year})
 	GetV2RecordYear(w http.ResponseWriter, r *http.Request, year int)
-	// Your GET endpoint
+	// get month records
 	// (GET /v2/record/{yyyymm})
 	GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request, yyyymm string, params GetV2RecordYyyymmParams)
-
+	// create record table
 	// (POST /v2/table/{year})
 	PostV2TableYear(w http.ResponseWriter, r *http.Request, year int)
 }

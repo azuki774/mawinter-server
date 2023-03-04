@@ -107,7 +107,9 @@ func (a *apigateway) PostV2Record(w http.ResponseWriter, r *http.Request) {
 }
 
 // (POST /v2/record/fixmonth)
-func (a *apigateway) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request)
+func (a *apigateway) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request) {
+
+}
 
 // Your GET endpoint
 // (GET /v2/record/summary/{year})

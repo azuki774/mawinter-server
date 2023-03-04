@@ -58,6 +58,7 @@ paths:
                   type: ''
                   price: 210
                   memo: ''
+      deprecated: true
     parameters: []
   '/record/year/{year}':
     parameters:
@@ -115,6 +116,7 @@ paths:
                       total: 4210
       operationId: get-record-year-year
       description: 'FY{year} の 年間サマリを取得する。'
+      deprecated: true
   '/table/{year}':
     parameters:
       - schema:
@@ -136,7 +138,7 @@ paths:
         in: path
         required: true
     post:
-      summary: ''
+      summary: create record table
       operationId: post-v2-table-year
       responses:
         '201':
@@ -145,7 +147,7 @@ paths:
           description: No Content
   /v2/record:
     post:
-      summary: ''
+      summary: create record
       operationId: post-v2-record
       responses:
         '201':
@@ -163,16 +165,6 @@ paths:
             schema:
               $ref: '#/components/schemas/req_record'
       description: レコードを1つ追加する
-  /v2/record/fixmonth:
-    post:
-      summary: ''
-      operationId: post-v2-record-fixmonth
-      responses:
-        '201':
-          description: Created
-        '204':
-          description: No Content
-      description: DBに登録している固定費テーブルの内容を、当月のRecord_YYYYMMに追加する
   '/v2/record/{yyyymm}':
     parameters:
       - schema:
@@ -181,7 +173,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: get month records
       tags: []
       responses:
         '200':
@@ -189,7 +181,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/record'
+                type: array
+                items:
+                  $ref: '#/components/schemas/record'
+                  x-stoplight:
+                    id: 6xjqcey0mchrl
         '404':
           description: Not Found
       operationId: get-v2-record-yyyymm
@@ -207,7 +203,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: get year summary
       tags: []
       responses:
         '200':
@@ -224,6 +220,24 @@ paths:
           description: Not Found
       operationId: get-v2-record-year
       description: year 年度のサマリーを表示する
+  /v2/record/fixmonth:
+    post:
+      summary: create fixmonth record
+      operationId: post-v2-record-fixmonth
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/record'
+                  x-stoplight:
+                    id: vu4xbpn3gtb8b
+        '204':
+          description: No Content
+      description: DBに登録している固定費テーブルの内容を、当月のRecord_YYYYMMに追加する
 components:
   schemas:
     category_year_summary:
