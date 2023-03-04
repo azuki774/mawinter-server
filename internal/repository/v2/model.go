@@ -56,3 +56,18 @@ func NewDBModelRecord(req openapi.ReqRecord) (rec model.Record_YYYYMM, err error
 
 	return rec, nil
 }
+
+// NewRecordFromDB では Record_YYYYMM テーブルをもとに、API Structを出力する。
+func NewRecordFromDB(req model.Record_YYYYMM) (rec openapi.Record, err error) {
+	rec = openapi.Record{
+		CategoryId: int(req.CategoryID),
+		// CategoryName: req.CategoryName : ここでは取得しない
+		Datetime: req.Datetime,
+		From:     req.From,
+		Id:       int(req.ID),
+		Memo:     req.Memo,
+		Price:    int(req.Price),
+		Type:     req.Type,
+	}
+	return rec, nil
+}

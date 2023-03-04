@@ -103,7 +103,32 @@ func (a *apigateway) GetRecordYearYear(w http.ResponseWriter, r *http.Request, y
 
 // (POST /v2/record)
 func (a *apigateway) PostV2Record(w http.ResponseWriter, r *http.Request) {
+	var req openapi.ReqRecord
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, err.Error())
+		return
+	}
 
+	ctx := context.Background()
+	rec, err := a.ap2.PostRecord(ctx, req)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	outputJson, err := json.Marshal(&rec)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprint(w, string(outputJson))
 }
 
 // (POST /v2/record/fixmonth)
@@ -120,10 +145,56 @@ func (a *apigateway) GetV2RecordYear(w http.ResponseWriter, r *http.Request, yea
 // Your GET endpoint
 // (GET /v2/record/{yyyymm})
 func (a *apigateway) GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request, yyyymm string, params openapi.GetV2RecordYyyymmParams) {
+	ctx := context.Background()
 
+	err := model.ValidYYYYMM(yyyymm)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, err.Error())
+	}
+
+	recs, err := a.ap2.GetYYYYMMRecords(ctx, yyyymm)
+	if errors.Is(err, model.ErrNotFound) {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(w, err.Error())
+		return
+	} else if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	outputJson, err := json.Marshal(&recs)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(outputJson))
 }
 
 // (POST /v2/table/{year})
 func (a *apigateway) PostV2TableYear(w http.ResponseWriter, r *http.Request, year int) {
+	ctx := context.Background()
 
+	_, err := model.ValidYYYY(strconv.Itoa(year))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, err.Error())
+	}
+
+	err = a.ap2.CreateTableYear(ctx, year)
+	if errors.Is(err, model.ErrAlreadyRecorded) {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	} else if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprintf(w, "record table created.\n")
 }
