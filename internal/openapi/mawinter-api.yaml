@@ -238,6 +238,11 @@ paths:
         '204':
           description: No Content
       description: DBに登録している固定費テーブルの内容を、当月のRecord_YYYYMMに追加する
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: yyyymm
 components:
   schemas:
     category_year_summary:
@@ -349,6 +354,7 @@ components:
           type: string
           x-stoplight:
             id: aenvvejre3h3q
+          default: ''
         memo:
           type: string
           x-stoplight:

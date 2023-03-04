@@ -25,6 +25,6 @@ func (d *DBRepository) CloseDB() (err error) {
 	return dbconn.Close()
 }
 
-// func (d *DBRepositoryV2) InsertRecord(req openapi.ReqRecord) (res openapi.Record, err error) {
+// func (d *DBRepository) InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error) {
 
 // }

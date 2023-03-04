@@ -107,7 +107,7 @@ func (a *apigateway) PostV2Record(w http.ResponseWriter, r *http.Request) {
 }
 
 // (POST /v2/record/fixmonth)
-func (a *apigateway) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request) {
+func (a *apigateway) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request, params openapi.PostV2RecordFixmonthParams) {
 
 }
 

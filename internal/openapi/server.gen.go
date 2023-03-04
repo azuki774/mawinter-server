@@ -30,7 +30,7 @@ type ServerInterface interface {
 	PostV2Record(w http.ResponseWriter, r *http.Request)
 	// create fixmonth record
 	// (POST /v2/record/fixmonth)
-	PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request)
+	PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request, params PostV2RecordFixmonthParams)
 	// get year summary
 	// (GET /v2/record/summary/{year})
 	GetV2RecordYear(w http.ResponseWriter, r *http.Request, year int)
@@ -152,8 +152,21 @@ func (siw *ServerInterfaceWrapper) PostV2Record(w http.ResponseWriter, r *http.R
 func (siw *ServerInterfaceWrapper) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PostV2RecordFixmonthParams
+
+	// ------------- Optional query parameter "yyyymm" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "yyyymm", r.URL.Query(), &params.Yyyymm)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "yyyymm", Err: err})
+		return
+	}
+
 	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostV2RecordFixmonth(w, r)
+		siw.Handler.PostV2RecordFixmonth(w, r, params)
 	})
 
 	for _, middleware := range siw.HandlerMiddlewares {

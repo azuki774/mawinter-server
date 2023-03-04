@@ -40,6 +40,11 @@ type ReqRecord struct {
 // PostRecordJSONBody defines parameters for PostRecord.
 type PostRecordJSONBody = map[string]interface{}
 
+// PostV2RecordFixmonthParams defines parameters for PostV2RecordFixmonth.
+type PostV2RecordFixmonthParams struct {
+	Yyyymm *string `form:"yyyymm,omitempty" json:"yyyymm,omitempty"`
+}
+
 // GetV2RecordYyyymmParams defines parameters for GetV2RecordYyyymm.
 type GetV2RecordYyyymmParams struct {
 	From *string `form:"from,omitempty" json:"from,omitempty"`
