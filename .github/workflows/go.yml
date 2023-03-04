@@ -55,8 +55,8 @@ jobs:
       - name: migration
         run: make migration
 
-      - name: create table
-        run: curl -XPOST http://localhost:8080/table/2022
+      - name: install mysql-connector-python
+        run: pip install mysql-connector-python
 
-      - name: insert fixmonth_insert.sql
-        run: mysql -u root -ppassword mawinter -h 127.0.0.1 < test/fixmonth_insert.sql
+      - name: run e2e.py
+        run: python test/e2e.py
