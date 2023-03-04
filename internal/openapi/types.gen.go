@@ -17,14 +17,14 @@ type CategoryYearSummary struct {
 
 // Record defines model for record.
 type Record struct {
-	CategoryId   *int       `json:"category_id,omitempty"`
-	CategoryName *string    `json:"category_name,omitempty"`
-	Datetime     *time.Time `json:"datetime,omitempty"`
-	From         *string    `json:"from,omitempty"`
-	Id           *int       `json:"id,omitempty"`
-	Memo         *string    `json:"memo,omitempty"`
-	Price        *int       `json:"price,omitempty"`
-	Type         *string    `json:"type,omitempty"`
+	CategoryId   int       `json:"category_id"`
+	CategoryName string    `json:"category_name"`
+	Datetime     time.Time `json:"datetime"`
+	From         string    `json:"from"`
+	Id           int       `json:"id"`
+	Memo         string    `json:"memo"`
+	Price        int       `json:"price"`
+	Type         string    `json:"type"`
 }
 
 // ReqRecord defines model for req_record.

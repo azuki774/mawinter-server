@@ -319,6 +319,15 @@ components:
           type: string
           x-stoplight:
             id: pm4447zn0fze1
+      required:
+        - id
+        - category_id
+        - category_name
+        - datetime
+        - from
+        - type
+        - price
+        - memo
     req_record:
       title: req_record
       x-stoplight:
@@ -354,7 +363,6 @@ components:
           type: string
           x-stoplight:
             id: aenvvejre3h3q
-          default: ''
         memo:
           type: string
           x-stoplight:
