@@ -17,19 +17,16 @@ services:
     container_name: mawinter-api
     ports:
       - "8080:8080"
-    environment:
-      - BASIC_AUTH_USERNAME=user
-      - BASIC_AUTH_PASSWORD=pass
 
-  mawinter-register:
-    image: mawinter-register:latest
-    container_name: mawinter-register
-    command:
-    - "fixmonth"
-    environment:
-      - MAIL_HOST=smtp.gmail.com
-      - MAIL_PORT=587
-      - MAIL_USER=x
-      - MAIL_PASS=x
-      - MAIL_TO=x
+  # mawinter-register:
+  #   image: mawinter-register:latest
+  #   container_name: mawinter-register
+  #   command:
+  #   - "fixmonth"
+  #   environment:
+  #     - MAIL_HOST=smtp.gmail.com
+  #     - MAIL_PORT=587
+  #     - MAIL_USER=x
+  #     - MAIL_PASS=x
+  #     - MAIL_TO=x
 
