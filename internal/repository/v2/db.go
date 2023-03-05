@@ -78,3 +78,24 @@ func (d *DBRepository) MakeCategoryNameMap() (cnf map[int]string, err error) {
 
 	return cnf, nil
 }
+
+// SumPriceForEachCatID は月間サマリ中間構造体を取得する（category_id 昇順）。
+func (d *DBRepository) GetMonthMidSummary(yyyymm string) (summon []model.CategoryMidMonthSummary, err error) {
+	sql := fmt.Sprintf(`SELECT category_id, count(1), sum(price) FROM Record_%s GROUP BY category_id ORDER BY category_id`, yyyymm)
+
+	rows, err := d.Conn.Raw(sql).Rows()
+	if err != nil {
+		return []model.CategoryMidMonthSummary{}, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var cm model.CategoryMidMonthSummary
+		err = rows.Scan(&cm.CategoryId, &cm.Count, &cm.Price)
+		if err != nil {
+			return []model.CategoryMidMonthSummary{}, err
+		}
+		summon = append(summon, cm)
+	}
+
+	return summon, nil
+}

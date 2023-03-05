@@ -164,3 +164,66 @@ func TestAPIService_GetYYYYMMRecords(t *testing.T) {
 		})
 	}
 }
+
+func TestAPIService_GetV2YearSummary(t *testing.T) {
+	type fields struct {
+		Logger *zap.Logger
+		Repo   DBRepository
+	}
+	type args struct {
+		ctx  context.Context
+		year int
+	}
+	tests := []struct {
+		name     string
+		fields   fields
+		args     args
+		wantSums []openapi.CategoryYearSummary
+		wantErr  bool
+	}{
+		{
+			name: "ok",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx:  context.Background(),
+				year: 2000,
+			},
+			wantSums: []openapi.CategoryYearSummary{
+				{
+					CategoryId:   100,
+					CategoryName: "cat1",
+					Count:        120,
+					Price:        []int{1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000},
+					Total:        12000,
+				},
+				{
+					CategoryId:   200,
+					CategoryName: "cat2",
+					Count:        220, // 20 * 11
+					Price:        []int{2000, 2000, 2000, 2000, 0, 2000, 2000, 2000, 2000, 2000, 2000, 2000},
+					Total:        22000,
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := &APIService{
+				Logger: tt.fields.Logger,
+				Repo:   tt.fields.Repo,
+			}
+			gotSums, err := a.GetV2YearSummary(tt.args.ctx, tt.args.year)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("APIService.GetV2YearSummary() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotSums, tt.wantSums) {
+				t.Errorf("APIService.GetV2YearSummary() = %v, want %v", gotSums, tt.wantSums)
+			}
+		})
+	}
+}

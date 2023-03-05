@@ -1,6 +1,7 @@
 package api
 
 import (
+	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
 	"time"
 )
@@ -56,4 +57,30 @@ func (m *mockRepo) GetMonthRecords(yyyymm string) (recs []openapi.Record, err er
 func (m *mockRepo) MakeCategoryNameMap() (cnf map[int]string, err error) {
 	cnf = map[int]string{100: "cat1", 200: "cat2"}
 	return cnf, nil
+}
+
+func (m *mockRepo) GetMonthMidSummary(yyyymm string) (summon []model.CategoryMidMonthSummary, err error) {
+	// テストのため、200008 の場合のみ catID: 200 は ノーレコードとする。
+	if yyyymm == "200008" {
+		return []model.CategoryMidMonthSummary{
+			{
+				CategoryId: 100,
+				Count:      10,
+				Price:      1000,
+			},
+		}, nil
+	}
+
+	return []model.CategoryMidMonthSummary{
+		{
+			CategoryId: 100,
+			Count:      10,
+			Price:      1000,
+		},
+		{
+			CategoryId: 200,
+			Count:      20,
+			Price:      2000,
+		},
+	}, nil
 }

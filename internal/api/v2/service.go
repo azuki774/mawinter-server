@@ -5,6 +5,7 @@ import (
 	"errors"
 	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
+	"sort"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
@@ -26,6 +27,7 @@ type DBRepository interface {
 	InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error)
 	GetMonthRecords(yyyymm string) (recs []openapi.Record, err error)
 	MakeCategoryNameMap() (cnf map[int]string, err error)
+	GetMonthMidSummary(yyyymm string) (summon []model.CategoryMidMonthSummary, err error) // SELECT category_id, count(*), sum(price) FROM Record_202211 GROUP BY category_id;
 }
 
 type APIService struct {
@@ -55,11 +57,6 @@ func (a *APIService) PostRecord(ctx context.Context, req openapi.ReqRecord) (rec
 
 func (a *APIService) CreateTableYear(ctx context.Context, year int) (err error) {
 	a.Logger.Info("called create year table")
-	// yyyyint, err := model.ValidYYYY(year)
-	// if err != nil {
-	// 	a.Logger.Warn("invalid value detected", zap.Error(err))
-	// 	return err
-	// }
 	yyyymmList := fyInterval(year)
 	for _, yyyymm := range yyyymmList {
 		err = a.Repo.CreateTableYYYYMM(yyyymm)
@@ -119,4 +116,68 @@ func (a *APIService) GetYYYYMMRecords(ctx context.Context, yyyymm string) (recs 
 
 	a.Logger.Info("complete get month records")
 	return recs, nil
+}
+
+func (a *APIService) GetV2YearSummary(ctx context.Context, year int) (sums []openapi.CategoryYearSummary, err error) {
+	a.Logger.Info("called get year summary")
+
+	a.Logger.Info("get category name mapping")
+	// categoryNameMap 取得
+	cnf, err := a.Repo.MakeCategoryNameMap()
+	if err != nil {
+		return nil, err
+	}
+
+	sumsDec := make(map[int]*openapi.CategoryYearSummary) // CatID -> openapi.CategoryYearSummary
+	// 初期化
+	for catId := range cnf {
+		sumsDec[catId] = &openapi.CategoryYearSummary{
+			CategoryId:   catId,
+			CategoryName: cnf[catId],
+			Count:        0,
+			Price:        make([]int, 12),
+			Total:        0,
+		}
+	}
+
+	a.Logger.Info("get records from DB")
+	// 1月ずつ処理する
+	yyyymmList := fyInterval(year)
+	for mi, yyyymm := range yyyymmList {
+		monthSums, err := a.Repo.GetMonthMidSummary(yyyymm)
+		if err != nil {
+			a.Logger.Error("failed to get info from DB", zap.Error(err))
+			return nil, err
+		}
+
+		for _, monthSum := range monthSums {
+			catId := monthSum.CategoryId
+			count := monthSum.Count
+			price := monthSum.Price
+			sumsDec[catId].Count += count
+			sumsDec[catId].Price[mi] = price
+			sumsDec[catId].Total += price
+		}
+	}
+
+	a.Logger.Info("making month summary")
+	// 最終的に出力する構造体に挿入する
+	for _, v := range sumsDec {
+		newSum := openapi.CategoryYearSummary{
+			CategoryId:   v.CategoryId,
+			CategoryName: v.CategoryName,
+			Count:        v.Count,
+			Price:        v.Price,
+			Total:        v.Total,
+		}
+		sums = append(sums, newSum)
+	}
+
+	sort.Slice(sums, func(i, j int) bool {
+		return sums[i].CategoryId < sums[j].CategoryId
+	})
+
+	a.Logger.Info("cpmplete get year summary")
+
+	return sums, nil
 }

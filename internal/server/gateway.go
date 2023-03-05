@@ -139,7 +139,29 @@ func (a *apigateway) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request
 // Your GET endpoint
 // (GET /v2/record/summary/{year})
 func (a *apigateway) GetV2RecordYear(w http.ResponseWriter, r *http.Request, year int) {
-	w.WriteHeader(http.StatusNotImplemented)
+	ctx := context.Background()
+	yearSummary, err := a.ap2.GetV2YearSummary(ctx, year)
+	if err != nil {
+		if errors.Is(err, model.ErrInvalidValue) {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprint(w, err.Error())
+			return
+		}
+
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	outputJson, err := json.Marshal(&yearSummary)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(outputJson))
 }
 
 // Your GET endpoint
