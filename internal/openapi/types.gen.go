@@ -11,6 +11,7 @@ import (
 type CategoryYearSummary struct {
 	CategoryId   int    `json:"category_id"`
 	CategoryName string `json:"category_name"`
+	Count        int    `json:"count"`
 	Price        []int  `json:"price"`
 	Total        int    `json:"total"`
 }

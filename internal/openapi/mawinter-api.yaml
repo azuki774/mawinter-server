@@ -78,7 +78,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/category_year_summary'
+                  type: object
               examples:
                 Example 1:
                   value:
@@ -255,6 +255,28 @@ paths:
         required: true
 components:
   schemas:
+    category_month_summary:
+      title: category_mid_month_summary
+      x-stoplight:
+        id: q254e2xeuvo8q
+      type: object
+      description: year_summary を作成するための中間構造体
+      properties:
+        category_id:
+          type: integer
+          x-stoplight:
+            id: vkzlgzh8jog9l
+        count:
+          type: integer
+          x-stoplight:
+            id: b8n6bzy66tjvf
+        price:
+          type: integer
+          x-stoplight:
+            id: 7hhe6l205nb18
+      required:
+        - category_id
+        - count
     category_year_summary:
       title: category_year_summary
       x-stoplight:
@@ -265,6 +287,10 @@ components:
           type: integer
         category_name:
           type: string
+        count:
+          type: integer
+          x-stoplight:
+            id: tnic45r9oa7pe
         price:
           type: array
           maxItems: 12
@@ -278,8 +304,28 @@ components:
       required:
         - category_id
         - category_name
+        - count
         - price
         - total
+      examples:
+        - category_id: 0
+          category_name: string
+          count: 0
+          price:
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+          total: 0
+      description: ''
     record:
       title: record
       x-stoplight:
