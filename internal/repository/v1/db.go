@@ -31,6 +31,7 @@ func (d *DBRepository) CloseDB() (err error) {
 	return dbconn.Close()
 }
 
+// CreateRecordTable: deprecated
 func (d *DBRepository) CreateRecordTable(yyyymm string) (err error) {
 	sql := fmt.Sprintf("CREATE TABLE `Record_%s` (", yyyymm)
 	sql = sql + "`id` int NOT NULL AUTO_INCREMENT,"
@@ -64,8 +65,6 @@ func (d *DBRepository) InsertRecord(req model.Recordstruct) (res model.Recordstr
 	res = req
 	return res, err
 }
-
-
 
 func (d *DBRepository) GetCategoryInfo() (info []model.Category, err error) {
 	info = []model.Category{}

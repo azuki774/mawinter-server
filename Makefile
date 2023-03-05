@@ -41,5 +41,6 @@ doc:
 	cp -a docs/schema/*.svg docs/build/
 
 generate:
-	oapi-codegen -package "server" -generate "chi-server,spec" docs/mawinter-api.yaml > internal/server/openapi.gen.go
-	oapi-codegen -package "model" -generate "types" docs/mawinter-api.yaml > internal/model/openapi.gen.go
+	oapi-codegen -package "openapi" -generate "chi-server" internal/openapi/mawinter-api.yaml > internal/openapi/server.gen.go
+	oapi-codegen -package "openapi" -generate "spec" internal/openapi/mawinter-api.yaml > internal/openapi/spec.gen.go
+	oapi-codegen -package "openapi" -generate "types" internal/openapi/mawinter-api.yaml > internal/openapi/types.gen.go

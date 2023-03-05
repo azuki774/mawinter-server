@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 func (Category) TableName() string {
 	return "Category"
