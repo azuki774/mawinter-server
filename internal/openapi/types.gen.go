@@ -9,10 +9,10 @@ import (
 
 // CategoryYearSummary defines model for category_year_summary.
 type CategoryYearSummary struct {
-	CategoryId   *int       `json:"category_id,omitempty"`
-	CategoryName *string    `json:"category_name,omitempty"`
-	Price        *[]float32 `json:"price,omitempty"`
-	Total        *int       `json:"total,omitempty"`
+	CategoryId   int    `json:"category_id"`
+	CategoryName string `json:"category_name"`
+	Price        []int  `json:"price"`
+	Total        int    `json:"total"`
 }
 
 // Record defines model for record.
@@ -42,12 +42,13 @@ type PostRecordJSONBody = map[string]interface{}
 
 // PostV2RecordFixmonthParams defines parameters for PostV2RecordFixmonth.
 type PostV2RecordFixmonthParams struct {
-	Yyyymm *string `form:"yyyymm,omitempty" json:"yyyymm,omitempty"`
+	Yyyymm *int `form:"yyyymm,omitempty" json:"yyyymm,omitempty"`
 }
 
 // GetV2RecordYyyymmParams defines parameters for GetV2RecordYyyymm.
 type GetV2RecordYyyymmParams struct {
-	From *string `form:"from,omitempty" json:"from,omitempty"`
+	From       *string `form:"from,omitempty" json:"from,omitempty"`
+	CategoryId *string `form:"category_id,omitempty" json:"category_id,omitempty"`
 }
 
 // PostRecordJSONRequestBody defines body for PostRecord for application/json ContentType.
