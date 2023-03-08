@@ -7,6 +7,7 @@ import (
 )
 
 type mockRepo struct {
+	GetMonthlyFixDoneReturn bool
 }
 
 func (m *mockRepo) CreateTableYYYYMM(yyyymm string) (err error) {
@@ -83,4 +84,33 @@ func (m *mockRepo) GetMonthMidSummary(yyyymm string) (summon []model.CategoryMid
 			Price:      2000,
 		},
 	}, nil
+}
+
+func (m *mockRepo) InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record, err error) {
+	return []openapi.Record{
+		{
+			CategoryId:   100,
+			CategoryName: "cat1",
+			Datetime:     time.Date(2021, 2, 15, 0, 0, 0, 0, jst),
+			From:         "fixmonth",
+			Id:           1,
+			Memo:         "",
+			Price:        1234,
+			Type:         "",
+		},
+		{
+			CategoryId:   200,
+			CategoryName: "cat2",
+			Datetime:     time.Date(2021, 2, 25, 0, 0, 0, 0, jst),
+			From:         "fixmonth",
+			Id:           2,
+			Memo:         "",
+			Price:        12345,
+			Type:         "",
+		},
+	}, nil
+}
+
+func (m *mockRepo) GetMonthlyFixDone(yyyymm string) (done bool, err error) {
+	return m.GetMonthlyFixDoneReturn, nil
 }

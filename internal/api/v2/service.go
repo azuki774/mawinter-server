@@ -28,6 +28,8 @@ type DBRepository interface {
 	GetMonthRecords(yyyymm string) (recs []openapi.Record, err error)
 	MakeCategoryNameMap() (cnf map[int]string, err error)
 	GetMonthMidSummary(yyyymm string) (summon []model.CategoryMidMonthSummary, err error) // SELECT category_id, count(*), sum(price) FROM Record_202211 GROUP BY category_id;
+	InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record, err error)
+	GetMonthlyFixDone(yyyymm string) (done bool, err error)
 }
 
 type APIService struct {
@@ -53,6 +55,29 @@ func (a *APIService) PostRecord(ctx context.Context, req openapi.ReqRecord) (rec
 
 	a.Logger.Info("complete post record")
 	return rec, nil
+}
+
+func (a *APIService) PostMonthlyFixRecord(ctx context.Context, yyyymm string) (recs []openapi.Record, err error) {
+	a.Logger.Info("called post fixmonth records", zap.String("yyyymm", yyyymm))
+	done, err := a.Repo.GetMonthlyFixDone(yyyymm)
+	if err != nil {
+		a.Logger.Error("failed to get monthly processed data", zap.String("yyyymm", yyyymm), zap.Error(err))
+		return []openapi.Record{}, err
+	}
+	if done {
+		// 既に処理済の場合はスキップ
+		a.Logger.Info("called post monthly already registed", zap.String("yyyymm", yyyymm))
+		return []openapi.Record{}, model.ErrAlreadyRecorded
+	}
+
+	recs, err = a.Repo.InsertMonthlyFixBilling(yyyymm)
+	if err != nil {
+		a.Logger.Error("failed to insert data", zap.String("yyyymm", yyyymm), zap.Error(err))
+		return []openapi.Record{}, err
+	}
+
+	a.Logger.Info("complete post fixmonth record", zap.String("yyyymm", yyyymm))
+	return recs, nil
 }
 
 func (a *APIService) CreateTableYear(ctx context.Context, year int) (err error) {
