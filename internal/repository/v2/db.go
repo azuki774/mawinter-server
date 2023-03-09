@@ -107,7 +107,7 @@ func (d *DBRepository) InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Re
 	var records []model.Record_YYYYMM      // レコードDB追加用の構造体
 
 	err = d.Conn.Transaction(func(tx *gorm.DB) error {
-		nerr := d.Conn.Find(&fixBills).Error // 固定費テーブルからデータ取得
+		nerr := tx.Table("Monthly_Fix_Billing").Find(&fixBills).Error // 固定費テーブルからデータ取得
 		if nerr != nil {
 			return nerr
 		}

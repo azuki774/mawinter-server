@@ -29,8 +29,8 @@ type ServerInterface interface {
 	// (POST /v2/record)
 	PostV2Record(w http.ResponseWriter, r *http.Request)
 	// create fixmonth record
-	// (POST /v2/record/fixmonth/{yyyymm})
-	PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request, yyyymm int, params PostV2RecordFixmonthParams)
+	// (POST /v2/record/fixmonth)
+	PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request, params PostV2RecordFixmonthParams)
 	// get year summary
 	// (GET /v2/record/summary/{year})
 	GetV2RecordYear(w http.ResponseWriter, r *http.Request, year int)
@@ -154,15 +154,6 @@ func (siw *ServerInterfaceWrapper) PostV2RecordFixmonth(w http.ResponseWriter, r
 
 	var err error
 
-	// ------------- Path parameter "yyyymm" -------------
-	var yyyymm int
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "yyyymm", runtime.ParamLocationPath, chi.URLParam(r, "yyyymm"), &yyyymm)
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "yyyymm", Err: err})
-		return
-	}
-
 	// Parameter object where we will unmarshal all parameters from the context
 	var params PostV2RecordFixmonthParams
 
@@ -175,7 +166,7 @@ func (siw *ServerInterfaceWrapper) PostV2RecordFixmonth(w http.ResponseWriter, r
 	}
 
 	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostV2RecordFixmonth(w, r, yyyymm, params)
+		siw.Handler.PostV2RecordFixmonth(w, r, params)
 	})
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -411,7 +402,7 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/v2/record", wrapper.PostV2Record)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/v2/record/fixmonth/{yyyymm}", wrapper.PostV2RecordFixmonth)
+		r.Post(options.BaseURL+"/v2/record/fixmonth", wrapper.PostV2RecordFixmonth)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/v2/record/summary/{year}", wrapper.GetV2RecordYear)

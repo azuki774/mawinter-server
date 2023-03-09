@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
+	"mawinter-server/internal/timeutil"
 	"net/http"
 	"strconv"
 
@@ -132,8 +133,35 @@ func (a *apigateway) PostV2Record(w http.ResponseWriter, r *http.Request) {
 }
 
 // (POST /v2/record/fixmonth)
-func (a *apigateway) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request, yyyymm int, params openapi.PostV2RecordFixmonthParams) {
-	w.WriteHeader(http.StatusNotImplemented)
+func (a *apigateway) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request, params openapi.PostV2RecordFixmonthParams) {
+	ctx := context.Background()
+	var yms string
+	if params.Yyyymm == nil {
+		// default value
+		yms = timeutil.NowFunc().Format("20060102")
+	} else {
+		yms = strconv.Itoa(*params.Yyyymm)
+	}
+
+	recs, err := a.ap2.PostMonthlyFixRecord(ctx, yms)
+	if errors.Is(err, model.ErrAlreadyRecorded) {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	} else if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	outputJson, err := json.Marshal(&recs)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprint(w, string(outputJson))
 }
 
 // Your GET endpoint
