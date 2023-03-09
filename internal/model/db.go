@@ -52,6 +52,7 @@ type MonthlyFixDoneDB struct {
 	UpdatedAt time.Time `gorm:"column:updated_at"`
 }
 
+// SumPriceCategoryID uses v1.
 type SumPriceCategoryID struct {
 	CategoryID int64
 	Count      int64

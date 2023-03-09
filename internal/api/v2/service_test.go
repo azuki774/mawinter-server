@@ -164,3 +164,150 @@ func TestAPIService_GetYYYYMMRecords(t *testing.T) {
 		})
 	}
 }
+
+func TestAPIService_GetV2YearSummary(t *testing.T) {
+	type fields struct {
+		Logger *zap.Logger
+		Repo   DBRepository
+	}
+	type args struct {
+		ctx  context.Context
+		year int
+	}
+	tests := []struct {
+		name     string
+		fields   fields
+		args     args
+		wantSums []openapi.CategoryYearSummary
+		wantErr  bool
+	}{
+		{
+			name: "ok",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx:  context.Background(),
+				year: 2000,
+			},
+			wantSums: []openapi.CategoryYearSummary{
+				{
+					CategoryId:   100,
+					CategoryName: "cat1",
+					Count:        120,
+					Price:        []int{1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000},
+					Total:        12000,
+				},
+				{
+					CategoryId:   200,
+					CategoryName: "cat2",
+					Count:        220, // 20 * 11
+					Price:        []int{2000, 2000, 2000, 2000, 0, 2000, 2000, 2000, 2000, 2000, 2000, 2000},
+					Total:        22000,
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := &APIService{
+				Logger: tt.fields.Logger,
+				Repo:   tt.fields.Repo,
+			}
+			gotSums, err := a.GetV2YearSummary(tt.args.ctx, tt.args.year)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("APIService.GetV2YearSummary() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotSums, tt.wantSums) {
+				t.Errorf("APIService.GetV2YearSummary() = %v, want %v", gotSums, tt.wantSums)
+			}
+		})
+	}
+}
+
+func TestAPIService_PostMonthlyFixRecord(t *testing.T) {
+	type fields struct {
+		Logger *zap.Logger
+		Repo   DBRepository
+	}
+	type args struct {
+		ctx    context.Context
+		yyyymm string
+	}
+	tests := []struct {
+		name     string
+		fields   fields
+		args     args
+		wantRecs []openapi.Record
+		wantErr  bool
+	}{
+		{
+			name: "ok (insert)",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx:    context.Background(),
+				yyyymm: "202102",
+			},
+			wantRecs: []openapi.Record{
+				{
+					CategoryId:   100,
+					CategoryName: "cat1",
+					Datetime:     time.Date(2021, 2, 15, 0, 0, 0, 0, jst),
+					From:         "fixmonth",
+					Id:           1,
+					Memo:         "",
+					Price:        1234,
+					Type:         "",
+				},
+				{
+					CategoryId:   200,
+					CategoryName: "cat2",
+					Datetime:     time.Date(2021, 2, 25, 0, 0, 0, 0, jst),
+					From:         "fixmonth",
+					Id:           2,
+					Memo:         "",
+					Price:        12345,
+					Type:         "",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "ok (already registed)",
+			fields: fields{
+				Logger: l,
+				Repo: &mockRepo{
+					GetMonthlyFixDoneReturn: true,
+				},
+			},
+			args: args{
+				ctx:    context.Background(),
+				yyyymm: "202103",
+			},
+			wantRecs: []openapi.Record{},
+			wantErr:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := &APIService{
+				Logger: tt.fields.Logger,
+				Repo:   tt.fields.Repo,
+			}
+			gotRecs, err := a.PostMonthlyFixRecord(tt.args.ctx, tt.args.yyyymm)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("APIService.PostMonthlyFixRecord() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotRecs, tt.wantRecs) {
+				t.Errorf("APIService.PostMonthlyFixRecord() = %v, want %v", gotRecs, tt.wantRecs)
+			}
+		})
+	}
+}

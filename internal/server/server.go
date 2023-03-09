@@ -21,8 +21,10 @@ type APIServiceV1 interface {
 type APIServiceV2 interface {
 	// V2
 	PostRecord(ctx context.Context, req openapi.ReqRecord) (rec openapi.Record, err error)
+	PostMonthlyFixRecord(ctx context.Context, yyyymm string) (recs []openapi.Record, err error)
 	CreateTableYear(ctx context.Context, year int) (err error)
 	GetYYYYMMRecords(ctx context.Context, yyyymm string) (recs []openapi.Record, err error)
+	GetV2YearSummary(ctx context.Context, year int) (sums []openapi.CategoryYearSummary, err error)
 }
 type Server struct {
 	Logger    *zap.Logger

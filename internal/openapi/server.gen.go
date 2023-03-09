@@ -228,6 +228,14 @@ func (siw *ServerInterfaceWrapper) GetV2RecordYyyymm(w http.ResponseWriter, r *h
 		return
 	}
 
+	// ------------- Optional query parameter "category_id" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "category_id", r.URL.Query(), &params.CategoryId)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "category_id", Err: err})
+		return
+	}
+
 	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetV2RecordYyyymm(w, r, yyyymm, params)
 	})

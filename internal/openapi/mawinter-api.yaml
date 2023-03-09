@@ -36,7 +36,7 @@ paths:
                     id: 123
                     category_id: 400
                     category_name: cat1
-                    date: '2021-01-01T00:00:00Z'
+                    datetime: '2021-01-01T00:00:00Z'
                     from: discord
                     type: ''
                     price: 1234
@@ -78,7 +78,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/category_year_summary'
+                  type: object
               examples:
                 Example 1:
                   value:
@@ -195,6 +195,10 @@ paths:
             type: string
           in: query
           name: from
+        - schema:
+            type: string
+          in: query
+          name: category_id
   '/v2/record/summary/{year}':
     parameters:
       - schema:
@@ -240,9 +244,10 @@ paths:
       description: DBに登録している固定費テーブルの内容を、当月のRecord_YYYYMMに追加する
       parameters:
         - schema:
-            type: string
+            type: integer
           in: query
           name: yyyymm
+    parameters: []
 components:
   schemas:
     category_year_summary:
@@ -255,38 +260,51 @@ components:
           type: integer
         category_name:
           type: string
+        count:
+          type: integer
+          x-stoplight:
+            id: tnic45r9oa7pe
         price:
           type: array
           maxItems: 12
           minItems: 12
           items:
-            type: number
+            type: integer
             default: 0
             example: 300
         total:
           type: integer
+      required:
+        - category_id
+        - category_name
+        - count
+        - price
+        - total
+      examples:
+        - category_id: 0
+          category_name: string
+          count: 0
+          price:
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+            - 300
+          total: 0
+      description: ''
     record:
       title: record
       x-stoplight:
         id: 4wwkw77fk5ukt
       type: object
-      examples:
-        - category_id: 270
-          category_name: 交通費
-          price:
-            - 2044
-            - 1603
-            - 1135
-            - 524
-            - 772
-            - 272
-            - 1633
-            - 272
-            - 0
-            - 0
-            - 0
-            - 0
-          total: 8255
+      examples: []
       properties:
         id:
           type: integer
@@ -328,6 +346,7 @@ components:
         - type
         - price
         - memo
+      description: ''
     req_record:
       title: req_record
       x-stoplight:

@@ -1,11 +1,13 @@
 package api
 
 import (
+	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
 	"time"
 )
 
 type mockRepo struct {
+	GetMonthlyFixDoneReturn bool
 }
 
 func (m *mockRepo) CreateTableYYYYMM(yyyymm string) (err error) {
@@ -56,4 +58,59 @@ func (m *mockRepo) GetMonthRecords(yyyymm string) (recs []openapi.Record, err er
 func (m *mockRepo) MakeCategoryNameMap() (cnf map[int]string, err error) {
 	cnf = map[int]string{100: "cat1", 200: "cat2"}
 	return cnf, nil
+}
+
+func (m *mockRepo) GetMonthMidSummary(yyyymm string) (summon []model.CategoryMidMonthSummary, err error) {
+	// テストのため、200008 の場合のみ catID: 200 は ノーレコードとする。
+	if yyyymm == "200008" {
+		return []model.CategoryMidMonthSummary{
+			{
+				CategoryId: 100,
+				Count:      10,
+				Price:      1000,
+			},
+		}, nil
+	}
+
+	return []model.CategoryMidMonthSummary{
+		{
+			CategoryId: 100,
+			Count:      10,
+			Price:      1000,
+		},
+		{
+			CategoryId: 200,
+			Count:      20,
+			Price:      2000,
+		},
+	}, nil
+}
+
+func (m *mockRepo) InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record, err error) {
+	return []openapi.Record{
+		{
+			CategoryId:   100,
+			CategoryName: "cat1",
+			Datetime:     time.Date(2021, 2, 15, 0, 0, 0, 0, jst),
+			From:         "fixmonth",
+			Id:           1,
+			Memo:         "",
+			Price:        1234,
+			Type:         "",
+		},
+		{
+			CategoryId:   200,
+			CategoryName: "cat2",
+			Datetime:     time.Date(2021, 2, 25, 0, 0, 0, 0, jst),
+			From:         "fixmonth",
+			Id:           2,
+			Memo:         "",
+			Price:        12345,
+			Type:         "",
+		},
+	}, nil
+}
+
+func (m *mockRepo) GetMonthlyFixDone(yyyymm string) (done bool, err error) {
+	return m.GetMonthlyFixDoneReturn, nil
 }
