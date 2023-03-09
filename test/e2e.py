@@ -1,6 +1,7 @@
 # pip install mysql-connector-python
 import requests
 import sys
+import time
 import json
 import mysql.connector
 
@@ -30,14 +31,19 @@ try:
     cursor.execute("DROP TABLE IF EXISTS Record_200101")
     cursor.execute("DROP TABLE IF EXISTS Record_200102")
     cursor.execute("DROP TABLE IF EXISTS Record_200103")
+    cursor.execute("TRUNCATE TABLE Monthly_Fix_Billing")
+    cursor.execute("TRUNCATE TABLE Monthly_Fix_Done")
+    cursor.execute("INSERT INTO Monthly_Fix_Billing VALUES (1, 100, 10, 1000, '', 'memo1', '2000/01/23', '2000/01/23')")
+    cursor.execute("INSERT INTO Monthly_Fix_Billing VALUES (2, 200, 20, 2000, '', 'memo2', '2000/01/23', '2000/01/23')")
 
     cursor.close()
+    cnx.commit()
+    cnx.close()
 
 except Exception as e:
     print(f"Error Occurred: {e}")
 
 print('# Database setup complete')
-
 
 print('# health check')
 url = 'http://localhost:8080/'
@@ -130,6 +136,35 @@ if response.status_code == 200:
         print(json_data)
         print(want)
         sys.exit(1)
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
+print('# insert fixmonth records')
+url = 'http://localhost:8080/v2/record/fixmonth?yyyymm=200006'
+response = requests.post(url)
+if response.status_code == 201:
+    json_data = response.json()
+    want = [{"category_id": 100, "category_name" : "月給", "id" : 1, "datetime": "2000-06-10T00:00:00+09:00", "from": "fixmonth", "type": "", "price": 1000, "memo": "memo1"}, 
+            {"category_id": 200, "category_name" : "家賃", "id" : 2, "datetime": "2000-06-20T00:00:00+09:00", "from": "fixmonth", "type": "", "price": 2000, "memo": "memo2"}
+           ]
+    if want != json_data:
+        print("[NG] {}".format(url))
+        print(json_data)
+        print(want)
+        sys.exit(1)
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
+print('# insert fixmonth records already done')
+url = 'http://localhost:8080/v2/record/fixmonth?yyyymm=200006'
+response = requests.post(url)
+if response.status_code == 204:
     print("[OK] {}".format(url))
 else:
     print("[NG] {}".format(url))
