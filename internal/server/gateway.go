@@ -138,7 +138,7 @@ func (a *apigateway) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request
 	var yms string
 	if params.Yyyymm == nil {
 		// default value
-		yms = timeutil.NowFunc().Format("20060102")
+		yms = timeutil.NowFunc().Format("200601")
 	} else {
 		yms = strconv.Itoa(*params.Yyyymm)
 	}
