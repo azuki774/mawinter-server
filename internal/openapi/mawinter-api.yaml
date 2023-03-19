@@ -248,6 +248,30 @@ paths:
           in: query
           name: yyyymm
     parameters: []
+  /version:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-version
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                version:
+                  type: string
+                  x-stoplight:
+                    id: rhq0fauy33tl0
+                revision:
+                  type: string
+                  x-stoplight:
+                    id: qe6fmbcam4nvh
+                build:
+                  type: string
+                  x-stoplight:
+                    id: 3glrzkw2ejgxh
 components:
   schemas:
     category_year_summary:

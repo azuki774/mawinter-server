@@ -4,17 +4,25 @@ container_name_api=mawinter-api
 container_name_doc=mawinter-doc
 container_name_register=mawinter-register
 
-.PHONY: build run push stop test migration doc
+.PHONY: build bin bin-linux-amd64 start stop migration test doc generate
 
 build:
 	docker build -t $(container_name_api):$(VERSION_API) -f build/Dockerfile .
-	docker build -t $(container_name_register):$(VERSION_API) -f build/Dockerfile-register .
+	# docker build -t $(container_name_register):$(VERSION_API) -f build/Dockerfile-register .
 
 bin:
-	go build -a -tags "netgo" -installsuffix netgo  -ldflags="-s -w -extldflags \"-static\"" -o bin/ ./...
+	go build -a -tags "netgo" -installsuffix netgo  -ldflags="-s -w -extldflags \"-static\" \
+	-X main.version=$(git describe --tag --abbrev=0) \
+	-X main.revision=$(git rev-list -1 HEAD) \
+	-X main.build=$(git describe --tags)" \
+	-o bin/ ./...
 
 bin-linux-amd64:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags "netgo" -installsuffix netgo  -ldflags="-s -w -extldflags \"-static\"" -o bin/ ./...
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags "netgo" -installsuffix netgo  -ldflags="-s -w -extldflags \"-static\" \
+	-X main.version=$(git describe --tag --abbrev=0) \
+	-X main.revision=$(git rev-list -1 HEAD) \
+	-X main.build=$(git describe --tags)" \
+	-o bin/ ./...
 
 start: 
 	docker compose -f deployment/compose-local.yml up -d
