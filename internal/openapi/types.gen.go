@@ -52,6 +52,12 @@ type GetV2RecordYyyymmParams struct {
 	CategoryId *string `form:"category_id,omitempty" json:"category_id,omitempty"`
 }
 
+// GetV2RecordYyyymmRecentParams defines parameters for GetV2RecordYyyymmRecent.
+type GetV2RecordYyyymmRecentParams struct {
+	// Num max record number
+	Num *int `form:"num,omitempty" json:"num,omitempty"`
+}
+
 // GetVersionJSONBody defines parameters for GetVersion.
 type GetVersionJSONBody struct {
 	Build    *string `json:"build,omitempty"`

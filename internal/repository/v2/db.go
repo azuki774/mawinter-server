@@ -64,6 +64,17 @@ func (d *DBRepository) GetMonthRecords(yyyymm string) (recs []openapi.Record, er
 	return recs, nil
 }
 
+func (d *DBRepository) GetMonthRecordsRecent(yyyymm string, num int) (recs []openapi.Record, err error) {
+	res := d.Conn.Table(fmt.Sprintf("Record_%s", yyyymm)).Order("id DESC").Limit(num).Find(&recs)
+	if errors.Is(res.Error, gorm.ErrRecordNotFound) { // TODO: 正しくは Error 1146 をハンドリングする
+		return []openapi.Record{}, model.ErrNotFound
+	} else if res.Error != nil {
+		return []openapi.Record{}, res.Error
+	}
+
+	return recs, nil
+}
+
 func (d *DBRepository) MakeCategoryNameMap() (cnf map[int]string, err error) {
 	cnf = make(map[int]string)
 	var catTable []model.Category

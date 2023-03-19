@@ -170,3 +170,72 @@ else:
     print("[NG] {}".format(url))
     print(response.status_code)
     sys.exit(1)
+
+print('(# create records)')
+url = 'http://localhost:8080/v2/record'
+data1 = '{"category_id": 100, "datetime": "20000710", "from": "testfrom1", "type": "S1", "price": 1000, "memo": "memo"}'
+data2 = '{"category_id": 200, "datetime": "20000715", "from": "testfrom2", "type": "", "price": 2000, "memo": ""}'
+data3 = '{"category_id": 300, "datetime": "20000720", "from": "", "type": "", "price": 3000, "memo": ""}'
+headers = { "Content-Type": "application/json" }
+response = requests.post(url, data=data1, headers = headers)
+if response.status_code == 201:
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
+response = requests.post(url, data=data2, headers = headers)
+if response.status_code == 201:
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
+response = requests.post(url, data=data3, headers = headers)
+if response.status_code == 201:
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
+print('# get recent records (1)')
+url = 'http://localhost:8080/v2/record/200007/recent?num=5'
+response = requests.get(url)
+if response.status_code == 200:
+    json_data = response.json()
+    want = [{"category_id": 300, "category_name" : "保険・税金", "id" : 3, "datetime": "2000-07-20T00:00:00+09:00", "from": "", "type": "", "price": 3000, "memo": ""}, 
+            {"category_id": 200, "category_name" : "家賃", "id" : 2, "datetime": "2000-07-15T00:00:00+09:00", "from": "testfrom2", "type": "", "price": 2000, "memo": ""},
+            {"category_id": 100, "category_name" : "月給", "id" : 1, "datetime": "2000-07-10T00:00:00+09:00", "from": "testfrom1", "type": "S1", "price": 1000, "memo": "memo"}, 
+           ]
+    if want != json_data:
+        print("[NG] {}".format(url))
+        print(json_data)
+        print(want)
+        sys.exit(1)
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
+print('# get recent records (2)')
+url = 'http://localhost:8080/v2/record/200007/recent?num=2'
+response = requests.get(url)
+if response.status_code == 200:
+    json_data = response.json()
+    want = [{"category_id": 300, "category_name" : "保険・税金", "id" : 3, "datetime": "2000-07-20T00:00:00+09:00", "from": "", "type": "", "price": 3000, "memo": ""}, 
+            {"category_id": 200, "category_name" : "家賃", "id" : 2, "datetime": "2000-07-15T00:00:00+09:00", "from": "testfrom2", "type": "", "price": 2000, "memo": ""},
+           ]
+    if want != json_data:
+        print("[NG] {}".format(url))
+        print(json_data)
+        print(want)
+        sys.exit(1)
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
