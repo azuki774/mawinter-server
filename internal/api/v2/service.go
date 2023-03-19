@@ -26,6 +26,7 @@ type DBRepository interface {
 	CreateTableYYYYMM(yyyymm string) (err error)
 	InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error)
 	GetMonthRecords(yyyymm string) (recs []openapi.Record, err error)
+	GetMonthRecordsRecent(yyyymm string, num int) (recs []openapi.Record, err error)
 	MakeCategoryNameMap() (cnf map[int]string, err error)
 	GetMonthMidSummary(yyyymm string) (summon []model.CategoryMidMonthSummary, err error) // SELECT category_id, count(*), sum(price) FROM Record_202211 GROUP BY category_id;
 	InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record, err error)
@@ -140,6 +141,32 @@ func (a *APIService) GetYYYYMMRecords(ctx context.Context, yyyymm string) (recs 
 	}
 
 	a.Logger.Info("complete get month records")
+	return recs, nil
+}
+
+func (a *APIService) GetYYYYMMRecordsRecent(ctx context.Context, yyyymm string, num int) (recs []openapi.Record, err error) {
+	a.Logger.Info("called get month recent records")
+
+	a.Logger.Info("get records from DB")
+	recsRaw, err := a.Repo.GetMonthRecordsRecent(yyyymm, num)
+	if err != nil {
+		return nil, err
+	}
+
+	a.Logger.Info("get category name mapping")
+	// categoryNameMap 取得
+	cnf, err := a.Repo.MakeCategoryNameMap()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, rec := range recsRaw {
+		// categoryName を付与
+		rec.CategoryName = cnf[rec.CategoryId]
+		recs = append(recs, rec)
+	}
+
+	a.Logger.Info("complete get month recent records")
 	return recs, nil
 }
 

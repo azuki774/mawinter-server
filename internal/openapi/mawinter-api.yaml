@@ -272,6 +272,36 @@ paths:
                   type: string
                   x-stoplight:
                     id: 3glrzkw2ejgxh
+  '/v2/record/{yyyymm}/recent':
+    parameters:
+      - schema:
+          type: string
+        name: yyyymm
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/record'
+                  x-stoplight:
+                    id: ejqo8blv6fmd9
+        '404':
+          description: Not Found
+      operationId: get-v2-record-yyyymm-recent
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: num
+          description: max record number
 components:
   schemas:
     category_year_summary:

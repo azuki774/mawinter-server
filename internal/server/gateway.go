@@ -239,6 +239,45 @@ func (a *apigateway) GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request, y
 	fmt.Fprint(w, string(outputJson))
 }
 
+// GET v2/record/{yyyymm}/recent?num=x
+func (a *apigateway) GetV2RecordYyyymmRecent(w http.ResponseWriter, r *http.Request, yyyymm string, params openapi.GetV2RecordYyyymmRecentParams) {
+	const defaultNum = 10
+	ctx := context.Background()
+
+	if params.Num == nil {
+		params.Num = int2ptr(defaultNum)
+	}
+
+	err := model.ValidYYYYMM(yyyymm)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	recs, err := a.ap2.GetYYYYMMRecordsRecent(ctx, yyyymm, *params.Num)
+	if errors.Is(err, model.ErrNotFound) {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(w, err.Error())
+		return
+	} else if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	outputJson, err := json.Marshal(&recs)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(outputJson))
+}
+
 // (POST /v2/table/{year})
 func (a *apigateway) PostV2TableYear(w http.ResponseWriter, r *http.Request, year int) {
 	ctx := context.Background()
@@ -282,5 +321,9 @@ func (a *apigateway) GetVersion(w http.ResponseWriter, r *http.Request) {
 }
 
 func str2ptr(a string) *string {
+	return &a
+}
+
+func int2ptr(a int) *int {
 	return &a
 }
