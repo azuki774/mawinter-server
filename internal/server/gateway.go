@@ -261,3 +261,26 @@ func (a *apigateway) PostV2TableYear(w http.ResponseWriter, r *http.Request, yea
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintf(w, "record table created.\n")
 }
+
+// (GET /version)
+func (a *apigateway) GetVersion(w http.ResponseWriter, r *http.Request) {
+	vers := openapi.GetVersionJSONBody{
+		Version:  str2ptr(Version),
+		Revision: str2ptr(Revision),
+		Build:    str2ptr(Build),
+	}
+	outputJson, err := json.Marshal(&vers)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(outputJson))
+}
+
+func str2ptr(a string) *string {
+	return &a
+}

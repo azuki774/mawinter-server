@@ -52,8 +52,18 @@ type GetV2RecordYyyymmParams struct {
 	CategoryId *string `form:"category_id,omitempty" json:"category_id,omitempty"`
 }
 
+// GetVersionJSONBody defines parameters for GetVersion.
+type GetVersionJSONBody struct {
+	Build    *string `json:"build,omitempty"`
+	Revision *string `json:"revision,omitempty"`
+	Version  *string `json:"version,omitempty"`
+}
+
 // PostRecordJSONRequestBody defines body for PostRecord for application/json ContentType.
 type PostRecordJSONRequestBody = PostRecordJSONBody
 
 // PostV2RecordJSONRequestBody defines body for PostV2Record for application/json ContentType.
 type PostV2RecordJSONRequestBody = ReqRecord
+
+// GetVersionJSONRequestBody defines body for GetVersion for application/json ContentType.
+type GetVersionJSONRequestBody GetVersionJSONBody

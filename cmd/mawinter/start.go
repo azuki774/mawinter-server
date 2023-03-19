@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"mawinter-server/internal/factory"
+	"mawinter-server/internal/server"
 
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -23,6 +24,12 @@ type StartOption struct {
 		Pass string
 	}
 }
+
+var (
+	version  string
+	revision string
+	build    string
+)
 
 var startOpt StartOption
 
@@ -68,6 +75,12 @@ func start() (err error) {
 	ap2 := factory.NewServiceV2(l, db2)
 	srv := factory.NewServer(l, ap1, ap2)
 	ctx := context.Background()
+
+	l.Info("binary info", zap.String("version", version), zap.String("revision", revision), zap.String("build", build))
+	server.Version = version
+	server.Revision = revision
+	server.Build = build
+
 	return srv.Start(ctx)
 }
 

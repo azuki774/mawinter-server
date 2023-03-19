@@ -10,6 +10,13 @@ import (
 	"go.uber.org/zap"
 )
 
+// Binary Info
+var (
+	Version  string
+	Revision string
+	Build    string
+)
+
 // V1
 type APIServiceV1 interface {
 	CreateRecordTableYear(yyyy string) (err error)
