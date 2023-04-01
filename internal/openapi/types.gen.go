@@ -48,8 +48,7 @@ type PostV2RecordFixmonthParams struct {
 
 // GetV2RecordYyyymmParams defines parameters for GetV2RecordYyyymm.
 type GetV2RecordYyyymmParams struct {
-	From       *string `form:"from,omitempty" json:"from,omitempty"`
-	CategoryId *string `form:"category_id,omitempty" json:"category_id,omitempty"`
+	CategoryId *int `form:"category_id,omitempty" json:"category_id,omitempty"`
 }
 
 // GetV2RecordYyyymmRecentParams defines parameters for GetV2RecordYyyymmRecent.

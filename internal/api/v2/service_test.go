@@ -104,6 +104,7 @@ func TestAPIService_GetYYYYMMRecords(t *testing.T) {
 	type args struct {
 		ctx    context.Context
 		yyyymm string
+		params openapi.GetV2RecordYyyymmParams
 	}
 	tests := []struct {
 		name     string
@@ -146,6 +147,49 @@ func TestAPIService_GetYYYYMMRecords(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "ok(params)",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx:    context.Background(),
+				yyyymm: "200001",
+				params: openapi.GetV2RecordYyyymmParams{
+					CategoryId: int2ptr(100),
+				},
+			},
+			wantRecs: []openapi.Record{
+				{
+					CategoryId:   100,
+					CategoryName: "cat1",
+					Datetime:     time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+					From:         "from",
+					Id:           1,
+					Memo:         "memo",
+					Price:        1234,
+					Type:         "type",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "ok(not found)",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx:    context.Background(),
+				yyyymm: "200001",
+				params: openapi.GetV2RecordYyyymmParams{
+					CategoryId: int2ptr(300),
+				},
+			},
+			wantRecs: []openapi.Record{},
+			wantErr:  false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -153,13 +197,13 @@ func TestAPIService_GetYYYYMMRecords(t *testing.T) {
 				Logger: tt.fields.Logger,
 				Repo:   tt.fields.Repo,
 			}
-			gotRecs, err := a.GetYYYYMMRecords(tt.args.ctx, tt.args.yyyymm)
+			gotRecs, err := a.GetYYYYMMRecords(tt.args.ctx, tt.args.yyyymm, tt.args.params)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("APIService.GetYYYYMMRecords() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(gotRecs, tt.wantRecs) {
-				t.Errorf("APIService.GetYYYYMMRecords() = %v, want %v", gotRecs, tt.wantRecs)
+				t.Errorf("APIService.GetYYYYMMRecords() = %#v, want %#v", gotRecs, tt.wantRecs)
 			}
 		})
 	}
