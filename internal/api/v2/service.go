@@ -123,6 +123,7 @@ func fyInterval(yyyy int) (yyyymm []string) {
 
 // GetYYYYMMRecords は yyyymm 月のレコードを取得する
 func (a *APIService) GetYYYYMMRecords(ctx context.Context, yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error) {
+	recs = []openapi.Record{}
 	a.Logger.Info("called get month records")
 
 	a.Logger.Info("get records from DB")
@@ -149,6 +150,7 @@ func (a *APIService) GetYYYYMMRecords(ctx context.Context, yyyymm string, params
 }
 
 func (a *APIService) GetYYYYMMRecordsRecent(ctx context.Context, yyyymm string, num int) (recs []openapi.Record, err error) {
+	recs = []openapi.Record{}
 	a.Logger.Info("called get month recent records")
 
 	a.Logger.Info("get records from DB")

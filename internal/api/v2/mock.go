@@ -57,7 +57,7 @@ func (m *mockRepo) GetMonthRecords(yyyymm string, params openapi.GetV2RecordYyyy
 				},
 			}
 		} else {
-			recs = nil
+			recs = []openapi.Record{}
 		}
 		return recs, nil
 	}

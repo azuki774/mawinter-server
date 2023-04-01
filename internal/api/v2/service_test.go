@@ -187,7 +187,7 @@ func TestAPIService_GetYYYYMMRecords(t *testing.T) {
 					CategoryId: int2ptr(300),
 				},
 			},
-			wantRecs: nil,
+			wantRecs: []openapi.Record{},
 			wantErr:  false,
 		},
 	}
@@ -203,7 +203,7 @@ func TestAPIService_GetYYYYMMRecords(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(gotRecs, tt.wantRecs) {
-				t.Errorf("APIService.GetYYYYMMRecords() = %v, want %v", gotRecs, tt.wantRecs)
+				t.Errorf("APIService.GetYYYYMMRecords() = %#v, want %#v", gotRecs, tt.wantRecs)
 			}
 		})
 	}

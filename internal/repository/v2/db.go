@@ -60,6 +60,9 @@ func (d *DBRepository) GetMonthRecords(yyyymm string, params openapi.GetV2Record
 	if params.CategoryId != nil {
 		// Category ID
 		res = d.Conn.Table(fmt.Sprintf("Record_%s", yyyymm)).Where("category_id = ?", *params.CategoryId).Find(&recs)
+		if recs == nil {
+			recs = []openapi.Record{} // null -> []
+		}
 	} else {
 		// No Option
 		res = d.Conn.Table(fmt.Sprintf("Record_%s", yyyymm)).Find(&recs)
