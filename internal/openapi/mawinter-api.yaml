@@ -192,11 +192,7 @@ paths:
       description: yyyymm のレコードをすべて表示する。パスパラメータで条件を絞ることができる。
       parameters:
         - schema:
-            type: string
-          in: query
-          name: from
-        - schema:
-            type: string
+            type: integer
           in: query
           name: category_id
   '/v2/record/summary/{year}':
