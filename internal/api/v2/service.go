@@ -25,7 +25,7 @@ func init() {
 type DBRepository interface {
 	CreateTableYYYYMM(yyyymm string) (err error)
 	InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error)
-	GetMonthRecords(yyyymm string) (recs []openapi.Record, err error)
+	GetMonthRecords(yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error)
 	GetMonthRecordsRecent(yyyymm string, num int) (recs []openapi.Record, err error)
 	MakeCategoryNameMap() (cnf map[int]string, err error)
 	GetMonthMidSummary(yyyymm string) (summon []model.CategoryMidMonthSummary, err error) // SELECT category_id, count(*), sum(price) FROM Record_202211 GROUP BY category_id;
@@ -36,6 +36,10 @@ type DBRepository interface {
 type APIService struct {
 	Logger *zap.Logger
 	Repo   DBRepository
+}
+
+func int2ptr(i int) *int {
+	return &i
 }
 
 func (a *APIService) PostRecord(ctx context.Context, req openapi.ReqRecord) (rec openapi.Record, err error) {
@@ -118,11 +122,11 @@ func fyInterval(yyyy int) (yyyymm []string) {
 }
 
 // GetYYYYMMRecords は yyyymm 月のレコードを取得する
-func (a *APIService) GetYYYYMMRecords(ctx context.Context, yyyymm string) (recs []openapi.Record, err error) {
+func (a *APIService) GetYYYYMMRecords(ctx context.Context, yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error) {
 	a.Logger.Info("called get month records")
 
 	a.Logger.Info("get records from DB")
-	recsRaw, err := a.Repo.GetMonthRecords(yyyymm) // category_name なし
+	recsRaw, err := a.Repo.GetMonthRecords(yyyymm, params) // category_name なし
 	if err != nil {
 		return nil, err
 	}

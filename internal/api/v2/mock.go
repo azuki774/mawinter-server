@@ -28,7 +28,40 @@ func (m *mockRepo) InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err 
 	return rec, nil
 }
 
-func (m *mockRepo) GetMonthRecords(yyyymm string) (recs []openapi.Record, err error) {
+func (m *mockRepo) GetMonthRecords(yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error) {
+	if params.CategoryId != nil {
+		if *params.CategoryId == 100 {
+			recs = []openapi.Record{
+				{
+					CategoryId: 100,
+					// CategoryName string    `json:"category_name"`
+					Datetime: time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+					From:     "from",
+					Id:       1,
+					Memo:     "memo",
+					Price:    1234,
+					Type:     "type",
+				},
+			}
+		} else if *params.CategoryId == 200 {
+			recs = []openapi.Record{
+				{
+					CategoryId: 200,
+					// CategoryName string    `json:"category_name"`
+					Datetime: time.Date(2000, 1, 25, 0, 0, 0, 0, jst),
+					From:     "",
+					Id:       2,
+					Memo:     "",
+					Price:    2345,
+					Type:     "",
+				},
+			}
+		} else {
+			recs = nil
+		}
+		return recs, nil
+	}
+
 	recs = []openapi.Record{
 		{
 			CategoryId: 100,
