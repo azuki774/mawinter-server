@@ -53,8 +53,18 @@ func (d *DBRepository) InsertRecord(req openapi.ReqRecord) (rec openapi.Record, 
 	return rec, nil
 }
 
-func (d *DBRepository) GetMonthRecords(yyyymm string) (recs []openapi.Record, err error) {
-	res := d.Conn.Table(fmt.Sprintf("Record_%s", yyyymm)).Find(&recs)
+func (d *DBRepository) GetMonthRecords(yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error) {
+	var res *gorm.DB
+
+	// TODO: params -> from の実装
+	if params.CategoryId != nil {
+		// Category ID
+		res = d.Conn.Table(fmt.Sprintf("Record_%s", yyyymm)).Where("category_id = ?", *params.CategoryId).Find(&recs)
+	} else {
+		// No Option
+		res = d.Conn.Table(fmt.Sprintf("Record_%s", yyyymm)).Find(&recs)
+	}
+
 	if errors.Is(res.Error, gorm.ErrRecordNotFound) { // TODO: 正しくは Error 1146 をハンドリングする
 		return []openapi.Record{}, model.ErrNotFound
 	} else if res.Error != nil {

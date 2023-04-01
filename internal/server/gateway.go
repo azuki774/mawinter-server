@@ -209,7 +209,7 @@ func (a *apigateway) GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request, y
 		return
 	}
 
-	recs, err := a.ap2.GetYYYYMMRecords(ctx, yyyymm)
+	recs, err := a.ap2.GetYYYYMMRecords(ctx, yyyymm, params)
 	if errors.Is(err, model.ErrNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprint(w, err.Error())
