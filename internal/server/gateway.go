@@ -197,11 +197,6 @@ func (a *apigateway) GetV2RecordYear(w http.ResponseWriter, r *http.Request, yea
 func (a *apigateway) GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request, yyyymm string, params openapi.GetV2RecordYyyymmParams) {
 	ctx := context.Background()
 
-	if params.CategoryId != nil {
-		w.WriteHeader(http.StatusNotImplemented)
-		return
-	}
-
 	err := model.ValidYYYYMM(yyyymm)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
