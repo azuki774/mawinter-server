@@ -46,5 +46,5 @@ jobs:
         run: rsync -avz -e "ssh -i id_for_sync -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${DOC_FILES} ${REMOTE_HOST}:${CONTENTS_DIR}
         env:
           DOC_FILES: "./docs/build/*"
-          REMOTE_HOST: "azuki@sage.azk774.net"
+          REMOTE_HOST: "azuki@akali.azuki.blue"
           CONTENTS_DIR: "/var/nginx/contents/mawinter/schema/"
