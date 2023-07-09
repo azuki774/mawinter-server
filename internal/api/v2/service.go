@@ -44,16 +44,24 @@ func int2ptr(i int) *int {
 
 func (a *APIService) PostRecord(ctx context.Context, req openapi.ReqRecord) (rec openapi.Record, err error) {
 	a.Logger.Info("called post record")
-	rec, err = a.Repo.InsertRecord(req)
-	if err != nil {
-		a.Logger.Error("failed to insert", zap.String("msg", err.Error()), zap.Error(err))
-		return openapi.Record{}, err
-	}
-
 	a.Logger.Info("get category name mapping")
+
 	// categoryNameMap 取得
 	cnf, err := a.Repo.MakeCategoryNameMap()
 	if err != nil {
+		return openapi.Record{}, err
+	}
+
+	_, ok := cnf[req.CategoryId] // DBにCategory IDがあるか確認
+	if !ok {
+		// Category ID がDBに未登録の場合
+		a.Logger.Warn("unknown category ID", zap.Int("category_id", rec.CategoryId))
+		return openapi.Record{}, model.ErrUnknownCategoryID
+	}
+
+	rec, err = a.Repo.InsertRecord(req)
+	if err != nil {
+		a.Logger.Error("failed to insert", zap.String("msg", err.Error()), zap.Error(err))
 		return openapi.Record{}, err
 	}
 	rec.CategoryName = cnf[rec.CategoryId]
