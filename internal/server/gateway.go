@@ -114,7 +114,12 @@ func (a *apigateway) PostV2Record(w http.ResponseWriter, r *http.Request) {
 
 	ctx := context.Background()
 	rec, err := a.ap2.PostRecord(ctx, req)
-	if err != nil {
+	if err != nil && errors.Is(err, model.ErrUnknownCategoryID) {
+		// Category ID情報がDBにない場合
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, err.Error())
+		return
+	} else if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, err.Error())
 		return
