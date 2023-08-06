@@ -44,7 +44,6 @@ func NewServiceV2(l *zap.Logger, db *v2db.DBRepository) (ap *v2.APIService) {
 	return &v2.APIService{Logger: l, Repo: db}
 }
 
-
 func NewRegisterService(l *zap.Logger, db *v1db.DBRepository, mc *client.MailClient) (ap *register.RegisterService) {
 	return &register.RegisterService{Logger: l, DB: db, MailClient: mc}
 }
@@ -70,5 +69,5 @@ func NewMailClient() *client.MailClient {
 }
 
 func NewDuplicateCheckService(l *zap.Logger, ap *v2.APIService) (svc *service.DuplicateCheckService) {
-	return &service.DuplicateCheckService{Logger: l, Ap: ap}
+	return &service.DuplicateCheckService{Logger: l, Ap: ap, MailClient: NewMailClient()}
 }
