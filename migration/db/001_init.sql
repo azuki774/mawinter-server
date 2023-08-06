@@ -41,7 +41,7 @@ create table `Record_YYYYMM` (
   `category_id` int NOT NULL,
   `datetime` datetime NOT NULL default current_timestamp,
   `from` varchar(64) NOT NULL,
-  `type` varchar(64) NOT NULL,
+  `type` varchar(64) NOT NULL, -- Ignore the check if 'D' is included
   `price` int NOT NULL,
   `memo` varchar(255) NOT NULL,
   `created_at` datetime default current_timestamp,
