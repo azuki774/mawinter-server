@@ -6,10 +6,21 @@ import (
 	"mawinter-server/internal/factory"
 	"mawinter-server/internal/server"
 	"mawinter-server/internal/timeutil"
+	"time"
 
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
+
+var jst *time.Location
+
+func init() {
+	j, err := time.LoadLocation("Asia/Tokyo")
+	if err != nil {
+		panic(err)
+	}
+	jst = j
+}
 
 type DuplicateCheckOption struct {
 	Logger *zap.Logger
@@ -20,7 +31,7 @@ type DuplicateCheckOption struct {
 		Pass string
 		Name string
 	}
-	YYYYMM string // proc month table
+	Lastmonth bool // if true, process last month table
 }
 
 var duplicateCheckOpt DuplicateCheckOption
@@ -58,13 +69,18 @@ func init() {
 	duplicateCheckCmd.Flags().StringVar(&duplicateCheckOpt.DBInfo.Name, "db-name", "mawinter", "DB Name")
 	duplicateCheckCmd.Flags().StringVar(&duplicateCheckOpt.DBInfo.User, "db-user", "root", "DB User")
 	duplicateCheckCmd.Flags().StringVar(&duplicateCheckOpt.DBInfo.Pass, "db-pass", "password", "DB Pass")
-	duplicateCheckCmd.Flags().StringVar(&duplicateCheckOpt.YYYYMM, "YYYYMM", "", "proc month table name (YYYYMM)")
+	duplicateCheckCmd.Flags().BoolVar(&duplicateCheckOpt.Lastmonth, "last-month", false, "if true, process last month table")
 }
 
 func Run() (err error) {
-	// TODO: validation
-	if duplicateCheckOpt.YYYYMM == "" {
-		duplicateCheckOpt.YYYYMM = timeutil.NowFunc().Format("200601")
+	var YYYYMM string // roc month table name (YYYYMM
+	thisMonth := time.Date(timeutil.NowFunc().Year(), timeutil.NowFunc().Month(), 1, 0, 0, 0, 0, jst)
+
+	if !duplicateCheckOpt.Lastmonth {
+		YYYYMM = timeutil.NowFunc().Format("200601")
+	} else {
+		// last month
+		YYYYMM = thisMonth.AddDate(0, -1, 0).Format("200601")
 	}
 
 	l, err := factory.NewLogger()
@@ -89,7 +105,7 @@ func Run() (err error) {
 	ap := factory.NewServiceV2(l, db)
 	svc := factory.NewDuplicateCheckService(l, ap)
 
-	l.Info("proc month table name", zap.String("YYYYMM", duplicateCheckOpt.YYYYMM))
+	l.Info("proc month table name", zap.String("YYYYMM", YYYYMM))
 
-	return svc.DuplicateCheck(ctx, duplicateCheckOpt.YYYYMM)
+	return svc.DuplicateCheck(ctx, YYYYMM)
 }
