@@ -12,10 +12,6 @@ type mockRepo struct {
 	errGetMonthly  error
 }
 
-type mockBillFetcher struct {
-	err error
-}
-
 type mockMailClient struct {
 	err error
 }
@@ -37,27 +33,6 @@ func (m *mockRepo) InsertUniqueCatIDRecord(req model.Recordstruct) (res model.Re
 	}, nil
 }
 
-func (m *mockBillFetcher) FetchBills(ctx context.Context, yyyymm string) (ress []model.BillAPIResponse, err error) {
-	if m.err != nil {
-		return []model.BillAPIResponse{}, m.err
-	}
-
-	ress = []model.BillAPIResponse{
-		{
-			BillName: "water",
-			Price:    12345,
-		},
-		{
-			BillName: "gas",
-			Price:    1234,
-		},
-		{
-			BillName: "elect",
-			Price:    123,
-		},
-	}
-	return ress, nil
-}
 func (m *mockRepo) GetMonthlyFixDone(yyyymm string) (flag bool, err error) {
 	if m.errGetMonthly != nil {
 		return false, m.errGetMonthly
