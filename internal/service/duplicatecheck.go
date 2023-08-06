@@ -46,6 +46,9 @@ func judgeDuplicateRecords(d1 openapi.Record, d2 openapi.Record) bool {
 }
 
 func (d *DuplicateCheckService) DuplicateCheck(ctx context.Context, yyyymm string) (err error) {
+	d.Logger.Info("DuplicateCheck start")
+	var dupInt = 0
+
 	recs, err := d.Ap.GetYYYYMMRecords(ctx, yyyymm, openapi.GetV2RecordYyyymmParams{})
 	if err != nil {
 		return err
@@ -70,10 +73,12 @@ func (d *DuplicateCheckService) DuplicateCheck(ctx context.Context, yyyymm strin
 
 			if judgeDuplicateRecords(u, v) {
 				// TODO: duplicate notification
-				d.Logger.Info("detect duplicate data")
+				d.Logger.Info("detect duplicate data", zap.Time("Date", u.Datetime))
+				dupInt++
 			}
 		}
 	}
 
+	d.Logger.Info("DuplicateCheck complete", zap.Int("rec_num", len(recs)), zap.Int("target_num", len(targets)), zap.Int("duplicate_num", dupInt))
 	return nil
 }
