@@ -16,7 +16,7 @@ type MailClient struct {
 func (m *MailClient) Send(ctx context.Context, to string, title string, body string) (err error) {
 	recipients := []string{to}
 
-	from := "mawinter@azk774.net"
+	from := m.SMTPUser
 	auth := smtp.PlainAuth("", m.SMTPUser, m.SMTPPass, m.SMTPHost)
 
 	// 送信先は１つのみ対応

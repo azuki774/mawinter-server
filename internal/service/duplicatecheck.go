@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"mawinter-server/internal/openapi"
+	"os"
 	"strings"
 	"time"
 
@@ -23,9 +24,13 @@ type APIServiceDup interface {
 	GetYYYYMMRecords(ctx context.Context, yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error)
 }
 
+type MailClient interface {
+	Send(ctx context.Context, to string, title string, body string) (err error)
+}
 type DuplicateCheckService struct {
 	Logger *zap.Logger
 	Ap     APIServiceDup
+	MailClient
 }
 
 func judgeDuplicateRecords(d1 openapi.Record, d2 openapi.Record) bool {
@@ -72,7 +77,13 @@ func (d *DuplicateCheckService) DuplicateCheck(ctx context.Context, yyyymm strin
 			}
 
 			if judgeDuplicateRecords(u, v) {
-				// TODO: duplicate notification
+				body := "duplicate data in " + u.Datetime.Format("20060102")
+				err = d.MailClient.Send(ctx, os.Getenv("MAIL_TO"), "[mawinter] detect duplicate data", body)
+				if err != nil {
+					d.Logger.Error("detect duplicate send mail error", zap.Error(err))
+					return err
+				}
+
 				d.Logger.Info("detect duplicate data", zap.Time("Date", u.Datetime))
 				dupInt++
 			}
