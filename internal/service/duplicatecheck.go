@@ -73,7 +73,7 @@ func (d *DuplicateCheckService) DuplicateCheck(ctx context.Context, yyyymm strin
 
 			if judgeDuplicateRecords(u, v) {
 				// TODO: duplicate notification
-				d.Logger.Info("detect duplicate data")
+				d.Logger.Info("detect duplicate data", zap.Time("Date", u.Datetime))
 				dupInt++
 			}
 		}
