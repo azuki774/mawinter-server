@@ -28,9 +28,9 @@ type MailClient interface {
 	Send(ctx context.Context, to string, title string, body string) (err error)
 }
 type DuplicateCheckService struct {
-	Logger *zap.Logger
-	Ap     APIServiceDup
-	MailClient
+	Logger     *zap.Logger
+	Ap         APIServiceDup
+	MailClient MailClient
 }
 
 func judgeDuplicateRecords(d1 openapi.Record, d2 openapi.Record) bool {
@@ -67,6 +67,8 @@ func (d *DuplicateCheckService) DuplicateCheck(ctx context.Context, yyyymm strin
 		}
 		targets = append(targets, r)
 	}
+
+	d.Logger.Info("fetch all records from monthly table")
 
 	// targets 内全体に重複の判定をかける
 	for i, u := range targets {

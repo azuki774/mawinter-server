@@ -103,8 +103,9 @@ func Test_judgeDuplicateRecords(t *testing.T) {
 
 func TestDuplicateCheckService_DuplicateCheck(t *testing.T) {
 	type fields struct {
-		Logger *zap.Logger
-		Ap     APIServiceDup
+		Logger     *zap.Logger
+		Ap         APIServiceDup
+		MailClient MailClient
 	}
 	type args struct {
 		ctx    context.Context
@@ -119,18 +120,23 @@ func TestDuplicateCheckService_DuplicateCheck(t *testing.T) {
 		{
 			name: "duplicate_exist",
 			fields: fields{
-				Logger: l,
-				Ap:     &mockAp{},
+				Logger:     l,
+				Ap:         &mockAp{},
+				MailClient: &mockMailClient{},
 			},
-			args:    args{},
+			args: args{
+				ctx:    context.Background(),
+				yyyymm: "200012",
+			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			d := &DuplicateCheckService{
-				Logger: tt.fields.Logger,
-				Ap:     tt.fields.Ap,
+				Logger:     tt.fields.Logger,
+				Ap:         tt.fields.Ap,
+				MailClient: tt.fields.MailClient,
 			}
 			if err := d.DuplicateCheck(tt.args.ctx, tt.args.yyyymm); (err != nil) != tt.wantErr {
 				t.Errorf("DuplicateCheckService.DuplicateCheck() error = %v, wantErr %v", err, tt.wantErr)
