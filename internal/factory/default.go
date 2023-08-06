@@ -44,12 +44,9 @@ func NewServiceV2(l *zap.Logger, db *v2db.DBRepository) (ap *v2.APIService) {
 	return &v2.APIService{Logger: l, Repo: db}
 }
 
-func NewFetcherBill(billEndpoint string) *client.BillFetcher {
-	return &client.BillFetcher{BillEndpoint: billEndpoint}
-}
 
-func NewRegisterService(l *zap.Logger, db *v1db.DBRepository, fet *client.BillFetcher, mc *client.MailClient) (ap *register.RegisterService) {
-	return &register.RegisterService{Logger: l, DB: db, BillFetcher: fet, MailClient: mc}
+func NewRegisterService(l *zap.Logger, db *v1db.DBRepository, mc *client.MailClient) (ap *register.RegisterService) {
+	return &register.RegisterService{Logger: l, DB: db, MailClient: mc}
 }
 
 func NewServer(l *zap.Logger, ap1 *v1.APIService, ap2 *v2.APIService) *server.Server {
