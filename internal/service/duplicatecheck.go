@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"mawinter-server/internal/openapi"
 	"os"
 	"strings"
@@ -70,6 +71,7 @@ func (d *DuplicateCheckService) DuplicateCheck(ctx context.Context, yyyymm strin
 
 	d.Logger.Info("fetch all records from monthly table")
 
+	mailbody := "duplicate data: \n"
 	// targets 内全体に重複の判定をかける
 	for i, u := range targets {
 		for j, v := range targets {
@@ -79,13 +81,7 @@ func (d *DuplicateCheckService) DuplicateCheck(ctx context.Context, yyyymm strin
 			}
 
 			if judgeDuplicateRecords(u, v) {
-				body := "duplicate data in " + u.Datetime.Format("20060102")
-				err = d.MailClient.Send(ctx, os.Getenv("MAIL_TO"), "[mawinter] detect duplicate data", body)
-				if err != nil {
-					d.Logger.Error("detect duplicate send mail error", zap.Error(err))
-					return err
-				}
-
+				mailbody += fmt.Sprintf("date = %s, category_id = %d, price = %d\n", u.Datetime, u.CategoryId, u.Price)
 				d.Logger.Info("detect duplicate data", zap.Time("Date", u.Datetime))
 				dupInt++
 			}
@@ -93,5 +89,13 @@ func (d *DuplicateCheckService) DuplicateCheck(ctx context.Context, yyyymm strin
 	}
 
 	d.Logger.Info("DuplicateCheck complete", zap.Int("rec_num", len(recs)), zap.Int("target_num", len(targets)), zap.Int("duplicate_num", dupInt))
+	if dupInt > 0 {
+		err = d.MailClient.Send(ctx, os.Getenv("MAIL_TO"), "[mawinter] detect duplicate report", mailbody)
+		if err != nil {
+			d.Logger.Error("detect duplicate send mail error", zap.Error(err))
+			return err
+		}
+	}
+
 	return nil
 }
