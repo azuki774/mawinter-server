@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
+	"mawinter-server/internal/timeutil"
 	"time"
 
 	"gorm.io/gorm"
@@ -206,4 +207,19 @@ func (d *DBRepository) GetMonthlyFixDone(yyyymm string) (done bool, err error) {
 	}
 	// already registed
 	return true, nil
+}
+
+func (d *DBRepository) GetMonthlyConfirm(yyyymm string) (yc openapi.ConfirmInfo, err error) {
+	// TODO
+	return openapi.ConfirmInfo{}, nil
+}
+
+func (d *DBRepository) UpdateMonthlyConfirm(yyyymm string, confirm bool) (yc openapi.ConfirmInfo, err error) {
+	// TODO
+	t := timeutil.NowFunc() // testconfig
+	return openapi.ConfirmInfo{
+		ConfirmDatetime: &t,
+		Status:          &confirm,
+		Yyyymm:          &yyyymm,
+	}, nil
 }

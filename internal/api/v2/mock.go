@@ -3,11 +3,13 @@ package api
 import (
 	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
+	"mawinter-server/internal/timeutil"
 	"time"
 )
 
 type mockRepo struct {
 	GetMonthlyFixDoneReturn bool
+	ReturnConfirm           bool // ここが true ならば各テーブルは confirm していることにする
 }
 
 func (m *mockRepo) CreateTableYYYYMM(yyyymm string) (err error) {
@@ -173,4 +175,20 @@ func (m *mockRepo) InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record
 
 func (m *mockRepo) GetMonthlyFixDone(yyyymm string) (done bool, err error) {
 	return m.GetMonthlyFixDoneReturn, nil
+}
+
+func (m *mockRepo) GetMonthlyConfirm(yyyymm string) (yc openapi.ConfirmInfo, err error) {
+	return openapi.ConfirmInfo{
+		Status: &m.ReturnConfirm,
+	}, nil
+}
+
+func (m *mockRepo) UpdateMonthlyConfirm(yyyymm string, confirm bool) (yc openapi.ConfirmInfo, err error) {
+	// 正常系
+	t := timeutil.NowFunc() // testconfig
+	return openapi.ConfirmInfo{
+		ConfirmDatetime: &t,
+		Status:          &confirm,
+		Yyyymm:          &yyyymm,
+	}, nil
 }

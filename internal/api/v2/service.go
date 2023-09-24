@@ -31,6 +31,8 @@ type DBRepository interface {
 	GetMonthMidSummary(yyyymm string) (summon []model.CategoryMidMonthSummary, err error) // SELECT category_id, count(*), sum(price) FROM Record_202211 GROUP BY category_id;
 	InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record, err error)
 	GetMonthlyFixDone(yyyymm string) (done bool, err error)
+	GetMonthlyConfirm(yyyymm string) (yc openapi.ConfirmInfo, err error)
+	UpdateMonthlyConfirm(yyyymm string, confirm bool) (yc openapi.ConfirmInfo, err error)
 }
 
 type APIService struct {
