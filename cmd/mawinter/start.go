@@ -58,12 +58,6 @@ func start() (err error) {
 	}
 	defer l.Sync()
 
-	db1, err := factory.NewDBRepositoryV1(startOpt.DBInfo.Host, startOpt.DBInfo.Port, startOpt.DBInfo.User, startOpt.DBInfo.Pass, startOpt.DBInfo.Name)
-	if err != nil {
-		l.Error("failed to connect DB", zap.Error(err))
-		return err
-	}
-
 	db2, err := factory.NewDBRepositoryV2(startOpt.DBInfo.Host, startOpt.DBInfo.Port, startOpt.DBInfo.User, startOpt.DBInfo.Pass, startOpt.DBInfo.Name)
 	if err != nil {
 		l.Error("failed to connect DB", zap.Error(err))
@@ -71,9 +65,8 @@ func start() (err error) {
 	}
 	defer db2.CloseDB()
 
-	ap1 := factory.NewServiceV1(l, db1)
 	ap2 := factory.NewServiceV2(l, db2)
-	srv := factory.NewServer(l, ap1, ap2)
+	srv := factory.NewServer(l, ap2)
 	ctx := context.Background()
 
 	l.Info("binary info", zap.String("version", version), zap.String("revision", revision), zap.String("build", build))

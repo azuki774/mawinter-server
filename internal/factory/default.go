@@ -2,7 +2,6 @@ package factory
 
 import (
 	"fmt"
-	v1 "mawinter-server/internal/api/v1"
 	v2 "mawinter-server/internal/api/v2"
 	"mawinter-server/internal/client"
 	"mawinter-server/internal/register"
@@ -36,10 +35,6 @@ func JSTTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.In(jst).Format(layout))
 }
 
-func NewServiceV1(l *zap.Logger, db *v1db.DBRepository) (ap *v1.APIService) {
-	return &v1.APIService{Logger: l, Repo: db}
-}
-
 func NewServiceV2(l *zap.Logger, db *v2db.DBRepository) (ap *v2.APIService) {
 	return &v2.APIService{Logger: l, Repo: db}
 }
@@ -48,8 +43,8 @@ func NewRegisterService(l *zap.Logger, db *v1db.DBRepository, mc *client.MailCli
 	return &register.RegisterService{Logger: l, DB: db, MailClient: mc}
 }
 
-func NewServer(l *zap.Logger, ap1 *v1.APIService, ap2 *v2.APIService) *server.Server {
-	return &server.Server{Logger: l, Ap1: ap1, Ap2: ap2, BasicAuth: struct {
+func NewServer(l *zap.Logger, ap2 *v2.APIService) *server.Server {
+	return &server.Server{Logger: l, Ap2: ap2, BasicAuth: struct {
 		User string
 		Pass string
 	}{os.Getenv("BASIC_AUTH_USERNAME"), os.Getenv("BASIC_AUTH_PASSWORD")}}
