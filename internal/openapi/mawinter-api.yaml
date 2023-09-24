@@ -1,9 +1,7 @@
 openapi: 3.1.0
-x-stoplight:
-  id: iayxih3222x5z
 info:
-  title: mawinter-api
   version: '1.0'
+  title: mawinter-api
   description: ''
 servers:
   - url: 'http://localhost:8080'
@@ -11,144 +9,59 @@ paths:
   /:
     get:
       summary: health check
-      tags: []
-      responses: {}
-      operationId: get
       description: |-
         health check
         always return 'It is the root page'
-  /record/:
-    post:
-      summary: post new a record
-      tags: []
-      responses:
-        '200':
-          description: OK
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/record'
-              examples:
-                Example 1:
-                  value:
-                    id: 123
-                    category_id: 400
-                    category_name: cat1
-                    datetime: '2021-01-01T00:00:00Z'
-                    from: discord
-                    type: ''
-                    price: 1234
-                    memo: ''
-      operationId: post-record
-      description: 家計簿データを追加する。
-      x-internal: false
+      operationId: get
+      responses: {}
+      servers:
+        - url: 'http://localhost:8080'
+  /version:
+    get:
+      summary: Your GET endpoint
+      operationId: get-version
       requestBody:
         content:
           application/json:
             schema:
               type: object
-            examples:
-              Example 1:
-                value:
-                  category_id: 120
-                  datetime: '20210101'
-                  from: discord
-                  type: ''
-                  price: 210
-                  memo: ''
-      deprecated: true
-    parameters: []
-  '/record/year/{year}':
-    parameters:
-      - schema:
-          type: string
-        name: year
-        in: path
-        required: true
-    get:
-      summary: get year records
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-              examples:
-                Example 1:
-                  value:
-                    - category_id: 210
-                      category_name: 種類
-                      price:
-                        - 4
-                        - 5
-                        - 6
-                        - 7
-                        - 8
-                        - 9
-                        - 10
-                        - 11
-                        - 12
-                        - 1
-                        - 2
-                        - 3
-                      total: 213912
-                    - category_id: 211
-                      category_name: 種類
-                      price:
-                        - 4
-                        - 5
-                        - 6
-                        - 7
-                        - 8
-                        - 9
-                        - 10
-                        - 11
-                        - 12
-                        - 1
-                        - 2
-                        - 3
-                      total: 4210
-      operationId: get-record-year-year
-      description: 'FY{year} の 年間サマリを取得する。'
-      deprecated: true
-  '/table/{year}':
-    parameters:
-      - schema:
-          type: number
-        name: year
-        in: path
-        required: true
-    post:
-      summary: create new YYYYMM table
-      tags: []
+              properties:
+                version:
+                  type: string
+                revision:
+                  type: string
+                build:
+                  type: string
       responses: {}
-      operationId: post-table-year
-      deprecated: true
+      servers:
+        - url: 'http://localhost:8080'
   '/v2/table/{year}':
-    parameters:
-      - schema:
-          type: integer
-        name: year
-        in: path
-        required: true
     post:
       summary: create record table
       operationId: post-v2-table-year
+      parameters:
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         '201':
           description: Created
         '204':
           description: No Content
+      servers:
+        - url: 'http://localhost:8080'
   /v2/record:
     post:
       summary: create record
+      description: レコードを1つ追加する
       operationId: post-v2-record
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/req_record'
       responses:
         '201':
           description: Created
@@ -159,71 +72,18 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/record'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/req_record'
-      description: レコードを1つ追加する
-  '/v2/record/{yyyymm}':
-    parameters:
-      - schema:
-          type: string
-        name: yyyymm
-        in: path
-        required: true
-    get:
-      summary: get month records
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/record'
-                  x-stoplight:
-                    id: 6xjqcey0mchrl
-        '404':
-          description: Not Found
-      operationId: get-v2-record-yyyymm
-      description: yyyymm のレコードをすべて表示する。パスパラメータで条件を絞ることができる。
-      parameters:
-        - schema:
-            type: integer
-          in: query
-          name: category_id
-  '/v2/record/summary/{year}':
-    parameters:
-      - schema:
-          type: integer
-        name: year
-        in: path
-        required: true
-    get:
-      summary: get year summary
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/category_year_summary'
-                  x-stoplight:
-                    id: opjpjcb06ir6o
-        '404':
-          description: Not Found
-      operationId: get-v2-record-year
-      description: year 年度のサマリーを表示する
+      servers:
+        - url: 'http://localhost:8080'
   /v2/record/fixmonth:
     post:
       summary: create fixmonth record
+      description: DBに登録している固定費テーブルの内容を、当月のRecord_YYYYMMに追加する
       operationId: post-v2-record-fixmonth
+      parameters:
+        - name: yyyymm
+          in: query
+          schema:
+            type: integer
       responses:
         '201':
           description: Created
@@ -233,51 +93,79 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/record'
-                  x-stoplight:
-                    id: vu4xbpn3gtb8b
         '204':
           description: No Content
-      description: DBに登録している固定費テーブルの内容を、当月のRecord_YYYYMMに追加する
+      servers:
+        - url: 'http://localhost:8080'
+  '/v2/record/{yyyymm}/confirm':
+    put:
+      summary: ''
+      operationId: put-v2-table-yyyymm-confirm
       parameters:
-        - schema:
-            type: integer
-          in: query
-          name: yyyymm
-    parameters: []
-  /version:
-    get:
-      summary: Your GET endpoint
-      tags: []
-      responses: {}
-      operationId: get-version
+        - name: yyyymm
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                version:
-                  type: string
-                  x-stoplight:
-                    id: rhq0fauy33tl0
-                revision:
-                  type: string
-                  x-stoplight:
-                    id: qe6fmbcam4nvh
-                build:
-                  type: string
-                  x-stoplight:
-                    id: 3glrzkw2ejgxh
-  '/v2/record/{yyyymm}/recent':
-    parameters:
-      - schema:
-          type: string
-        name: yyyymm
-        in: path
-        required: true
+                status:
+                  type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/confirm_info'
+            application/xml:
+              schema:
+                type: object
+        '404':
+          description: Not Found
+      servers:
+        - url: 'http://localhost:8080'
     get:
-      summary: Your GET endpoint
-      tags: []
+      summary: ''
+      operationId: get-v2-record-yyyymm-confirm
+      parameters:
+        - name: yyyymm
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/confirm_info'
+        '404':
+          description: Not Found
+      servers:
+        - url: 'http://localhost:8080'
+  '/v2/record/{yyyymm}':
+    get:
+      summary: get month records
+      description: yyyymm のレコードをすべて表示する。パスパラメータで条件を絞ることができる。
+      operationId: get-v2-record-yyyymm
+      parameters:
+        - name: category_id
+          in: query
+          schema:
+            type: integer
+        - name: yyyymm
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: OK
@@ -287,24 +175,141 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/record'
-                  x-stoplight:
-                    id: ejqo8blv6fmd9
+            multipart/form-data:
+              schema:
+                $ref: '#/components/schemas/record'
         '404':
           description: Not Found
+      servers:
+        - url: 'http://localhost:8080'
+  '/v2/record/summary/{year}':
+    get:
+      summary: get year summary
+      description: year 年度のサマリーを表示する
+      operationId: get-v2-record-year
+      parameters:
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/category_year_summary'
+        '404':
+          description: Not Found
+      servers:
+        - url: 'http://localhost:8080'
+  '/v2/record/{yyyymm}/recent':
+    get:
+      summary: Your GET endpoint
       operationId: get-v2-record-yyyymm-recent
       parameters:
-        - schema:
-            type: integer
+        - name: num
           in: query
-          name: num
           description: max record number
+          schema:
+            type: integer
+        - name: yyyymm
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/record'
+        '404':
+          description: Not Found
+      servers:
+        - url: 'http://localhost:8080'
 components:
   schemas:
-    category_year_summary:
-      title: category_year_summary
-      x-stoplight:
-        id: 3cphpxfvazyb5
+    req_record:
       type: object
+      title: req_record
+      properties:
+        category_id:
+          type: integer
+        price:
+          type: integer
+        datetime:
+          type: string
+          pattern: '[0-9]'
+          examples:
+            - '20060102'
+        from:
+          type: string
+        type:
+          type: string
+        memo:
+          type: string
+      required:
+        - category_id
+        - price
+      examples:
+        - category_id: 120
+          datetime: '20230101'
+          from: discord
+          type: ''
+          price: 210
+          memo: ''
+    record:
+      type: object
+      title: record
+      properties:
+        id:
+          type: integer
+        category_id:
+          type: integer
+        category_name:
+          type: string
+        datetime:
+          type: string
+          format: date-time
+        from:
+          type: string
+        type:
+          type: string
+        price:
+          type: integer
+        memo:
+          type: string
+      required:
+        - id
+        - category_id
+        - category_name
+        - datetime
+        - from
+        - type
+        - price
+        - memo
+      examples: []
+    confirm_info:
+      type: object
+      title: confirm_info
+      properties:
+        yyyymm:
+          type: string
+        confirm_datetime:
+          type: string
+          format: date-time
+        status:
+          type: boolean
+    category_year_summary:
+      type: object
+      title: category_year_summary
       properties:
         category_id:
           type: integer
@@ -312,16 +317,15 @@ components:
           type: string
         count:
           type: integer
-          x-stoplight:
-            id: tnic45r9oa7pe
         price:
           type: array
-          maxItems: 12
           minItems: 12
+          maxItems: 12
           items:
             type: integer
             default: 0
-            example: 300
+            examples:
+              - 300
         total:
           type: integer
       required:
@@ -348,95 +352,3 @@ components:
             - 300
             - 300
           total: 0
-      description: ''
-    record:
-      title: record
-      x-stoplight:
-        id: 4wwkw77fk5ukt
-      type: object
-      examples: []
-      properties:
-        id:
-          type: integer
-        category_id:
-          type: integer
-          x-stoplight:
-            id: fm5qc6s76y2qn
-        category_name:
-          type: string
-          x-stoplight:
-            id: xqd1g63fc9869
-        datetime:
-          type: string
-          x-stoplight:
-            id: sf70dr6dud4dp
-          format: date-time
-        from:
-          type: string
-          x-stoplight:
-            id: 6f2ix36jzus3z
-        type:
-          type: string
-          x-stoplight:
-            id: 0rvnym8g6sjrv
-        price:
-          type: integer
-          x-stoplight:
-            id: g1bepmv8ntfni
-        memo:
-          type: string
-          x-stoplight:
-            id: pm4447zn0fze1
-      required:
-        - id
-        - category_id
-        - category_name
-        - datetime
-        - from
-        - type
-        - price
-        - memo
-      description: ''
-    req_record:
-      title: req_record
-      x-stoplight:
-        id: fa50bs6wli9ep
-      type: object
-      examples:
-        - category_id: 120
-          datetime: '20230101'
-          from: discord
-          type: ''
-          price: 210
-          memo: ''
-      properties:
-        category_id:
-          type: integer
-          x-stoplight:
-            id: 6wkcobddru2tu
-        price:
-          type: integer
-          x-stoplight:
-            id: d8ma692tpj8k4
-        datetime:
-          type: string
-          x-stoplight:
-            id: hms0ndadqlb2c
-          pattern: '[0-9]'
-          example: '20060102'
-        from:
-          type: string
-          x-stoplight:
-            id: ghw9bhhguntyj
-        type:
-          type: string
-          x-stoplight:
-            id: aenvvejre3h3q
-        memo:
-          type: string
-          x-stoplight:
-            id: zwb411cvei6bn
-      required:
-        - category_id
-        - price
-  requestBodies: {}

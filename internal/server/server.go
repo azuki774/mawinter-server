@@ -36,7 +36,6 @@ type APIServiceV2 interface {
 }
 type Server struct {
 	Logger    *zap.Logger
-	Ap1       APIServiceV1
 	Ap2       APIServiceV2
 	BasicAuth struct {
 		User string
@@ -54,7 +53,7 @@ func (s *Server) Start(ctx context.Context) error {
 	r := chi.NewRouter()
 	r.Use(s.middlewareLogging)
 
-	openapi.HandlerFromMux(&apigateway{Logger: s.Logger, ap1: s.Ap1, ap2: s.Ap2}, r)
+	openapi.HandlerFromMux(&apigateway{Logger: s.Logger, ap2: s.Ap2}, r)
 	addr := ":8080"
 	if err := http.ListenAndServe(addr, r); err != nil {
 		s.Logger.Error("failed to listen and serve", zap.Error(err))
