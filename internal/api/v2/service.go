@@ -245,7 +245,47 @@ func (a *APIService) GetV2YearSummary(ctx context.Context, year int) (sums []ope
 		return sums[i].CategoryId < sums[j].CategoryId
 	})
 
-	a.Logger.Info("cpmplete get year summary")
+	a.Logger.Info("complete get year summary")
 
 	return sums, nil
+}
+
+func (a *APIService) GetMonthlyConfirm(ctx context.Context, yyyymm string) (yc openapi.ConfirmInfo, err error) {
+	a.Logger.Info("called GetMonthlyConfirm")
+	yc.Yyyymm = &yyyymm
+	yc, err = a.Repo.GetMonthlyConfirm(yyyymm)
+	if err != nil {
+		// NotFound -> status = false
+		if errors.Is(err, model.ErrNotFound) {
+			f := false
+			yc.Status = &f
+			a.Logger.Info("monthly confirm record is not found", zap.Error(err))
+		} else {
+			// Internal error -> error
+			a.Logger.Error("failed to get monthly confirm", zap.Error(err))
+			return openapi.ConfirmInfo{}, err
+		}
+	} else {
+		// success fetch data
+		a.Logger.Info("fetch monthly confirm successfully", zap.Error(err))
+	}
+
+	a.Logger.Info("complete GetMonthlyConfirm")
+	return yc, nil
+}
+
+func (a *APIService) UpdateMonthlyConfirm(ctx context.Context, yyyymm string, confirm bool) (yc openapi.ConfirmInfo, err error) {
+	a.Logger.Info("called UpdateMonthlyConfirm")
+	yc.Yyyymm = &yyyymm
+	yc, err = a.Repo.UpdateMonthlyConfirm(yyyymm, confirm)
+	if err != nil {
+		// Internal error -> error
+		a.Logger.Error("failed to get monthly confirm", zap.Error(err))
+		return openapi.ConfirmInfo{}, err
+	}
+	// success fetch data
+	a.Logger.Info("update monthly confirm successfully", zap.Error(err))
+
+	a.Logger.Info("complete UpdateMonthlyConfirm")
+	return yc, nil
 }

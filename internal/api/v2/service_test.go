@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"mawinter-server/internal/openapi"
+	"mawinter-server/internal/timeutil"
 	"reflect"
 	"testing"
 	"time"
@@ -476,6 +477,163 @@ func TestAPIService_PostMonthlyFixRecord(t *testing.T) {
 			}
 			if !reflect.DeepEqual(gotRecs, tt.wantRecs) {
 				t.Errorf("APIService.PostMonthlyFixRecord() = %v, want %v", gotRecs, tt.wantRecs)
+			}
+		})
+	}
+}
+
+func TestAPIService_GetMonthlyConfirm(t *testing.T) {
+	testDate := time.Date(2000, 1, 23, 1, 23, 0, 0, jst)
+	boolTrue := true
+	boolFalse := false
+	type fields struct {
+		Logger *zap.Logger
+		Repo   DBRepository
+	}
+	type args struct {
+		ctx    context.Context
+		yyyymm string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantYc  openapi.ConfirmInfo
+		wantErr bool
+	}{
+		{
+			name: "ok (true)",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{ReturnConfirm: true},
+			},
+			args: args{
+				ctx:    context.Background(),
+				yyyymm: "200001",
+			},
+			wantYc: openapi.ConfirmInfo{
+				ConfirmDatetime: &testDate,
+				Status:          &boolTrue,
+				Yyyymm:          strPtr("200001"),
+			},
+			wantErr: false,
+		},
+		{
+			name: "ok (false)",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx:    context.Background(),
+				yyyymm: "200001",
+			},
+			wantYc: openapi.ConfirmInfo{
+				ConfirmDatetime: &testDate,
+				Status:          &boolFalse,
+				Yyyymm:          strPtr("200001"),
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// set test time
+			timeutil.NowFunc = func() time.Time {
+				return testDate
+			}
+
+			a := &APIService{
+				Logger: tt.fields.Logger,
+				Repo:   tt.fields.Repo,
+			}
+			gotYc, err := a.GetMonthlyConfirm(tt.args.ctx, tt.args.yyyymm)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("APIService.GetMonthlyConfirm() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotYc, tt.wantYc) {
+				t.Errorf("APIService.GetMonthlyConfirm() = %v, want %v", gotYc, tt.wantYc)
+			}
+		})
+	}
+}
+
+func TestAPIService_UpdateMonthlyConfirm(t *testing.T) {
+	testDate := time.Date(2000, 1, 23, 1, 23, 0, 0, jst)
+	boolTrue := true
+	boolFalse := false
+	type fields struct {
+		Logger *zap.Logger
+		Repo   DBRepository
+	}
+	type args struct {
+		ctx     context.Context
+		yyyymm  string
+		confirm bool
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantYc  openapi.ConfirmInfo
+		wantErr bool
+	}{
+		{
+			name: "ok (-> true)",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{ReturnConfirm: true},
+			},
+			args: args{
+				ctx:     context.Background(),
+				yyyymm:  "200001",
+				confirm: true,
+			},
+			wantYc: openapi.ConfirmInfo{
+				ConfirmDatetime: &testDate,
+				Status:          &boolTrue,
+				Yyyymm:          strPtr("200001"),
+			},
+			wantErr: false,
+		},
+		{
+			name: "ok (-> false)",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx:     context.Background(),
+				yyyymm:  "200001",
+				confirm: false,
+			},
+			wantYc: openapi.ConfirmInfo{
+				ConfirmDatetime: &testDate,
+				Status:          &boolFalse,
+				Yyyymm:          strPtr("200001"),
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// set test time
+			timeutil.NowFunc = func() time.Time {
+				return testDate
+			}
+
+			a := &APIService{
+				Logger: tt.fields.Logger,
+				Repo:   tt.fields.Repo,
+			}
+			gotYc, err := a.UpdateMonthlyConfirm(tt.args.ctx, tt.args.yyyymm, tt.args.confirm)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("APIService.UpdateMonthlyConfirm() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotYc, tt.wantYc) {
+				t.Errorf("APIService.UpdateMonthlyConfirm() = %v, want %v", gotYc, tt.wantYc)
 			}
 		})
 	}
