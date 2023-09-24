@@ -58,3 +58,11 @@ type SumPriceCategoryID struct {
 	Count      int64
 	Sum        int64
 }
+
+type MonthlyConfirm struct {
+	YYYYMM          string    `gorm:"column:yyyymm;primaryKey"`
+	Confirm         uint8     `gorm:"column:confirm"`
+	ConfirmDatetime time.Time `gorm:"column:confirm_datetime"`
+	CreatedAt       time.Time `gorm:"column:created_at"`
+	UpdatedAt       time.Time `gorm:"column:updated_at"`
+}

@@ -319,3 +319,58 @@ func TestDBRepository_InsertMonthlyFixBilling(t *testing.T) {
 		})
 	}
 }
+
+func Test_dbModelToConfirmInfo(t *testing.T) {
+	boolTrue := true
+	boolFalse := false
+	testDate := time.Date(2006, 1, 23, 0, 0, 0, 0, jst)
+	type args struct {
+		mc model.MonthlyConfirm
+	}
+	tests := []struct {
+		name   string
+		args   args
+		wantYc openapi.ConfirmInfo
+	}{
+		{
+			name: "ok (true)",
+			args: args{
+				mc: model.MonthlyConfirm{
+					YYYYMM:          "200601",
+					Confirm:         uint8(1),
+					ConfirmDatetime: testDate,
+					CreatedAt:       testDate,
+					UpdatedAt:       testDate,
+				},
+			},
+			wantYc: openapi.ConfirmInfo{
+				ConfirmDatetime: &testDate,
+				Status:          &boolTrue,
+				Yyyymm:          strPtr("200601"),
+			},
+		},
+		{
+			name: "ok (false)",
+			args: args{
+				mc: model.MonthlyConfirm{
+					YYYYMM:          "200601",
+					Confirm:         uint8(0),
+					ConfirmDatetime: testDate,
+					CreatedAt:       testDate,
+					UpdatedAt:       testDate,
+				},
+			},
+			wantYc: openapi.ConfirmInfo{
+				Status: &boolFalse,
+				Yyyymm: strPtr("200601"),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotYc := dbModelToConfirmInfo(tt.args.mc); !reflect.DeepEqual(gotYc, tt.wantYc) {
+				t.Errorf("dbModelToConfirmInfo() = %v, want %v", gotYc, tt.wantYc)
+			}
+		})
+	}
+}
