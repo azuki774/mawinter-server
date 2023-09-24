@@ -178,8 +178,12 @@ func (m *mockRepo) GetMonthlyFixDone(yyyymm string) (done bool, err error) {
 }
 
 func (m *mockRepo) GetMonthlyConfirm(yyyymm string) (yc openapi.ConfirmInfo, err error) {
+	// 正常系
+	t := timeutil.NowFunc() // testconfig
 	return openapi.ConfirmInfo{
-		Status: &m.ReturnConfirm,
+		ConfirmDatetime: &t,
+		Status:          &m.ReturnConfirm,
+		Yyyymm:          &yyyymm,
 	}, nil
 }
 
