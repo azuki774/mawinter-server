@@ -238,42 +238,28 @@ func (a *apigateway) PostV2TableYear(w http.ResponseWriter, r *http.Request, yea
 
 // (GET /v2/record/{yyyymm}/confirm)
 func (a *apigateway) GetV2RecordYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string) {
-	// TODO
-	vers := openapi.GetVersionJSONBody{
-		Version:  str2ptr(Version),
-		Revision: str2ptr(Revision),
-		Build:    str2ptr(Build),
-	}
-	outputJson, err := json.Marshal(&vers)
+	err := model.ValidYYYYMM(yyyymm)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, err.Error())
-		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, string(outputJson))
+	fmt.Fprint(w, "NotYetImplemented")
 }
 
 // (PUT /v2/record/{yyyymm}/confirm)
 func (a *apigateway) PutV2TableYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string) {
-	// TODO
-	vers := openapi.GetVersionJSONBody{
-		Version:  str2ptr(Version),
-		Revision: str2ptr(Revision),
-		Build:    str2ptr(Build),
-	}
-	outputJson, err := json.Marshal(&vers)
+	err := model.ValidYYYYMM(yyyymm)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, err.Error())
-		return
 	}
-
+	// TODO
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, string(outputJson))
+	fmt.Fprint(w, "NotYetImplemented")
 }
 
 // (GET /version)
