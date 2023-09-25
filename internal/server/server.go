@@ -33,6 +33,8 @@ type APIServiceV2 interface {
 	GetYYYYMMRecords(ctx context.Context, yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error)
 	GetYYYYMMRecordsRecent(ctx context.Context, yyyymm string, num int) (recs []openapi.Record, err error)
 	GetV2YearSummary(ctx context.Context, year int) (sums []openapi.CategoryYearSummary, err error)
+	GetMonthlyConfirm(ctx context.Context, yyyymm string) (yc openapi.ConfirmInfo, err error)
+	UpdateMonthlyConfirm(ctx context.Context, yyyymm string, confirm bool) (yc openapi.ConfirmInfo, err error)
 }
 type Server struct {
 	Logger    *zap.Logger
