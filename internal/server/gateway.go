@@ -238,28 +238,65 @@ func (a *apigateway) PostV2TableYear(w http.ResponseWriter, r *http.Request, yea
 
 // (GET /v2/record/{yyyymm}/confirm)
 func (a *apigateway) GetV2RecordYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string) {
+	ctx := context.Background()
 	err := model.ValidYYYYMM(yyyymm)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, err.Error())
 	}
+	yc, err := a.ap2.GetMonthlyConfirm(ctx, yyyymm)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	outputJson, err := json.Marshal(&yc)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, "NotYetImplemented")
+	fmt.Fprint(w, string(outputJson))
 }
 
 // (PUT /v2/record/{yyyymm}/confirm)
 func (a *apigateway) PutV2TableYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string) {
+	ctx := context.Background()
 	err := model.ValidYYYYMM(yyyymm)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, err.Error())
 	}
-	// TODO
+
+	var req openapi.ConfirmInfo
+	err = json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	yc, err := a.ap2.UpdateMonthlyConfirm(ctx, yyyymm, *req.Status)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	outputJson, err := json.Marshal(&yc)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, "NotYetImplemented")
+	fmt.Fprint(w, string(outputJson))
 }
 
 // (GET /version)
