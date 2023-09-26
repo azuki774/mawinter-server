@@ -61,6 +61,11 @@ func (a *apigateway) PostV2Record(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, err.Error())
 		return
+	} else if err != nil && errors.Is(err, model.ErrAlreadyRecorded) {
+		// confirm month 確定済の月だった場合
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, "already confirmed month")
+		return
 	} else if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, err.Error())

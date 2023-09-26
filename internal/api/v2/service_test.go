@@ -79,6 +79,28 @@ func TestAPIService_PostRecord(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "already confirm",
+			fields: fields{
+				Logger: l,
+				Repo: &mockRepo{
+					ReturnConfirm: true,
+				},
+			},
+			args: args{
+				ctx: context.Background(),
+				req: openapi.ReqRecord{
+					CategoryId: 100,
+					Datetime:   strPtr("20000123"),
+					From:       strPtr("from"),
+					Memo:       strPtr("memo"),
+					Price:      1234,
+					Type:       strPtr("type"),
+				},
+			},
+			wantRec: openapi.Record{},
+			wantErr: true,
+		},
+		{
 			name: "unknown category ID",
 			fields: fields{
 				Logger: l,
