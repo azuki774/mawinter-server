@@ -231,7 +231,7 @@ func dbModelToConfirmInfo(mc model.MonthlyConfirm) (yc openapi.ConfirmInfo) {
 func (d *DBRepository) GetMonthlyConfirm(yyyymm string) (yc openapi.ConfirmInfo, err error) {
 	var mc model.MonthlyConfirm
 	boolFalse := false
-	err = d.Conn.Table("Monthly_Confirm").Where("yyyymm = ?", yyyymm).Take(&mc).Error
+	err = d.Conn.Debug().Table("Monthly_Confirm").Where("yyyymm = ?", yyyymm).Take(&mc).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return openapi.ConfirmInfo{
@@ -243,15 +243,25 @@ func (d *DBRepository) GetMonthlyConfirm(yyyymm string) (yc openapi.ConfirmInfo,
 			return openapi.ConfirmInfo{}, err
 		}
 	}
-	return openapi.ConfirmInfo{}, nil
+
+	yc = dbModelToConfirmInfo(mc)
+	return yc, nil
 }
 
 func (d *DBRepository) UpdateMonthlyConfirm(yyyymm string, confirm bool) (yc openapi.ConfirmInfo, err error) {
 	var mc model.MonthlyConfirm
+	var confirmNum uint8
 	t := timeutil.NowFunc()
+	// confirm
+	if confirm {
+		confirmNum = uint8(1)
+	} else {
+		confirmNum = uint8(0)
+	}
+
 	err = d.Conn.Transaction(func(tx *gorm.DB) error {
 		// GET
-		nerr := tx.Table("Monthly_Confirm").Where("yyyymm = ?", yyyymm).Take(&mc).Error
+		nerr := tx.Debug().Table("Monthly_Confirm").Where("yyyymm = ?", yyyymm).Take(&mc).Error
 		if nerr != nil && !errors.Is(nerr, gorm.ErrRecordNotFound) {
 			return nerr
 		}
@@ -259,10 +269,11 @@ func (d *DBRepository) UpdateMonthlyConfirm(yyyymm string, confirm bool) (yc ope
 		// UPSERT
 		mc = model.MonthlyConfirm{
 			YYYYMM:          yyyymm,
+			Confirm:         confirmNum,
 			ConfirmDatetime: t,
 		}
 
-		nerr = tx.Table("Monthly_Confirm").Save(&mc).Error
+		nerr = tx.Debug().Table("Monthly_Confirm").Save(&mc).Error
 		if nerr != nil {
 			return nerr
 		}
@@ -274,5 +285,6 @@ func (d *DBRepository) UpdateMonthlyConfirm(yyyymm string, confirm bool) (yc ope
 		return openapi.ConfirmInfo{}, err
 	}
 
+	yc = dbModelToConfirmInfo(mc)
 	return yc, nil
 }
