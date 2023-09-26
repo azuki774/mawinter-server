@@ -33,6 +33,7 @@ try:
     cursor.execute("DROP TABLE IF EXISTS Record_200103")
     cursor.execute("TRUNCATE TABLE Monthly_Fix_Billing")
     cursor.execute("TRUNCATE TABLE Monthly_Fix_Done")
+    cursor.execute("TRUNCATE TABLE Monthly_Confirm")
     cursor.execute(
         "INSERT INTO Monthly_Fix_Billing VALUES (1, 100, 10, 1000, '', 'memo1', '2000/01/23', '2000/01/23')"
     )
@@ -530,6 +531,64 @@ if response.status_code == 200:
         print(json_data)
         print(want)
         sys.exit(1)
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
+# Monthly_Confirm
+print("# get monthly confirm")
+url = "http://localhost:8080/v2/record/200007/confirm"
+response = requests.get(url)
+if response.status_code == 200:
+    json_data = response.json()
+    want = {
+        "yyyymm": "200007",
+        "status": False
+    }
+    if want != json_data:
+        print("[NG] {}".format(url))
+        print(json_data)
+        print(want)
+        sys.exit(1)
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
+# Monthly_Confirm
+print("# put monthly confirm")
+url = "http://localhost:8080/v2/record/200007/confirm"
+data1 = '{"status": true}'
+headers = {"Content-Type": "application/json"}
+response = requests.put(url, data=data1, headers=headers)
+if response.status_code == 200:
+    json_data = response.json()
+    want = {
+        "yyyymm": "200007",
+        "status": True,
+        "confirm_datetime": json_data["confirm_datetime"] # confirm_datetime の細かい日付は比較しないようにする
+    }
+
+    if want != json_data:
+        print("[NG] {}".format(url))
+        print(json_data)
+        print(want)
+        sys.exit(1)
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
+print("# create records at confirm table")
+url = "http://localhost:8080/v2/record"
+data1 = '{"category_id": 100, "datetime": "20000712", "from": "testfrom1", "type": "S1", "price": 10000, "memo": "fixed"}'
+headers = {"Content-Type": "application/json"}
+response = requests.post(url, data=data1, headers=headers)
+if response.status_code == 400: # Bad Requests because the table is confirmed
     print("[OK] {}".format(url))
 else:
     print("[NG] {}".format(url))
