@@ -46,8 +46,19 @@ func int2ptr(i int) *int {
 
 func (a *APIService) PostRecord(ctx context.Context, req openapi.ReqRecord) (rec openapi.Record, err error) {
 	a.Logger.Info("called post record")
-	a.Logger.Info("get category name mapping")
+	a.Logger.Info("get monthly confirm")
+	// 確定した月でないかを確認する
+	yyyymm := (*req.Datetime)[0:5]
+	yc, err := a.Repo.GetMonthlyConfirm(yyyymm)
+	if err != nil {
+		return openapi.Record{}, err
+	}
+	if *yc.Status {
+		a.Logger.Info("already confirm month", zap.String("yyyymm", yyyymm))
+		return openapi.Record{}, model.ErrAlreadyRecorded
+	}
 
+	a.Logger.Info("get category name mapping")
 	// categoryNameMap 取得
 	cnf, err := a.Repo.MakeCategoryNameMap()
 	if err != nil {
@@ -255,18 +266,11 @@ func (a *APIService) GetMonthlyConfirm(ctx context.Context, yyyymm string) (yc o
 	yc.Yyyymm = &yyyymm
 	yc, err = a.Repo.GetMonthlyConfirm(yyyymm)
 	if err != nil {
-		// NotFound -> status = false
-		if errors.Is(err, model.ErrNotFound) {
-			f := false
-			yc.Status = &f
-			a.Logger.Info("monthly confirm record is not found", zap.Error(err))
-		} else {
-			// Internal error -> error
-			a.Logger.Error("failed to get monthly confirm", zap.Error(err))
-			return openapi.ConfirmInfo{}, err
-		}
+		// Internal error -> error
+		a.Logger.Error("failed to get monthly confirm", zap.Error(err))
+		return openapi.ConfirmInfo{}, err
 	} else {
-		// success fetch data
+		// success fetch data or not found (= false)
 		a.Logger.Info("fetch monthly confirm successfully", zap.Error(err))
 	}
 
@@ -283,7 +287,7 @@ func (a *APIService) UpdateMonthlyConfirm(ctx context.Context, yyyymm string, co
 		a.Logger.Error("failed to get monthly confirm", zap.Error(err))
 		return openapi.ConfirmInfo{}, err
 	}
-	// success fetch data
+
 	a.Logger.Info("update monthly confirm successfully", zap.Error(err))
 
 	a.Logger.Info("complete UpdateMonthlyConfirm")

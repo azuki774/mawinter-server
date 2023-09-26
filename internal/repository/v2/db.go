@@ -252,7 +252,7 @@ func (d *DBRepository) UpdateMonthlyConfirm(yyyymm string, confirm bool) (yc ope
 	err = d.Conn.Transaction(func(tx *gorm.DB) error {
 		// GET
 		nerr := tx.Table("Monthly_Confirm").Where("yyyymm = ?", yyyymm).Take(&mc).Error
-		if nerr != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		if nerr != nil && !errors.Is(nerr, gorm.ErrRecordNotFound) {
 			return nerr
 		}
 
@@ -262,7 +262,7 @@ func (d *DBRepository) UpdateMonthlyConfirm(yyyymm string, confirm bool) (yc ope
 			ConfirmDatetime: t,
 		}
 
-		nerr = tx.Save(&mc).Error
+		nerr = tx.Table("Monthly_Confirm").Save(&mc).Error
 		if nerr != nil {
 			return nerr
 		}
