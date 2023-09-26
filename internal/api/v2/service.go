@@ -48,7 +48,7 @@ func (a *APIService) PostRecord(ctx context.Context, req openapi.ReqRecord) (rec
 	a.Logger.Info("called post record")
 	a.Logger.Info("get monthly confirm")
 	// 確定した月でないかを確認する
-	yyyymm := (*req.Datetime)[0:5]
+	yyyymm := (*req.Datetime)[0:6]
 	yc, err := a.Repo.GetMonthlyConfirm(yyyymm)
 	if err != nil {
 		return openapi.Record{}, err
