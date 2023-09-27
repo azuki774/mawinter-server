@@ -5,6 +5,7 @@ import (
 	"errors"
 	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
+	"mawinter-server/internal/timeutil"
 	"sort"
 	"time"
 
@@ -47,8 +48,18 @@ func int2ptr(i int) *int {
 func (a *APIService) PostRecord(ctx context.Context, req openapi.ReqRecord) (rec openapi.Record, err error) {
 	a.Logger.Info("called post record")
 	a.Logger.Info("get monthly confirm")
+
 	// 確定した月でないかを確認する
-	yyyymm := (*req.Datetime)[0:6]
+
+	// FIX: req.Datetime の変換タイミングが悪いので暫定対応
+	var yyyymm string
+	if req.Datetime == nil {
+		// Datetime が未設定なら現時刻がDBに挿入されるはずなので、今の時点でのYYYYMMをセットする
+		yyyymm = timeutil.NowFunc().Format("200601")
+	} else {
+		yyyymm = (*req.Datetime)[0:6]
+	}
+
 	yc, err := a.Repo.GetMonthlyConfirm(yyyymm)
 	if err != nil {
 		return openapi.Record{}, err
