@@ -44,7 +44,7 @@
   
     <script src="https://cdn.jsdelivr.net/gh/diversen/pandoc-bootstrap-adaptive-template@959c3622/jquery.sticky-kit.js"></script>
     <meta name="generator" content="pandoc" />
-  <title>Monthly_Fix_Billing</title>
+  <title>Monthly_Confirm</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
@@ -121,8 +121,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <div class="well toc">
 
         <ul>
-        <li><a href="#monthly_fix_billing"
-        id="toc-monthly_fix_billing">Monthly_Fix_Billing</a>
+        <li><a href="#monthly_confirm"
+        id="toc-monthly_confirm">Monthly_Confirm</a>
         <ul>
         <li><a href="#description"
         id="toc-description">Description</a></li>
@@ -139,24 +139,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <div class="span9">
 
       
-      <h1 id="monthly_fix_billing">Monthly_Fix_Billing</h1>
+      <h1 id="monthly_confirm">Monthly_Confirm</h1>
 <h2 id="description">Description</h2>
 <details>
 <summary>
 <strong>Table Definition</strong>
 </summary>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> `Monthly_Fix_Billing` (</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  `id` <span class="dt">int</span>(<span class="dv">11</span>) <span class="kw">NOT</span> <span class="kw">NULL</span> AUTO_INCREMENT,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  `category_id` <span class="dt">int</span>(<span class="dv">11</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  `day` <span class="dt">int</span>(<span class="dv">11</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  `price` <span class="dt">int</span>(<span class="dv">11</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  `type` <span class="dt">varchar</span>(<span class="dv">64</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  `memo` <span class="dt">varchar</span>(<span class="dv">255</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  `created_at` datetime <span class="kw">DEFAULT</span> <span class="fu">current_timestamp</span>(),</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  `updated_at` <span class="dt">timestamp</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="fu">current_timestamp</span>() <span class="kw">ON</span> <span class="kw">UPDATE</span> <span class="fu">current_timestamp</span>(),</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (`id`)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>) ENGINE<span class="op">=</span>InnoDB AUTO_INCREMENT<span class="op">=</span>[Redacted <span class="kw">by</span> tbls] <span class="kw">DEFAULT</span> CHARSET<span class="op">=</span>utf8mb4 COLLATE<span class="op">=</span>utf8mb4_general_ci</span></code></pre></div>
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> `Monthly_Confirm` (</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  `yyyymm` <span class="dt">varchar</span>(<span class="dv">6</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  `confirm` tinyint(<span class="dv">1</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  `confirm_datetime` datetime <span class="kw">DEFAULT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  `created_at` datetime <span class="kw">DEFAULT</span> <span class="fu">current_timestamp</span>(),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  `updated_at` <span class="dt">timestamp</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="fu">current_timestamp</span>() <span class="kw">ON</span> <span class="kw">UPDATE</span> <span class="fu">current_timestamp</span>(),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (`yyyymm`)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>) ENGINE<span class="op">=</span>InnoDB <span class="kw">DEFAULT</span> CHARSET<span class="op">=</span>utf8mb4 COLLATE<span class="op">=</span>utf8mb4_general_ci</span></code></pre></div>
 </details>
 <h2 id="columns">Columns</h2>
 <table>
@@ -184,28 +181,8 @@ class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#c
 </thead>
 <tbody>
 <tr class="odd">
-<td>id</td>
-<td>int(11)</td>
-<td></td>
-<td>false</td>
-<td>auto_increment</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td>category_id</td>
-<td>int(11)</td>
-<td></td>
-<td>false</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>day</td>
-<td>int(11)</td>
+<td>yyyymm</td>
+<td>varchar(6)</td>
 <td></td>
 <td>false</td>
 <td></td>
@@ -214,8 +191,8 @@ class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#c
 <td></td>
 </tr>
 <tr class="even">
-<td>price</td>
-<td>int(11)</td>
+<td>confirm</td>
+<td>tinyint(1)</td>
 <td></td>
 <td>false</td>
 <td></td>
@@ -224,26 +201,16 @@ class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#c
 <td></td>
 </tr>
 <tr class="odd">
-<td>type</td>
-<td>varchar(64)</td>
-<td></td>
-<td>false</td>
+<td>confirm_datetime</td>
+<td>datetime</td>
+<td>NULL</td>
+<td>true</td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr class="even">
-<td>memo</td>
-<td>varchar(255)</td>
-<td></td>
-<td>false</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
 <td>created_at</td>
 <td>datetime</td>
 <td>current_timestamp()</td>
@@ -253,7 +220,7 @@ class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#c
 <td></td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>updated_at</td>
 <td>timestamp</td>
 <td>current_timestamp()</td>
@@ -278,7 +245,7 @@ class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#c
 <tr class="odd">
 <td>PRIMARY</td>
 <td>PRIMARY KEY</td>
-<td>PRIMARY KEY (id)</td>
+<td>PRIMARY KEY (yyyymm)</td>
 </tr>
 </tbody>
 </table>
@@ -293,13 +260,13 @@ class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#c
 <tbody>
 <tr class="odd">
 <td>PRIMARY</td>
-<td>PRIMARY KEY (id) USING BTREE</td>
+<td>PRIMARY KEY (yyyymm) USING BTREE</td>
 </tr>
 </tbody>
 </table>
 <h2 id="relations">Relations</h2>
 <figure>
-<img src="Monthly_Fix_Billing.svg" alt="er" />
+<img src="Monthly_Confirm.svg" alt="er" />
 <figcaption aria-hidden="true">er</figcaption>
 </figure>
 <hr />

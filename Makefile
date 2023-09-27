@@ -45,7 +45,7 @@ doc:
 	docker build -t $(container_name_doc):$(VERSION_API) -f build/Dockerfile-doc .
 	docker compose -f deployment/compose-local-doc.yml up
 	# req: create doc by tbls
-	./docs/build_md.sh 2> /dev/null
+	./docs/build_md.sh 2> /dev/null # required pandoc
 	cp -a docs/schema/*.svg docs/build/
 
 generate:

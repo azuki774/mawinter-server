@@ -19,7 +19,7 @@ CREATE TABLE `Record_YYYYMM` (
   PRIMARY KEY (`id`),
   KEY `idx_cat` (`category_id`),
   KEY `idx_date` (`datetime`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 ```
 
 </details>
