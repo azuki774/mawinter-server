@@ -109,18 +109,18 @@ func (c *CategoryYearSummaryStruct) AddMonthPrice(price int) {
 	c.Total = c.Total + price
 }
 
-func (m *MonthlyFixBilling) ConvAddDBModel(yyyymm string) (Record_YYYYMM, error) {
+func (m *MonthlyFixBilling) ConvAddDBModel(yyyymm string) (Record, error) {
 	yyyynum, err := strconv.Atoi(yyyymm[0:4])
 	if err != nil {
-		return Record_YYYYMM{}, err
+		return Record{}, err
 	}
 
 	mmnum, err := strconv.Atoi(yyyymm[5:6])
 	if err != nil {
-		return Record_YYYYMM{}, err
+		return Record{}, err
 	}
 
-	return Record_YYYYMM{
+	return Record{
 		CategoryID: int64(m.CategoryID),
 		Datetime:   time.Date(yyyynum, time.Month(mmnum), m.Day, 0, 0, 0, 0, jst),
 		From:       "fixmonth", // 固定値

@@ -125,11 +125,11 @@ func (d *DBRepository) GetMonthMidSummary(yyyymm string) (summon []model.Categor
 	return summon, nil
 }
 
-// InsertMonthlyFixBilling は Record_YYYYMM に固定費を登録する
+// InsertMonthlyFixBilling は Record に固定費を登録する
 func (d *DBRepository) InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record, err error) {
 	var mfb []model.MonthlyFixBillingDB    // DBのモデル
 	var fixBills []model.MonthlyFixBilling // 中間構造体
-	var records []model.Record_YYYYMM      // レコードDB追加用の構造体
+	var records []model.Record      // レコードDB追加用の構造体
 
 	err = d.Conn.Transaction(func(tx *gorm.DB) error {
 		nerr := tx.Table("Monthly_Fix_Billing").Find(&fixBills).Error // 固定費テーブルからデータ取得

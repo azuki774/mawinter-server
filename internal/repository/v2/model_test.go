@@ -20,7 +20,7 @@ func TestNewDBModelRecord(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		wantRec model.Record_YYYYMM
+		wantRec model.Record
 		wantErr bool
 		nowTime time.Time
 	}{
@@ -32,7 +32,7 @@ func TestNewDBModelRecord(t *testing.T) {
 					Price:      10000,
 				},
 			},
-			wantRec: model.Record_YYYYMM{
+			wantRec: model.Record{
 				CategoryID: 100,
 				Datetime:   time.Date(2010, 12, 1, 0, 0, 0, 0, jst),
 				Price:      10000,
@@ -52,7 +52,7 @@ func TestNewDBModelRecord(t *testing.T) {
 					Type:       strPtr("type"),
 				},
 			},
-			wantRec: model.Record_YYYYMM{
+			wantRec: model.Record{
 				CategoryID: 200,
 				Datetime:   time.Date(2011, 12, 1, 0, 0, 0, 0, jst),
 				From:       "from",
