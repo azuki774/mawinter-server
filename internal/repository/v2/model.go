@@ -17,7 +17,7 @@ func init() {
 	jst = j
 }
 
-func NewDBModelRecord(req openapi.ReqRecord) (rec model.Record_YYYYMM, err error) {
+func NewDBModelRecord(req openapi.ReqRecord) (rec model.Record, err error) {
 	// ID is not set
 	rec.CategoryID = int64(req.CategoryId)
 
@@ -25,7 +25,7 @@ func NewDBModelRecord(req openapi.ReqRecord) (rec model.Record_YYYYMM, err error
 		// YYYYMMDD
 		rec.Datetime, err = time.ParseInLocation("20060102", *req.Datetime, jst)
 		if err != nil {
-			return model.Record_YYYYMM{}, nil
+			return model.Record{}, nil
 		}
 	} else {
 		// default
@@ -57,8 +57,8 @@ func NewDBModelRecord(req openapi.ReqRecord) (rec model.Record_YYYYMM, err error
 	return rec, nil
 }
 
-// NewRecordFromDB では Record_YYYYMM テーブルをもとに、API Structを出力する。
-func NewRecordFromDB(req model.Record_YYYYMM) (rec openapi.Record, err error) {
+// NewRecordFromDB では Record テーブルをもとに、API Structを出力する。
+func NewRecordFromDB(req model.Record) (rec openapi.Record, err error) {
 	rec = openapi.Record{
 		CategoryId: int(req.CategoryID),
 		// CategoryName: req.CategoryName : ここでは取得しない

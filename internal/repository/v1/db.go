@@ -133,7 +133,7 @@ func (d *DBRepository) InsertMonthlyFixBilling(yyyymm string, fixBills []model.M
 		Done:   1,
 	}
 
-	var insRecs []model.Record_YYYYMM
+	var insRecs []model.Record
 
 	for _, v := range fixBills {
 		addrec, err := v.ConvAddDBModel(yyyymm)

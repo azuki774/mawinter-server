@@ -22,7 +22,7 @@ type Category struct {
 	Name       string `gorm:"column:name"`
 }
 
-type Record_YYYYMM struct {
+type Record struct {
 	ID         int64     `gorm:"id;primaryKey"`
 	CategoryID int64     `gorm:"column:category_id;index;not null"`
 	Datetime   time.Time `gorm:"column:datetime;autoCreateTime;index;not null"`
