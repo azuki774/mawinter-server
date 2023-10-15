@@ -28,7 +28,7 @@ type APIServiceV2 interface {
 	// V2
 	PostRecord(ctx context.Context, req openapi.ReqRecord) (rec openapi.Record, err error)
 	PostMonthlyFixRecord(ctx context.Context, yyyymm string) (recs []openapi.Record, err error)
-	CreateTableYear(ctx context.Context, year int) (err error)
+	GetRecords(ctx context.Context, num int) (recs []openapi.Record, err error)
 	GetYYYYMMRecords(ctx context.Context, yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error)
 	GetYYYYMMRecordsRecent(ctx context.Context, yyyymm string, num int) (recs []openapi.Record, err error)
 	GetV2YearSummary(ctx context.Context, year int) (sums []openapi.CategoryYearSummary, err error)

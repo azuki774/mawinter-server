@@ -97,9 +97,36 @@ func (a *apigateway) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request
 	fmt.Fprint(w, string(outputJson))
 }
 
-// (GET /v2/record/recent)
+// (GET /v2/record)
 func (a *apigateway) GetV2Record(w http.ResponseWriter, r *http.Request, params openapi.GetV2RecordParams) {
-	return
+	ctx := context.Background()
+	num := 20 // default value
+
+	if params.Num != nil {
+		num = *params.Num
+	}
+
+	recs, err := a.ap2.GetRecords(ctx, num)
+	if errors.Is(err, model.ErrNotFound) {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(w, err.Error())
+		return
+	} else if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	outputJson, err := json.Marshal(&recs)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(outputJson))
 }
 
 // Your GET endpoint
@@ -202,29 +229,6 @@ func (a *apigateway) GetV2RecordYyyymmRecent(w http.ResponseWriter, r *http.Requ
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, string(outputJson))
-}
-
-// (POST /v2/table/{year})
-func (a *apigateway) PostV2TableYear(w http.ResponseWriter, r *http.Request, year int) {
-	ctx := context.Background()
-
-	_, err := model.ValidYYYY(strconv.Itoa(year))
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, err.Error())
-	}
-
-	err = a.ap2.CreateTableYear(ctx, year)
-	if errors.Is(err, model.ErrAlreadyRecorded) {
-		w.WriteHeader(http.StatusNoContent)
-		return
-	} else if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
-	}
-
-	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintf(w, "record table created.\n")
 }
 
 // (GET /v2/record/{yyyymm}/confirm)

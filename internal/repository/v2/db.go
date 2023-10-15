@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"mawinter-server/internal/model"
@@ -24,13 +25,6 @@ func (d *DBRepository) CloseDB() (err error) {
 	return dbconn.Close()
 }
 
-func (d *DBRepository) CreateTableYYYYMM(yyyymm string) (err error) {
-	baseTableName := "Record_YYYYMM"
-	sql := fmt.Sprintf("CREATE TABLE `Record_%s` LIKE %s", yyyymm, baseTableName)
-	err = d.Conn.Exec(sql).Error
-	return err
-}
-
 func (d *DBRepository) InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error) {
 	dbRec, err := NewDBModelRecord(req)
 	if err != nil {
@@ -48,6 +42,14 @@ func (d *DBRepository) InsertRecord(req openapi.ReqRecord) (rec openapi.Record, 
 	}
 
 	return rec, nil
+}
+
+func (d *DBRepository) GetRecords(ctx context.Context, num int) (recs []openapi.Record, err error) {
+	res := d.Conn.Table(RecordTableName).Order("id DESC").Limit(num).Find(&recs)
+	if res.Error != nil {
+		return []openapi.Record{}, res.Error
+	}
+	return recs, nil
 }
 
 func (d *DBRepository) GetMonthRecords(yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error) {
