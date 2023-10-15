@@ -17,6 +17,16 @@ func init() {
 	jst = j
 }
 
+func yyyymmToInitDayTime(yyyymm string) (t time.Time, err error) {
+	// yyyymm -> time.Time
+	// yyyymm から その月の1日目の time.Time を返す
+	t, err = time.ParseInLocation("200601", yyyymm, jst)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return t, nil
+}
+
 func NewDBModelRecord(req openapi.ReqRecord) (rec model.Record, err error) {
 	// ID is not set
 	rec.CategoryID = int64(req.CategoryId)

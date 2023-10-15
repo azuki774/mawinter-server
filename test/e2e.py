@@ -19,18 +19,7 @@ try:
 
     cursor = cnx.cursor()
 
-    cursor.execute("DROP TABLE IF EXISTS Record_200004")
-    cursor.execute("DROP TABLE IF EXISTS Record_200005")
-    cursor.execute("DROP TABLE IF EXISTS Record_200006")
-    cursor.execute("DROP TABLE IF EXISTS Record_200007")
-    cursor.execute("DROP TABLE IF EXISTS Record_200008")
-    cursor.execute("DROP TABLE IF EXISTS Record_200009")
-    cursor.execute("DROP TABLE IF EXISTS Record_200010")
-    cursor.execute("DROP TABLE IF EXISTS Record_200011")
-    cursor.execute("DROP TABLE IF EXISTS Record_200012")
-    cursor.execute("DROP TABLE IF EXISTS Record_200101")
-    cursor.execute("DROP TABLE IF EXISTS Record_200102")
-    cursor.execute("DROP TABLE IF EXISTS Record_200103")
+    cursor.execute("TRUNCATE TABLE Record")
     cursor.execute("TRUNCATE TABLE Monthly_Fix_Billing")
     cursor.execute("TRUNCATE TABLE Monthly_Fix_Done")
     cursor.execute("TRUNCATE TABLE Monthly_Confirm")
@@ -54,26 +43,6 @@ print("# health check")
 url = "http://localhost:8080/"
 response = requests.get(url)
 if response.status_code == 200:
-    print("[OK] {}".format(url))
-else:
-    print("[NG] {}".format(url))
-    print(response.status_code)
-    sys.exit(1)
-
-print("# create table")
-url = "http://localhost:8080/v2/table/2000"
-response = requests.post(url)
-if response.status_code == 201:
-    print("[OK] {}".format(url))
-else:
-    print("[NG] {}".format(url))
-    print(response.status_code)
-    sys.exit(1)
-
-print("# create table already exists")
-url = "http://localhost:8080/v2/table/2000"
-response = requests.post(url)
-if response.status_code == 204:
     print("[OK] {}".format(url))
 else:
     print("[NG] {}".format(url))
@@ -382,7 +351,7 @@ if response.status_code == 201:
         {
             "category_id": 100,
             "category_name": "月給",
-            "id": 1,
+            "id": 4,
             "datetime": "2000-06-10T00:00:00+09:00",
             "from": "fixmonth",
             "type": "",
@@ -392,7 +361,7 @@ if response.status_code == 201:
         {
             "category_id": 200,
             "category_name": "家賃",
-            "id": 2,
+            "id": 5,
             "datetime": "2000-06-20T00:00:00+09:00",
             "from": "fixmonth",
             "type": "",
@@ -460,7 +429,7 @@ if response.status_code == 200:
         {
             "category_id": 300,
             "category_name": "保険・税金",
-            "id": 3,
+            "id": 8,
             "datetime": "2000-07-20T00:00:00+09:00",
             "from": "",
             "type": "",
@@ -470,7 +439,7 @@ if response.status_code == 200:
         {
             "category_id": 200,
             "category_name": "家賃",
-            "id": 2,
+            "id": 7,
             "datetime": "2000-07-15T00:00:00+09:00",
             "from": "testfrom2",
             "type": "",
@@ -480,7 +449,7 @@ if response.status_code == 200:
         {
             "category_id": 100,
             "category_name": "月給",
-            "id": 1,
+            "id": 6,
             "datetime": "2000-07-10T00:00:00+09:00",
             "from": "testfrom1",
             "type": "S1",
@@ -508,7 +477,7 @@ if response.status_code == 200:
         {
             "category_id": 300,
             "category_name": "保険・税金",
-            "id": 3,
+            "id": 8,
             "datetime": "2000-07-20T00:00:00+09:00",
             "from": "",
             "type": "",
@@ -518,7 +487,7 @@ if response.status_code == 200:
         {
             "category_id": 200,
             "category_name": "家賃",
-            "id": 2,
+            "id": 7,
             "datetime": "2000-07-15T00:00:00+09:00",
             "from": "testfrom2",
             "type": "",
