@@ -6,10 +6,11 @@ import (
 	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
 	"mawinter-server/internal/timeutil"
-	"time"
 
 	"gorm.io/gorm"
 )
+
+const RecordTableName = "Record"
 
 type DBRepository struct {
 	Conn *gorm.DB
@@ -21,11 +22,6 @@ func (d *DBRepository) CloseDB() (err error) {
 		return err
 	}
 	return dbconn.Close()
-}
-
-func getRecordTable(t time.Time) string {
-	YYYYMM := t.Format("200601")
-	return fmt.Sprintf("Record_%s", YYYYMM)
 }
 
 func (d *DBRepository) CreateTableYYYYMM(yyyymm string) (err error) {
@@ -41,7 +37,7 @@ func (d *DBRepository) InsertRecord(req openapi.ReqRecord) (rec openapi.Record, 
 		return openapi.Record{}, err
 	}
 
-	dbRes := d.Conn.Table(getRecordTable(dbRec.Datetime)).Create(&dbRec)
+	dbRes := d.Conn.Table(RecordTableName).Create(&dbRec)
 	if dbRes.Error != nil {
 		return openapi.Record{}, dbRes.Error
 	}
@@ -56,17 +52,27 @@ func (d *DBRepository) InsertRecord(req openapi.ReqRecord) (rec openapi.Record, 
 
 func (d *DBRepository) GetMonthRecords(yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error) {
 	var res *gorm.DB
+	startDate, err := yyyymmToInitDayTime(yyyymm)
+	if err != nil {
+		return []openapi.Record{}, err
+	}
+	endDate := startDate.AddDate(0, 1, 0)
 
 	// TODO: params -> from の実装
 	if params.CategoryId != nil {
 		// Category ID
-		res = d.Conn.Table(fmt.Sprintf("Record_%s", yyyymm)).Where("category_id = ?", *params.CategoryId).Find(&recs)
+		res = d.Conn.Debug().Table(RecordTableName).
+			Where("category_id = ?", *params.CategoryId).
+			Where("datetime >= ? AND datetime < ?", startDate, endDate).
+			Find(&recs)
 		if recs == nil {
 			recs = []openapi.Record{} // null -> []
 		}
 	} else {
 		// No Option
-		res = d.Conn.Table(fmt.Sprintf("Record_%s", yyyymm)).Find(&recs)
+		res = d.Conn.Debug().Table(RecordTableName).
+			Where("datetime >= ? AND datetime < ?", startDate, endDate).
+			Find(&recs)
 	}
 
 	if errors.Is(res.Error, gorm.ErrRecordNotFound) { // TODO: 正しくは Error 1146 をハンドリングする
@@ -79,7 +85,13 @@ func (d *DBRepository) GetMonthRecords(yyyymm string, params openapi.GetV2Record
 }
 
 func (d *DBRepository) GetMonthRecordsRecent(yyyymm string, num int) (recs []openapi.Record, err error) {
-	res := d.Conn.Table(fmt.Sprintf("Record_%s", yyyymm)).Order("id DESC").Limit(num).Find(&recs)
+	startDate, err := yyyymmToInitDayTime(yyyymm)
+	if err != nil {
+		return []openapi.Record{}, err
+	}
+	endDate := startDate.AddDate(0, 1, 0)
+
+	res := d.Conn.Table(RecordTableName).Where("datetime >= ? AND datetime < ?", startDate, endDate).Order("id DESC").Limit(num).Find(&recs)
 	if errors.Is(res.Error, gorm.ErrRecordNotFound) { // TODO: 正しくは Error 1146 をハンドリングする
 		return []openapi.Record{}, model.ErrNotFound
 	} else if res.Error != nil {
@@ -106,7 +118,13 @@ func (d *DBRepository) MakeCategoryNameMap() (cnf map[int]string, err error) {
 
 // SumPriceForEachCatID は月間サマリ中間構造体を取得する（category_id 昇順）。
 func (d *DBRepository) GetMonthMidSummary(yyyymm string) (summon []model.CategoryMidMonthSummary, err error) {
-	sql := fmt.Sprintf(`SELECT category_id, count(1), sum(price) FROM Record_%s GROUP BY category_id ORDER BY category_id`, yyyymm)
+	startDate, err := yyyymmToInitDayTime(yyyymm)
+	if err != nil {
+		return []model.CategoryMidMonthSummary{}, err
+	}
+	endDate := startDate.AddDate(0, 1, 0)
+	sqlWhere := fmt.Sprintf("datetime >= \"%s\" AND datetime < \"%s\"", startDate.Format("20060102"), endDate.Format("20060102"))
+	sql := fmt.Sprintf(`SELECT category_id, count(1), sum(price) FROM Record WHERE %s GROUP BY category_id ORDER BY category_id`, sqlWhere)
 
 	rows, err := d.Conn.Raw(sql).Rows()
 	if err != nil {
@@ -129,7 +147,7 @@ func (d *DBRepository) GetMonthMidSummary(yyyymm string) (summon []model.Categor
 func (d *DBRepository) InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record, err error) {
 	var mfb []model.MonthlyFixBillingDB    // DBのモデル
 	var fixBills []model.MonthlyFixBilling // 中間構造体
-	var records []model.Record      // レコードDB追加用の構造体
+	var records []model.Record             // レコードDB追加用の構造体
 
 	err = d.Conn.Transaction(func(tx *gorm.DB) error {
 		nerr := tx.Table("Monthly_Fix_Billing").Find(&fixBills).Error // 固定費テーブルからデータ取得
@@ -163,7 +181,7 @@ func (d *DBRepository) InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Re
 		if nerr != nil {
 			return nerr
 		}
-		nerr = tx.Table(fmt.Sprintf("Record_%s", yyyymm)).Create(&records).Error // 月固定データ追加
+		nerr = tx.Table(RecordTableName).Create(&records).Error // 月固定データ追加
 		if nerr != nil {
 			return nerr
 		}

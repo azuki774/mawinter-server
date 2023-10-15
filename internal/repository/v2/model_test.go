@@ -82,3 +82,44 @@ func TestNewDBModelRecord(t *testing.T) {
 		})
 	}
 }
+
+func Test_yyyymmToInitDayTime(t *testing.T) {
+	type args struct {
+		yyyymm string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantT   time.Time
+		wantErr bool
+	}{
+		{
+			name: "200102",
+			args: args{
+				yyyymm: "200102",
+			},
+			wantT:   time.Date(2001, 2, 1, 0, 0, 0, 0, jst),
+			wantErr: false,
+		},
+		{
+			name: "202511",
+			args: args{
+				yyyymm: "202511",
+			},
+			wantT:   time.Date(2025, 11, 1, 0, 0, 0, 0, jst),
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotT, err := yyyymmToInitDayTime(tt.args.yyyymm)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("yyyymmToInitDayTime() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotT, tt.wantT) {
+				t.Errorf("yyyymmToInitDayTime() = %v, want %v", gotT, tt.wantT)
+			}
+		})
+	}
+}
