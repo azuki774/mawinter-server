@@ -3,6 +3,7 @@ package register
 import (
 	"context"
 	"mawinter-server/internal/model"
+	"mawinter-server/internal/openapi"
 	"time"
 )
 
@@ -16,20 +17,18 @@ type mockMailClient struct {
 	err error
 }
 
-func (m *mockRepo) InsertUniqueCatIDRecord(req model.Recordstruct) (res model.Recordstruct, err error) {
+func (m *mockRepo) InsertUniqueCatIDRecord(req openapi.Record) (res openapi.Record, err error) {
 	if m.err != nil {
-		return model.Recordstruct{}, m.err
+		return openapi.Record{}, m.err
 	}
 
-	return model.Recordstruct{
-		ID:         1,
-		CategoryID: 210,
+	return openapi.Record{
+		Id:         1,
+		CategoryId: 210,
 		Datetime:   time.Now(),
 		From:       "bill-manager-api",
 		Type:       "",
 		Price:      1234,
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
 	}, nil
 }
 
@@ -59,8 +58,8 @@ func (m *mockRepo) GetMonthlyFixBilling() (fixBills []model.MonthlyFixBilling, e
 		},
 	}, nil
 }
-func (m *mockRepo) InsertMonthlyFixBilling(yyyymm string, fixBills []model.MonthlyFixBilling) (err error) {
-	return m.errGetMonthly
+func (m *mockRepo) InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record, err error) {
+	return []openapi.Record{}, m.errGetMonthly
 }
 
 func (m *mockMailClient) Send(ctx context.Context, to string, title string, body string) (err error) {

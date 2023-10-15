@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"mawinter-server/internal/model"
+	"mawinter-server/internal/openapi"
 	"os"
 
 	"go.uber.org/zap"
@@ -14,10 +15,10 @@ var (
 )
 
 type DBRepository interface {
-	InsertUniqueCatIDRecord(req model.Recordstruct) (res model.Recordstruct, err error)
+	InsertUniqueCatIDRecord(req openapi.Record) (res openapi.Record, err error)
 	GetMonthlyFixDone(yyyymm string) (flag bool, err error)
 	GetMonthlyFixBilling() (fixBills []model.MonthlyFixBilling, err error)
-	InsertMonthlyFixBilling(yyyymm string, fixBills []model.MonthlyFixBilling) (err error)
+	InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record, err error)
 }
 
 type MailClient interface {
@@ -44,15 +45,8 @@ func (r *RegisterService) InsertMonthlyFixBilling(ctx context.Context, yyyymm st
 	}
 	lg := r.Logger.With(zap.String("yyyymm", yyyymm))
 
-	// Record テーブルに挿入するデータを取得
-	fixBills, err := r.DB.GetMonthlyFixBilling()
-	if err != nil {
-		lg.Error("failed to get fix billing recoreds", zap.Error(err))
-		return err
-	}
-
 	// Insert
-	err = r.DB.InsertMonthlyFixBilling(yyyymm, fixBills)
+	recs, err := r.DB.InsertMonthlyFixBilling(yyyymm)
 	if err != nil {
 		lg.Error("failed to insert fix billing records", zap.Error(err))
 		return err
@@ -62,7 +56,7 @@ func (r *RegisterService) InsertMonthlyFixBilling(ctx context.Context, yyyymm st
 
 	// 環境変数 MAIL_TO に何か入ったときのみ通知メールを送信する。
 	if os.Getenv("MAIL_TO") != "" {
-		err = notifyMailInsertMonthlyFixBilling(ctx, r.MailClient, fixBills)
+		err = notifyMailInsertMonthlyFixBilling(ctx, r.MailClient, recs)
 		if err != nil {
 			// send error
 			r.Logger.Error("notify mail send error", zap.Error(err))
@@ -76,10 +70,10 @@ func (r *RegisterService) InsertMonthlyFixBilling(ctx context.Context, yyyymm st
 	return nil
 }
 
-func notifyMailInsertMonthlyFixBilling(ctx context.Context, MailClient MailClient, fbs []model.MonthlyFixBilling) (err error) {
+func notifyMailInsertMonthlyFixBilling(ctx context.Context, MailClient MailClient, recs []openapi.Record) (err error) {
 	to := os.Getenv("MAIL_TO")
 	title := "[Mawinter] 月次固定費の登録完了"
-	body := model.NewMailMonthlyFixBilling(fbs)
+	body := model.NewMailMonthlyFixBilling(recs)
 
 	return MailClient.Send(ctx, to, title, body)
 }
