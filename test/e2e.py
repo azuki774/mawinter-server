@@ -118,7 +118,7 @@ else:
     print(response.status_code)
     sys.exit(1)
 
-print("# get records with category_id")
+print("# get records with record 200004 category_id")
 url = "http://localhost:8080/v2/record/200004?category_id=100"
 response = requests.get(url)
 if response.status_code == 200:
@@ -420,7 +420,7 @@ else:
     print(response.status_code)
     sys.exit(1)
 
-print("# get recent records (1)")
+print("# get recent YYYYMM records (1)")
 url = "http://localhost:8080/v2/record/200007/recent?num=5"
 response = requests.get(url)
 if response.status_code == 200:
@@ -468,7 +468,7 @@ else:
     print(response.status_code)
     sys.exit(1)
 
-print("# get recent records (2)")
+print("# get recent YYYYMM records (2)")
 url = "http://localhost:8080/v2/record/200007/recent?num=2"
 response = requests.get(url)
 if response.status_code == 200:
@@ -558,6 +558,210 @@ data1 = '{"category_id": 100, "datetime": "20000712", "from": "testfrom1", "type
 headers = {"Content-Type": "application/json"}
 response = requests.post(url, data=data1, headers=headers)
 if response.status_code == 400: # Bad Requests because the table is confirmed
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
+# ここまで
+# data1 = '{"category_id": 100, "datetime": "20000410", "from": "testfrom1", "type": "S1", "price": 1000, "memo": "memo"}'
+# data2 = '{"category_id": 200, "datetime": "20000415", "from": "testfrom2", "type": "", "price": 2000, "memo": ""}'
+# data3 = '{"category_id": 300, "datetime": "20000515", "from": "", "type": "", "price": 3000, "memo": ""}'
+"""
+        {
+            "category_id": 100,
+            "category_name": "月給",
+            "id": 4,
+            "datetime": "2000-06-10T00:00:00+09:00",
+            "from": "fixmonth",
+            "type": "",
+            "price": 1000,
+            "memo": "memo1",
+        },
+        {
+            "category_id": 200,
+            "category_name": "家賃",
+            "id": 5,
+            "datetime": "2000-06-20T00:00:00+09:00",
+            "from": "fixmonth",
+            "type": "",
+            "price": 2000,
+            "memo": "memo2",
+        },
+"""
+# data1 = '{"category_id": 100, "datetime": "20000710", "from": "testfrom1", "type": "S1", "price": 1000, "memo": "memo"}'
+# data2 = '{"category_id": 200, "datetime": "20000715", "from": "testfrom2", "type": "", "price": 2000, "memo": ""}'
+# data3 = '{"category_id": 300, "datetime": "20000720", "from": "", "type": "", "price": 3000, "memo": ""}'
+
+print("# get records (1)")
+url = "http://localhost:8080/v2/record?num=3"
+response = requests.get(url)
+if response.status_code == 200:
+    json_data = response.json()
+    want = [
+        {
+            "category_id": 300,
+            "category_name": "保険・税金",
+            "datetime": "2000-07-20T00:00:00+09:00",
+            "from": "",
+            "id": 8,
+            "memo": "",
+            "price": 3000,
+            "type": ""
+        },
+        {
+            "category_id": 200,
+            "category_name": "家賃",
+            "datetime": "2000-07-15T00:00:00+09:00",
+            "from": "testfrom2",
+            "id": 7,
+            "memo": "",
+            "price": 2000,
+            "type": ""
+        },
+        {
+            "category_id": 100,
+            "category_name": "月給",
+            "datetime": "2000-07-10T00:00:00+09:00",
+            "from": "testfrom1",
+            "id": 6,
+            "memo": "memo",
+            "price": 1000,
+            "type": "S1"
+        }
+    ]
+    if want != json_data:
+        print("[NG] {}".format(url))
+        print(json_data)
+        print(want)
+        sys.exit(1)
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
+print("# get records (2)")
+url = "http://localhost:8080/v2/record?num=1"
+response = requests.get(url)
+if response.status_code == 200:
+    json_data = response.json()
+    want = [
+        {
+            "category_id": 300,
+            "category_name": "保険・税金",
+            "datetime": "2000-07-20T00:00:00+09:00",
+            "from": "",
+            "id": 8,
+            "memo": "",
+            "price": 3000,
+            "type": ""
+        }
+    ]
+    if want != json_data:
+        print("[NG] {}".format(url))
+        print(json_data)
+        print(want)
+        sys.exit(1)
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
+print("# get records (3)")
+url = "http://localhost:8080/v2/record"
+response = requests.get(url)
+if response.status_code == 200:
+    json_data = response.json()
+    want = [
+        {
+            "category_id": 300,
+            "category_name": "保険・税金",
+            "datetime": "2000-07-20T00:00:00+09:00",
+            "from": "",
+            "id": 8,
+            "memo": "",
+            "price": 3000,
+            "type": ""
+        },
+        {
+            "category_id": 200,
+            "category_name": "家賃",
+            "datetime": "2000-07-15T00:00:00+09:00",
+            "from": "testfrom2",
+            "id": 7,
+            "memo": "",
+            "price": 2000,
+            "type": ""
+        },
+        {
+            "category_id": 100,
+            "category_name": "月給",
+            "datetime": "2000-07-10T00:00:00+09:00",
+            "from": "testfrom1",
+            "id": 6,
+            "memo": "memo",
+            "price": 1000,
+            "type": "S1"
+        },
+        {
+            "category_id": 200,
+            "category_name": "家賃",
+            "datetime": "2000-06-20T00:00:00+09:00",
+            "from": "fixmonth",
+            "id": 5,
+            "memo": "memo2",
+            "price": 2000,
+            "type": ""
+        },
+        {
+            "category_id": 100,
+            "category_name": "月給",
+            "datetime": "2000-06-10T00:00:00+09:00",
+            "from": "fixmonth",
+            "id": 4,
+            "memo": "memo1",
+            "price": 1000,
+            "type": ""
+        },
+        {
+            "category_id": 300,
+            "category_name": "保険・税金",
+            "datetime": "2000-05-15T00:00:00+09:00",
+            "from": "",
+            "id": 3,
+            "memo": "",
+            "price": 3000,
+            "type": ""
+        },
+        {
+            "category_id": 200,
+            "category_name": "家賃",
+            "datetime": "2000-04-15T00:00:00+09:00",
+            "from": "testfrom2",
+            "id": 2,
+            "memo": "",
+            "price": 2000,
+            "type": ""
+        },
+        {
+            "category_id": 100,
+            "category_name": "月給",
+            "datetime": "2000-04-10T00:00:00+09:00",
+            "from": "testfrom1",
+            "id": 1,
+            "memo": "memo",
+            "price": 1000,
+            "type": "S1"
+        }
+    ]
+    if want != json_data:
+        print("[NG] {}".format(url))
+        print(json_data)
+        print(want)
+        sys.exit(1)
     print("[OK] {}".format(url))
 else:
     print("[NG] {}".format(url))

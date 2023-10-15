@@ -2,14 +2,12 @@ package api
 
 import (
 	"context"
-	"errors"
 	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
 	"mawinter-server/internal/timeutil"
 	"sort"
 	"time"
 
-	"github.com/go-sql-driver/mysql"
 	"go.uber.org/zap"
 )
 
@@ -24,7 +22,6 @@ func init() {
 }
 
 type DBRepository interface {
-	CreateTableYYYYMM(yyyymm string) (err error)
 	InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error)
 	GetRecords(ctx context.Context, num int) (recs []openapi.Record, err error)
 	GetMonthRecords(yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error)
@@ -142,32 +139,6 @@ func (a *APIService) PostMonthlyFixRecord(ctx context.Context, yyyymm string) (r
 
 	a.Logger.Info("complete post fixmonth record", zap.String("yyyymm", yyyymm))
 	return recs, nil
-}
-
-func (a *APIService) CreateTableYear(ctx context.Context, year int) (err error) {
-	a.Logger.Info("called create year table")
-	yyyymmList := fyInterval(year)
-	for _, yyyymm := range yyyymmList {
-		err = a.Repo.CreateTableYYYYMM(yyyymm)
-		var mysqlError *mysql.MySQLError
-		if err != nil && errors.As(err, &mysqlError) {
-			if err.(*mysql.MySQLError).Number == 1050 {
-				// already exitsts
-				a.Logger.Info("already existed Record_YYYYMM table", zap.String("YYYYMM", yyyymm))
-				return model.ErrAlreadyRecorded
-			}
-			// other MySQL error
-			a.Logger.Error("failed to create Record_YYYYMM table (MySQL)", zap.String("msg", err.Error()), zap.String("YYYYMM", yyyymm), zap.Error(err))
-			return err
-		} else if err != nil {
-			// internal error
-			a.Logger.Error("failed to create Record_YYYYMM table (gorm)", zap.String("msg", err.Error()), zap.String("YYYYMM", yyyymm), zap.Error(err))
-			return err
-		}
-		a.Logger.Info("complete create Record_YYYYMM table", zap.String("YYYYMM", yyyymm))
-	}
-
-	return nil
 }
 
 // FYyyyy の yyyymm をリストで返す
