@@ -1,4 +1,4 @@
-# Record_YYYYMM
+# Record
 
 ## Description
 
@@ -6,7 +6,7 @@
 <summary><strong>Table Definition</strong></summary>
 
 ```sql
-CREATE TABLE `Record_YYYYMM` (
+CREATE TABLE `Record` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `category_id` int(11) NOT NULL,
   `datetime` datetime NOT NULL DEFAULT current_timestamp(),
@@ -19,7 +19,7 @@ CREATE TABLE `Record_YYYYMM` (
   PRIMARY KEY (`id`),
   KEY `idx_cat` (`category_id`),
   KEY `idx_date` (`datetime`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+) ENGINE=InnoDB AUTO_INCREMENT=[Redacted by tbls] DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 ```
 
 </details>
@@ -54,7 +54,7 @@ CREATE TABLE `Record_YYYYMM` (
 
 ## Relations
 
-![er](Record_YYYYMM.svg)
+![er](Record.svg)
 
 ---
 
