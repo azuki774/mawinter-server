@@ -45,6 +45,12 @@ type ReqRecord struct {
 	Type       *string `json:"type,omitempty"`
 }
 
+// GetV2RecordParams defines parameters for GetV2Record.
+type GetV2RecordParams struct {
+	// Num the number of records
+	Num *int `form:"num,omitempty" json:"num,omitempty"`
+}
+
 // PostV2RecordFixmonthParams defines parameters for PostV2RecordFixmonth.
 type PostV2RecordFixmonthParams struct {
 	Yyyymm *int `form:"yyyymm,omitempty" json:"yyyymm,omitempty"`

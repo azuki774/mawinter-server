@@ -19,7 +19,6 @@ var (
 
 // V1
 type APIServiceV1 interface {
-	CreateRecordTableYear(yyyy string) (err error)
 	AddRecord(ctx context.Context, req model.RecordRequest) (res model.Recordstruct, err error)
 	GetYearSummary(ctx context.Context, yyyy string) (sum []*model.CategoryYearSummaryStruct, err error)
 }
