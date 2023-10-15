@@ -4,7 +4,6 @@ import (
 	"net"
 	"time"
 
-	v1db "mawinter-server/internal/repository/v1"
 	v2db "mawinter-server/internal/repository/v2"
 
 	"go.uber.org/zap"
@@ -15,7 +14,7 @@ import (
 const DBConnectRetry = 5
 const DBConnectRetryInterval = 10
 
-func NewDBRepositoryV1(host, port, user, pass, name string) (dbR *v1db.DBRepository, err error) {
+func NewDBRepositoryV1(host, port, user, pass, name string) (dbR *v2db.DBRepository, err error) {
 	l, err := NewLogger()
 	if err != nil {
 		return nil, err
@@ -41,7 +40,7 @@ func NewDBRepositoryV1(host, port, user, pass, name string) (dbR *v1db.DBReposit
 		time.Sleep(DBConnectRetryInterval * time.Second)
 	}
 
-	return &v1db.DBRepository{Conn: gormdb}, nil
+	return &v2db.DBRepository{Conn: gormdb}, nil
 }
 
 func NewDBRepositoryV2(host, port, user, pass, name string) (dbR *v2db.DBRepository, err error) {

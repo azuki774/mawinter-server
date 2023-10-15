@@ -213,7 +213,7 @@ func (d *DBRepository) InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Re
 	return recs, nil
 }
 
-// InsertMonthlyFixBilling は 固定費が登録済かどうかを取得する
+// GetMonthlyFixDone は 固定費が登録済かどうかを取得する
 // done = false なら未登録
 func (d *DBRepository) GetMonthlyFixDone(yyyymm string) (done bool, err error) {
 	var mfd model.MonthlyFixDoneDB

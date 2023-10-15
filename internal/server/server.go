@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
 	"net/http"
 
@@ -16,12 +15,6 @@ var (
 	Revision string
 	Build    string
 )
-
-// V1
-type APIServiceV1 interface {
-	AddRecord(ctx context.Context, req model.RecordRequest) (res model.Recordstruct, err error)
-	GetYearSummary(ctx context.Context, yyyy string) (sum []*model.CategoryYearSummaryStruct, err error)
-}
 
 // V2
 type APIServiceV2 interface {
