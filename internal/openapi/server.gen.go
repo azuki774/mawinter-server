@@ -16,6 +16,9 @@ type ServerInterface interface {
 	// health check
 	// (GET /)
 	Get(w http.ResponseWriter, r *http.Request)
+
+	// (GET /v2/record)
+	GetV2Record(w http.ResponseWriter, r *http.Request, params GetV2RecordParams)
 	// create record
 	// (POST /v2/record)
 	PostV2Record(w http.ResponseWriter, r *http.Request)
@@ -37,9 +40,6 @@ type ServerInterface interface {
 	// Your GET endpoint
 	// (GET /v2/record/{yyyymm}/recent)
 	GetV2RecordYyyymmRecent(w http.ResponseWriter, r *http.Request, yyyymm string, params GetV2RecordYyyymmRecentParams)
-	// create record table
-	// (POST /v2/table/{year})
-	PostV2TableYear(w http.ResponseWriter, r *http.Request, year int)
 	// Your GET endpoint
 	// (GET /version)
 	GetVersion(w http.ResponseWriter, r *http.Request)
@@ -52,6 +52,11 @@ type Unimplemented struct{}
 // health check
 // (GET /)
 func (_ Unimplemented) Get(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /v2/record)
+func (_ Unimplemented) GetV2Record(w http.ResponseWriter, r *http.Request, params GetV2RecordParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -95,12 +100,6 @@ func (_ Unimplemented) GetV2RecordYyyymmRecent(w http.ResponseWriter, r *http.Re
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// create record table
-// (POST /v2/table/{year})
-func (_ Unimplemented) PostV2TableYear(w http.ResponseWriter, r *http.Request, year int) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
 // Your GET endpoint
 // (GET /version)
 func (_ Unimplemented) GetVersion(w http.ResponseWriter, r *http.Request) {
@@ -122,6 +121,34 @@ func (siw *ServerInterfaceWrapper) Get(w http.ResponseWriter, r *http.Request) {
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.Get(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetV2Record operation middleware
+func (siw *ServerInterfaceWrapper) GetV2Record(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetV2RecordParams
+
+	// ------------- Optional query parameter "num" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "num", r.URL.Query(), &params.Num)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "num", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetV2Record(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -326,32 +353,6 @@ func (siw *ServerInterfaceWrapper) GetV2RecordYyyymmRecent(w http.ResponseWriter
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostV2TableYear operation middleware
-func (siw *ServerInterfaceWrapper) PostV2TableYear(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	var err error
-
-	// ------------- Path parameter "year" -------------
-	var year int
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "year", runtime.ParamLocationPath, chi.URLParam(r, "year"), &year)
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "year", Err: err})
-		return
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostV2TableYear(w, r, year)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
 // GetVersion operation middleware
 func (siw *ServerInterfaceWrapper) GetVersion(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -484,6 +485,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Get(options.BaseURL+"/", wrapper.Get)
 	})
 	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/v2/record", wrapper.GetV2Record)
+	})
+	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/v2/record", wrapper.PostV2Record)
 	})
 	r.Group(func(r chi.Router) {
@@ -503,9 +507,6 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/v2/record/{yyyymm}/recent", wrapper.GetV2RecordYyyymmRecent)
-	})
-	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/v2/table/{year}", wrapper.PostV2TableYear)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/version", wrapper.GetVersion)

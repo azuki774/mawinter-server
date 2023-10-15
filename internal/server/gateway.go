@@ -23,25 +23,6 @@ func (a *apigateway) Get(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "It is the root page.\n")
 }
 
-// create new YYYYMM table
-// (POST /table/{year})
-func (a *apigateway) PostTableYear(w http.ResponseWriter, r *http.Request, year float32) {
-	err := a.ap2.CreateTableYear(context.TODO(), int(year))
-	if err != nil {
-		if errors.Is(err, model.ErrInvalidValue) {
-			w.WriteHeader(http.StatusBadRequest)
-			fmt.Fprintf(w, "Error: %s\n", err.Error())
-			return
-		}
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "Error: %s\n", err.Error())
-		return
-	}
-
-	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintf(w, "record table created.\n")
-}
-
 // V2
 
 // (POST /v2/record)
@@ -114,6 +95,11 @@ func (a *apigateway) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprint(w, string(outputJson))
+}
+
+// (GET /v2/record/recent)
+func (a *apigateway) GetV2Record(w http.ResponseWriter, r *http.Request, params openapi.GetV2RecordParams) {
+	return
 }
 
 // Your GET endpoint

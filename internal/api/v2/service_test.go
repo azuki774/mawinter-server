@@ -138,6 +138,158 @@ func TestAPIService_PostRecord(t *testing.T) {
 		})
 	}
 }
+func TestAPIService_GetRecords(t *testing.T) {
+	type fields struct {
+		Logger *zap.Logger
+		Repo   DBRepository
+	}
+	type args struct {
+		ctx context.Context
+		num int
+	}
+	tests := []struct {
+		name     string
+		fields   fields
+		args     args
+		wantRecs []openapi.Record
+		wantErr  bool
+	}{
+		{
+			name: "required over actual number",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx: context.Background(),
+				num: 3,
+			},
+			wantRecs: []openapi.Record{
+				{
+					CategoryId:   100,
+					CategoryName: "cat1",
+					Datetime:     time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+					From:         "from",
+					Id:           1,
+					Memo:         "memo",
+					Price:        1234,
+					Type:         "type",
+				},
+				{
+					CategoryId:   200,
+					CategoryName: "cat2",
+					Datetime:     time.Date(2000, 1, 25, 0, 0, 0, 0, jst),
+					From:         "",
+					Id:           2,
+					Memo:         "",
+					Price:        2345,
+					Type:         "",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "required just number",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx: context.Background(),
+				num: 2,
+			},
+			wantRecs: []openapi.Record{
+				{
+					CategoryId:   100,
+					CategoryName: "cat1",
+					Datetime:     time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+					From:         "from",
+					Id:           1,
+					Memo:         "memo",
+					Price:        1234,
+					Type:         "type",
+				},
+				{
+					CategoryId:   200,
+					CategoryName: "cat2",
+					Datetime:     time.Date(2000, 1, 25, 0, 0, 0, 0, jst),
+					From:         "",
+					Id:           2,
+					Memo:         "",
+					Price:        2345,
+					Type:         "",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "ok",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx: context.Background(),
+				num: 1,
+			},
+			wantRecs: []openapi.Record{
+				{
+					CategoryId:   100,
+					CategoryName: "cat1",
+					Datetime:     time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+					From:         "from",
+					Id:           1,
+					Memo:         "memo",
+					Price:        1234,
+					Type:         "type",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "zero",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx: context.Background(),
+				num: 0,
+			},
+			wantRecs: nil,
+			wantErr:  false,
+		},
+		{
+			name: "invalid args",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx: context.Background(),
+				num: -1,
+			},
+			wantRecs: []openapi.Record{},
+			wantErr:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := &APIService{
+				Logger: tt.fields.Logger,
+				Repo:   tt.fields.Repo,
+			}
+			gotRecs, err := a.GetRecords(tt.args.ctx, tt.args.num)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("APIService.GetRecordsRecent() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotRecs, tt.wantRecs) {
+				t.Errorf("APIService.GetRecordsRecent() = %v, want %v", gotRecs, tt.wantRecs)
+			}
+		})
+	}
+}
 
 func TestAPIService_GetYYYYMMRecords(t *testing.T) {
 	type fields struct {

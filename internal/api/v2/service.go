@@ -26,6 +26,7 @@ func init() {
 type DBRepository interface {
 	CreateTableYYYYMM(yyyymm string) (err error)
 	InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error)
+	GetRecords(ctx context.Context, num int) (recs []openapi.Record, err error)
 	GetMonthRecords(yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error)
 	GetMonthRecordsRecent(yyyymm string, num int) (recs []openapi.Record, err error)
 	MakeCategoryNameMap() (cnf map[int]string, err error)
@@ -92,6 +93,32 @@ func (a *APIService) PostRecord(ctx context.Context, req openapi.ReqRecord) (rec
 
 	a.Logger.Info("complete post record")
 	return rec, nil
+}
+
+// GetRecords は num の数だけ ID 降順に Record を取得する
+func (a *APIService) GetRecords(ctx context.Context, num int) (recs []openapi.Record, err error) {
+	a.Logger.Info("called GetRecordsRecent", zap.Int("num", num))
+	recsRaw, err := a.Repo.GetRecords(ctx, num)
+	if err != nil {
+		a.Logger.Error("failed to get records")
+		return []openapi.Record{}, err
+	}
+
+	a.Logger.Info("get category name mapping")
+	// categoryNameMap 取得
+	cnf, err := a.Repo.MakeCategoryNameMap()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, rec := range recsRaw {
+		// categoryName を付与
+		rec.CategoryName = cnf[rec.CategoryId]
+		recs = append(recs, rec)
+	}
+
+	a.Logger.Info("complete GetRecordsRecent", zap.Int("num", num))
+	return recs, nil
 }
 
 func (a *APIService) PostMonthlyFixRecord(ctx context.Context, yyyymm string) (recs []openapi.Record, err error) {
