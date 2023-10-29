@@ -40,7 +40,7 @@ func judgeDuplicateRecords(d1 openapi.Record, d2 openapi.Record) bool {
 		return false
 	}
 
-	if d1.CategoryId != d2.CategoryId {
+	if d1.Price != d2.Price {
 		return false
 	}
 
