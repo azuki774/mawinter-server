@@ -296,6 +296,26 @@ func TestDBRepository_InsertMonthlyFixBilling(t *testing.T) {
 						AddRow("2", "200", "cat2"))
 			},
 		},
+		{
+			name:   "none",
+			fields: fields{},
+			args: args{
+				yyyymm: "202102",
+			},
+			wantErr:  false,
+			wantRecs: nil,
+			mockSetUp: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+				mock.ExpectQuery("SELECT").
+					WillReturnRows(sqlmock.NewRows([]string{"category_id", "day", "price"}))
+				mock.ExpectExec(regexp.QuoteMeta(
+					"INSERT INTO `Monthly_Fix_Done`")).
+					WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectCommit()
+				mock.ExpectQuery("SELECT").
+					WillReturnRows(sqlmock.NewRows([]string{"id", "category_id", "name"}))
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
