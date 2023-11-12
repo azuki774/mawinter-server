@@ -179,13 +179,18 @@ func (d *DBRepository) InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Re
 			YYYYMM: yyyymm,
 			Done:   1,
 		}
+
 		nerr = tx.Create(&doneRec).Error // 月固定データ追加記録
 		if nerr != nil {
 			return nerr
 		}
-		nerr = tx.Table(RecordTableName).Create(&records).Error // 月固定データ追加
-		if nerr != nil {
-			return nerr
+
+		if len(records) > 0 {
+			// 挿入すべきデータがある場合: issse #62
+			nerr = tx.Table(RecordTableName).Create(&records).Error // 月固定データ追加
+			if nerr != nil {
+				return nerr
+			}
 		}
 
 		// commit
