@@ -7,7 +7,6 @@ require (
 	github.com/getkin/kin-openapi v0.107.0
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
-	github.com/go-sql-driver/mysql v1.6.0
 	github.com/oapi-codegen/runtime v1.0.0
 	github.com/spf13/cobra v1.6.1
 	go.uber.org/zap v1.23.0
@@ -20,6 +19,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/swag v0.21.1 // indirect
+	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/invopop/yaml v0.1.0 // indirect
