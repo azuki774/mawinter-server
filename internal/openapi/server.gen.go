@@ -16,7 +16,7 @@ type ServerInterface interface {
 	// health check
 	// (GET /)
 	Get(w http.ResponseWriter, r *http.Request)
-
+	// get records
 	// (GET /v2/record)
 	GetV2Record(w http.ResponseWriter, r *http.Request, params GetV2RecordParams)
 	// create record
@@ -40,7 +40,7 @@ type ServerInterface interface {
 	// Your GET endpoint
 	// (GET /v2/record/{yyyymm}/recent)
 	GetV2RecordYyyymmRecent(w http.ResponseWriter, r *http.Request, yyyymm string, params GetV2RecordYyyymmRecentParams)
-	// Your GET endpoint
+	// get version
 	// (GET /version)
 	GetVersion(w http.ResponseWriter, r *http.Request)
 }
@@ -55,6 +55,7 @@ func (_ Unimplemented) Get(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// get records
 // (GET /v2/record)
 func (_ Unimplemented) GetV2Record(w http.ResponseWriter, r *http.Request, params GetV2RecordParams) {
 	w.WriteHeader(http.StatusNotImplemented)
@@ -100,7 +101,7 @@ func (_ Unimplemented) GetV2RecordYyyymmRecent(w http.ResponseWriter, r *http.Re
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Your GET endpoint
+// get version
 // (GET /version)
 func (_ Unimplemented) GetVersion(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)

@@ -18,7 +18,7 @@ paths:
         - url: 'http://localhost:8080'
   /version:
     get:
-      summary: Your GET endpoint
+      summary: get version
       operationId: get-version
       requestBody:
         content:
@@ -58,7 +58,7 @@ paths:
       servers:
         - url: 'http://localhost:8080'
     get:
-      summary: ''
+      summary: get records
       operationId: get-v2-record
       parameters:
         - name: num
