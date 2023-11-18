@@ -370,6 +370,33 @@ func TestAPIService_GetYYYYMMRecords(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "ok(params from)",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx:    context.Background(),
+				yyyymm: "200001",
+				params: openapi.GetV2RecordYyyymmParams{
+					From: strPtr("mawinter-web"),
+				},
+			},
+			wantRecs: []openapi.Record{
+				{
+					CategoryId:   200,
+					CategoryName: "cat2",
+					Datetime:     time.Date(2000, 1, 25, 0, 0, 0, 0, jst),
+					From:         "mawinter-web",
+					Id:           2,
+					Memo:         "",
+					Price:        2345,
+					Type:         "",
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "ok(not found)",
 			fields: fields{
 				Logger: l,
