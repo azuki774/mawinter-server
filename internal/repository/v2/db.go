@@ -52,7 +52,7 @@ func (d *DBRepository) GetRecords(ctx context.Context, num int) (recs []openapi.
 	return recs, nil
 }
 
-func (d *DBRepository) GetMonthRecords(yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error) {
+func (d *DBRepository) GetMonthRecords(yyyymm string) (recs []openapi.Record, err error) {
 	var res *gorm.DB
 	startDate, err := yyyymmToInitDayTime(yyyymm)
 	if err != nil {
@@ -60,22 +60,9 @@ func (d *DBRepository) GetMonthRecords(yyyymm string, params openapi.GetV2Record
 	}
 	endDate := startDate.AddDate(0, 1, 0)
 
-	// TODO: params -> from の実装
-	if params.CategoryId != nil {
-		// Category ID
-		res = d.Conn.Debug().Table(RecordTableName).
-			Where("category_id = ?", *params.CategoryId).
-			Where("datetime >= ? AND datetime < ?", startDate, endDate).
-			Find(&recs)
-		if recs == nil {
-			recs = []openapi.Record{} // null -> []
-		}
-	} else {
-		// No Option
-		res = d.Conn.Debug().Table(RecordTableName).
-			Where("datetime >= ? AND datetime < ?", startDate, endDate).
-			Find(&recs)
-	}
+	res = d.Conn.Debug().Table(RecordTableName).
+		Where("datetime >= ? AND datetime < ?", startDate, endDate).
+		Find(&recs)
 
 	if errors.Is(res.Error, gorm.ErrRecordNotFound) { // TODO: 正しくは Error 1146 をハンドリングする
 		return []openapi.Record{}, model.ErrNotFound
