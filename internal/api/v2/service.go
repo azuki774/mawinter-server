@@ -24,7 +24,7 @@ func init() {
 type DBRepository interface {
 	InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error)
 	GetRecords(ctx context.Context, num int) (recs []openapi.Record, err error)
-	GetMonthRecords(yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error)
+	GetMonthRecords(yyyymm string) (recs []openapi.Record, err error)
 	GetMonthRecordsRecent(yyyymm string, num int) (recs []openapi.Record, err error)
 	MakeCategoryNameMap() (cnf map[int]string, err error)
 	GetMonthMidSummary(yyyymm string) (summon []model.CategoryMidMonthSummary, err error) // SELECT category_id, count(*), sum(price) FROM Record_202211 GROUP BY category_id;
@@ -156,12 +156,6 @@ func (a *APIService) GetYYYYMMRecords(ctx context.Context, yyyymm string, params
 	recs = []openapi.Record{}
 	a.Logger.Info("called get month records")
 
-	a.Logger.Info("get records from DB")
-	recsRaw, err := a.Repo.GetMonthRecords(yyyymm, params) // category_name なし
-	if err != nil {
-		return nil, err
-	}
-
 	a.Logger.Info("get category name mapping")
 	// categoryNameMap 取得
 	cnf, err := a.Repo.MakeCategoryNameMap()
@@ -169,7 +163,30 @@ func (a *APIService) GetYYYYMMRecords(ctx context.Context, yyyymm string, params
 		return nil, err
 	}
 
-	for _, rec := range recsRaw {
+	a.Logger.Info("get records from DB")
+	recsRaw, err := a.Repo.GetMonthRecords(yyyymm) // category_name なし
+	if err != nil {
+		return nil, err
+	}
+
+	// parameters 抽出する
+	// category_id
+	var recRawExt1 []openapi.Record // category_id でフィルタリングしたもの
+	var recRawExt2 []openapi.Record // from でフィルタリングしたもの
+	for _, r := range recsRaw {
+		if params.CategoryId == nil || (r.CategoryId == *params.CategoryId) {
+			recRawExt1 = append(recRawExt1, r)
+		}
+	}
+
+	// from
+	for _, r := range recRawExt1 {
+		if params.CategoryId == nil || (r.CategoryId == *params.CategoryId) {
+			recRawExt2 = append(recRawExt2, r)
+		}
+	}
+
+	for _, rec := range recRawExt2 {
 		// categoryName を付与
 		rec.CategoryName = cnf[rec.CategoryId]
 		recs = append(recs, rec)
