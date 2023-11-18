@@ -146,6 +146,34 @@ else:
     print(response.status_code)
     sys.exit(1)
 
+print("# get records with record 200004 from")
+url = "http://localhost:8080/v2/record/200004?from=testfrom2"
+response = requests.get(url)
+if response.status_code == 200:
+    json_data = response.json()
+    want = [
+        {
+            "category_id": 200,
+            "category_name": "家賃",
+            "id": 2,
+            "datetime": "2000-04-15T00:00:00+09:00",
+            "from": "testfrom2",
+            "type": "",
+            "price": 2000,
+            "memo": "",
+        }
+    ]
+    if want != json_data:
+        print("[NG] {}".format(url))
+        print(json_data)
+        print(want)
+        sys.exit(1)
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
 print("# get records with category_id (not found)")
 url = "http://localhost:8080/v2/record/200004?category_id=999"
 response = requests.get(url)
@@ -512,10 +540,7 @@ url = "http://localhost:8080/v2/record/200007/confirm"
 response = requests.get(url)
 if response.status_code == 200:
     json_data = response.json()
-    want = {
-        "yyyymm": "200007",
-        "status": False
-    }
+    want = {"yyyymm": "200007", "status": False}
     if want != json_data:
         print("[NG] {}".format(url))
         print(json_data)
@@ -538,7 +563,9 @@ if response.status_code == 200:
     want = {
         "yyyymm": "200007",
         "status": True,
-        "confirm_datetime": json_data["confirm_datetime"] # confirm_datetime の細かい日付は比較しないようにする
+        "confirm_datetime": json_data[
+            "confirm_datetime"
+        ],  # confirm_datetime の細かい日付は比較しないようにする
     }
 
     if want != json_data:
@@ -557,7 +584,7 @@ url = "http://localhost:8080/v2/record"
 data1 = '{"category_id": 100, "datetime": "20000712", "from": "testfrom1", "type": "S1", "price": 10000, "memo": "fixed"}'
 headers = {"Content-Type": "application/json"}
 response = requests.post(url, data=data1, headers=headers)
-if response.status_code == 400: # Bad Requests because the table is confirmed
+if response.status_code == 400:  # Bad Requests because the table is confirmed
     print("[OK] {}".format(url))
 else:
     print("[NG] {}".format(url))
@@ -608,7 +635,7 @@ if response.status_code == 200:
             "id": 8,
             "memo": "",
             "price": 3000,
-            "type": ""
+            "type": "",
         },
         {
             "category_id": 200,
@@ -618,7 +645,7 @@ if response.status_code == 200:
             "id": 7,
             "memo": "",
             "price": 2000,
-            "type": ""
+            "type": "",
         },
         {
             "category_id": 100,
@@ -628,8 +655,8 @@ if response.status_code == 200:
             "id": 6,
             "memo": "memo",
             "price": 1000,
-            "type": "S1"
-        }
+            "type": "S1",
+        },
     ]
     if want != json_data:
         print("[NG] {}".format(url))
@@ -656,7 +683,7 @@ if response.status_code == 200:
             "id": 8,
             "memo": "",
             "price": 3000,
-            "type": ""
+            "type": "",
         }
     ]
     if want != json_data:
@@ -684,7 +711,7 @@ if response.status_code == 200:
             "id": 8,
             "memo": "",
             "price": 3000,
-            "type": ""
+            "type": "",
         },
         {
             "category_id": 200,
@@ -694,7 +721,7 @@ if response.status_code == 200:
             "id": 7,
             "memo": "",
             "price": 2000,
-            "type": ""
+            "type": "",
         },
         {
             "category_id": 100,
@@ -704,7 +731,7 @@ if response.status_code == 200:
             "id": 6,
             "memo": "memo",
             "price": 1000,
-            "type": "S1"
+            "type": "S1",
         },
         {
             "category_id": 200,
@@ -714,7 +741,7 @@ if response.status_code == 200:
             "id": 5,
             "memo": "memo2",
             "price": 2000,
-            "type": ""
+            "type": "",
         },
         {
             "category_id": 100,
@@ -724,7 +751,7 @@ if response.status_code == 200:
             "id": 4,
             "memo": "memo1",
             "price": 1000,
-            "type": ""
+            "type": "",
         },
         {
             "category_id": 300,
@@ -734,7 +761,7 @@ if response.status_code == 200:
             "id": 3,
             "memo": "",
             "price": 3000,
-            "type": ""
+            "type": "",
         },
         {
             "category_id": 200,
@@ -744,7 +771,7 @@ if response.status_code == 200:
             "id": 2,
             "memo": "",
             "price": 2000,
-            "type": ""
+            "type": "",
         },
         {
             "category_id": 100,
@@ -754,8 +781,8 @@ if response.status_code == 200:
             "id": 1,
             "memo": "memo",
             "price": 1000,
-            "type": "S1"
-        }
+            "type": "S1",
+        },
     ]
     if want != json_data:
         print("[NG] {}".format(url))

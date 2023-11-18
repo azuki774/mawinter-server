@@ -181,7 +181,7 @@ func (a *APIService) GetYYYYMMRecords(ctx context.Context, yyyymm string, params
 
 	// from
 	for _, r := range recRawExt1 {
-		if params.CategoryId == nil || (r.CategoryId == *params.CategoryId) {
+		if params.From == nil || (r.From == *params.From) {
 			recRawExt2 = append(recRawExt2, r)
 		}
 	}
