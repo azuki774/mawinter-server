@@ -75,6 +75,9 @@ jobs:
             type=semver,pattern={{major}}
             type=semver,pattern=latest
 
+      - name: fetch tags
+        run: git fetch --tags
+
       - name: annotation tag check
         run: t1=`git describe --abbrev=0` t2=`git describe --tags` test "${t1}" = "${t2}"
 
