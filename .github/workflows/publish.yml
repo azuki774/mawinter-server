@@ -28,7 +28,7 @@ jobs:
             type=semver,pattern=latest
 
       - name: annotation tag check
-        run: t1=`git describe --tags` t2=`git describe` test ${t1} != {t2}
+        run: t1=`git describe --tags --abbrev=0` t2=`git describe --abbrev=0` test "${t1}" != "{t2}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
