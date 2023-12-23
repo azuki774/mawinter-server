@@ -27,6 +27,9 @@ jobs:
             type=semver,pattern={{major}}
             type=semver,pattern=latest
 
+      - name: annotation tag check
+        run: t1=`git describe --abbrev=0` t2=`git describe --tags` test "${t1}" = "${t2}"
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -71,6 +74,12 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=semver,pattern=latest
+
+      - name: fetch tags
+        run: git fetch --tags
+
+      - name: annotation tag check
+        run: t1=`git describe --abbrev=0` t2=`git describe --tags` test "${t1}" = "${t2}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
