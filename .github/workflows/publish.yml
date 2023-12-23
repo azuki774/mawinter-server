@@ -27,6 +27,11 @@ jobs:
             type=semver,pattern={{major}}
             type=semver,pattern=latest
 
+      - name: annotation tag check
+        run: test "${annotations} != ''"
+        env:
+          annotations: ${{ steps.meta.outputs.annotations }}
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
