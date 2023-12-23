@@ -30,7 +30,7 @@ jobs:
       - name: annotation tag check
         run: test "${annotations}" != ''
         env:
-          annotations: ${{ steps.meta.outputs.annotations }}
+          annotations: ${{ steps.tag-data.outputs.git-tag-annotation }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
