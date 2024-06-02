@@ -65,6 +65,27 @@ func (a *apigateway) PostV2Record(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, string(outputJson))
 }
 
+// (GET /v2/record/count)
+func (a *apigateway) GetV2RecordCount(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+	rec, err := a.ap2.GetRecordsCount(ctx)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	outputJson, err := json.Marshal(&rec)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(outputJson))
+}
+
 // (POST /v2/record/fixmonth)
 func (a *apigateway) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request, params openapi.PostV2RecordFixmonthParams) {
 	ctx := context.Background()

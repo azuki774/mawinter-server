@@ -839,3 +839,47 @@ func TestAPIService_UpdateMonthlyConfirm(t *testing.T) {
 		})
 	}
 }
+
+func TestAPIService_GetRecordsCount(t *testing.T) {
+	type fields struct {
+		Logger *zap.Logger
+		Repo   DBRepository
+	}
+	type args struct {
+		ctx context.Context
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantRec openapi.RecordCount
+		wantErr bool
+	}{
+		{
+			name: "ok",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args:    args{ctx: context.Background()},
+			wantRec: openapi.RecordCount{Num: int2ptr(123)},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := &APIService{
+				Logger: tt.fields.Logger,
+				Repo:   tt.fields.Repo,
+			}
+			gotRec, err := a.GetRecordsCount(tt.args.ctx)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("APIService.GetRecordsCount() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotRec, tt.wantRec) {
+				t.Errorf("APIService.GetRecordsCount() = %v, want %v", gotRec, tt.wantRec)
+			}
+		})
+	}
+}

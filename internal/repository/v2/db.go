@@ -52,6 +52,14 @@ func (d *DBRepository) GetRecords(ctx context.Context, num int) (recs []openapi.
 	return recs, nil
 }
 
+func (d *DBRepository) GetRecordsCount(ctx context.Context) (num int, err error) {
+	res := d.Conn.Table(RecordTableName).Raw("SELECT count(1) FROM Record").Scan(&num)
+	if res.Error != nil {
+		return 0, res.Error
+	}
+	return num, nil
+}
+
 func (d *DBRepository) GetMonthRecords(yyyymm string) (recs []openapi.Record, err error) {
 	var res *gorm.DB
 	startDate, err := yyyymmToInitDayTime(yyyymm)

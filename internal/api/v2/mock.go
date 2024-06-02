@@ -79,6 +79,10 @@ func (m *mockRepo) GetRecords(ctx context.Context, num int) (recs []openapi.Reco
 	return recs, nil
 }
 
+func (m *mockRepo) GetRecordsCount(ctx context.Context) (num int, err error) {
+	return 123, nil // 正常系
+}
+
 func (m *mockRepo) GetMonthRecords(yyyymm string) (recs []openapi.Record, err error) {
 	recs = []openapi.Record{
 		{
