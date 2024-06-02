@@ -22,6 +22,9 @@ type ServerInterface interface {
 	// create record
 	// (POST /v2/record)
 	PostV2Record(w http.ResponseWriter, r *http.Request)
+	// /v2/record/count
+	// (GET /v2/record/count)
+	GetV2RecordCount(w http.ResponseWriter, r *http.Request)
 	// create fixmonth record
 	// (POST /v2/record/fixmonth)
 	PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request, params PostV2RecordFixmonthParams)
@@ -64,6 +67,12 @@ func (_ Unimplemented) GetV2Record(w http.ResponseWriter, r *http.Request, param
 // create record
 // (POST /v2/record)
 func (_ Unimplemented) PostV2Record(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// /v2/record/count
+// (GET /v2/record/count)
+func (_ Unimplemented) GetV2RecordCount(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -148,6 +157,14 @@ func (siw *ServerInterfaceWrapper) GetV2Record(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	// ------------- Optional query parameter "offset" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "offset", r.URL.Query(), &params.Offset)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "offset", Err: err})
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetV2Record(w, r, params)
 	}))
@@ -165,6 +182,21 @@ func (siw *ServerInterfaceWrapper) PostV2Record(w http.ResponseWriter, r *http.R
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PostV2Record(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetV2RecordCount operation middleware
+func (siw *ServerInterfaceWrapper) GetV2RecordCount(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetV2RecordCount(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -498,6 +530,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/v2/record", wrapper.PostV2Record)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/v2/record/count", wrapper.GetV2RecordCount)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/v2/record/fixmonth", wrapper.PostV2RecordFixmonth)
