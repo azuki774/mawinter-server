@@ -35,6 +35,11 @@ type Record struct {
 	Type         string    `json:"type"`
 }
 
+// RecordCount defines model for record_count.
+type RecordCount struct {
+	Num *int `json:"num,omitempty"`
+}
+
 // ReqRecord defines model for req_record.
 type ReqRecord struct {
 	CategoryId int     `json:"category_id"`
@@ -48,7 +53,8 @@ type ReqRecord struct {
 // GetV2RecordParams defines parameters for GetV2Record.
 type GetV2RecordParams struct {
 	// Num the number of records
-	Num *int `form:"num,omitempty" json:"num,omitempty"`
+	Num    *int `form:"num,omitempty" json:"num,omitempty"`
+	Offset *int `form:"offset,omitempty" json:"offset,omitempty"`
 }
 
 // PostV2RecordFixmonthParams defines parameters for PostV2RecordFixmonth.

@@ -70,6 +70,10 @@ paths:
           schema:
             type: integer
             default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
       requestBody:
         content: {}
       responses:
@@ -81,6 +85,24 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/record'
+      servers:
+        - url: 'http://localhost:8080'
+  /v2/record/count:
+    get:
+      summary: /v2/record/count
+      description: 保存されているレコードの全件数を表示する。
+      operationId: get-v2-record-count
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/record_count'
+              examples:
+                Example 1:
+                  value:
+                    num: 1234
       servers:
         - url: 'http://localhost:8080'
   /v2/record/fixmonth:
@@ -309,6 +331,12 @@ components:
         - price
         - memo
       examples: []
+    record_count:
+      type: object
+      title: record_count
+      properties:
+        num:
+          type: integer
     confirm_info:
       type: object
       title: confirm_info
