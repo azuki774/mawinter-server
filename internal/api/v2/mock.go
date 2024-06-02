@@ -32,20 +32,10 @@ func (m *mockRepo) InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err 
 	return rec, nil
 }
 
-// GetRecords は mock だと num <= 2 までしか対応しない
-func (m *mockRepo) GetRecords(ctx context.Context, num int) (recs []openapi.Record, err error) {
-	if num >= 2 {
+// GetRecords は mock だと num <= 2 && offset = 0 と num = 20 && offset = 1 までしか対応しない
+func (m *mockRepo) GetRecords(ctx context.Context, num int, offset int) (recs []openapi.Record, err error) {
+	if offset == 1 {
 		recs = []openapi.Record{
-			{
-				CategoryId: 100,
-				// CategoryName string    `json:"category_name"`
-				Datetime: time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
-				From:     "from",
-				Id:       1,
-				Memo:     "memo",
-				Price:    1234,
-				Type:     "type",
-			},
 			{
 				CategoryId: 200,
 				// CategoryName string    `json:"category_name"`
@@ -57,23 +47,48 @@ func (m *mockRepo) GetRecords(ctx context.Context, num int) (recs []openapi.Reco
 				Type:     "",
 			},
 		}
-	} else if num == 1 {
-		recs = []openapi.Record{
-			{
-				CategoryId: 100,
-				// CategoryName string    `json:"category_name"`
-				Datetime: time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
-				From:     "from",
-				Id:       1,
-				Memo:     "memo",
-				Price:    1234,
-				Type:     "type",
-			},
-		}
-	} else if num == 0 {
-		recs = []openapi.Record{}
 	} else {
-		return []openapi.Record{}, fmt.Errorf("invalid args")
+		if num >= 2 {
+			recs = []openapi.Record{
+				{
+					CategoryId: 100,
+					// CategoryName string    `json:"category_name"`
+					Datetime: time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+					From:     "from",
+					Id:       1,
+					Memo:     "memo",
+					Price:    1234,
+					Type:     "type",
+				},
+				{
+					CategoryId: 200,
+					// CategoryName string    `json:"category_name"`
+					Datetime: time.Date(2000, 1, 25, 0, 0, 0, 0, jst),
+					From:     "",
+					Id:       2,
+					Memo:     "",
+					Price:    2345,
+					Type:     "",
+				},
+			}
+		} else if num == 1 {
+			recs = []openapi.Record{
+				{
+					CategoryId: 100,
+					// CategoryName string    `json:"category_name"`
+					Datetime: time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+					From:     "from",
+					Id:       1,
+					Memo:     "memo",
+					Price:    1234,
+					Type:     "type",
+				},
+			}
+		} else if num == 0 {
+			recs = []openapi.Record{}
+		} else {
+			return []openapi.Record{}, fmt.Errorf("invalid args")
+		}
 	}
 
 	return recs, nil

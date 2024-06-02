@@ -44,8 +44,8 @@ func (d *DBRepository) InsertRecord(req openapi.ReqRecord) (rec openapi.Record, 
 	return rec, nil
 }
 
-func (d *DBRepository) GetRecords(ctx context.Context, num int) (recs []openapi.Record, err error) {
-	res := d.Conn.Table(RecordTableName).Order("id DESC").Limit(num).Find(&recs)
+func (d *DBRepository) GetRecords(ctx context.Context, num int, offset int) (recs []openapi.Record, err error) {
+	res := d.Conn.Table(RecordTableName).Order("id DESC").Limit(num).Offset(offset).Find(&recs)
 	if res.Error != nil {
 		return []openapi.Record{}, res.Error
 	}

@@ -608,35 +608,6 @@ else:
     print(response.status_code)
     sys.exit(1)
 
-# ここまで
-# data1 = '{"category_id": 100, "datetime": "20000410", "from": "testfrom1", "type": "S1", "price": 1000, "memo": "memo"}'
-# data2 = '{"category_id": 200, "datetime": "20000415", "from": "testfrom2", "type": "", "price": 2000, "memo": ""}'
-# data3 = '{"category_id": 300, "datetime": "20000515", "from": "", "type": "", "price": 3000, "memo": ""}'
-"""
-        {
-            "category_id": 100,
-            "category_name": "月給",
-            "id": 4,
-            "datetime": "2000-06-10T00:00:00+09:00",
-            "from": "fixmonth",
-            "type": "",
-            "price": 1000,
-            "memo": "memo1",
-        },
-        {
-            "category_id": 200,
-            "category_name": "家賃",
-            "id": 5,
-            "datetime": "2000-06-20T00:00:00+09:00",
-            "from": "fixmonth",
-            "type": "",
-            "price": 2000,
-            "memo": "memo2",
-        },
-"""
-# data1 = '{"category_id": 100, "datetime": "20000710", "from": "testfrom1", "type": "S1", "price": 1000, "memo": "memo"}'
-# data2 = '{"category_id": 200, "datetime": "20000715", "from": "testfrom2", "type": "", "price": 2000, "memo": ""}'
-# data3 = '{"category_id": 300, "datetime": "20000720", "from": "", "type": "", "price": 3000, "memo": ""}'
 
 print("# get records (1)")
 url = "http://localhost:8080/v2/record?num=3"
@@ -799,6 +770,54 @@ if response.status_code == 200:
             "memo": "memo",
             "price": 1000,
             "type": "S1",
+        },
+    ]
+    if want != json_data:
+        print("[NG] {}".format(url))
+        print(json_data)
+        print(want)
+        sys.exit(1)
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
+print("# get records (4)")
+url = "http://localhost:8080/v2/record?num=3&offset=1"
+response = requests.get(url)
+if response.status_code == 200:
+    json_data = response.json()
+    want = [
+        {
+            "category_id": 200,
+            "category_name": "家賃",
+            "datetime": "2000-07-15T00:00:00+09:00",
+            "from": "testfrom2",
+            "id": 7,
+            "memo": "",
+            "price": 2000,
+            "type": "",
+        },
+        {
+            "category_id": 100,
+            "category_name": "月給",
+            "datetime": "2000-07-10T00:00:00+09:00",
+            "from": "testfrom1",
+            "id": 6,
+            "memo": "memo",
+            "price": 1000,
+            "type": "S1",
+        },
+        {
+            "category_id": 200,
+            "category_name": "家賃",
+            "datetime": "2000-06-20T00:00:00+09:00",
+            "from": "fixmonth",
+            "id": 5,
+            "memo": "memo2",
+            "price": 2000,
+            "type": "",
         },
     ]
     if want != json_data:
