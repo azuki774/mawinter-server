@@ -127,7 +127,13 @@ func (a *apigateway) GetV2Record(w http.ResponseWriter, r *http.Request, params 
 		num = *params.Num
 	}
 
-	recs, err := a.ap2.GetRecords(ctx, num)
+	offset := 0 // default value
+
+	if params.Offset != nil {
+		offset = *params.Offset
+	}
+
+	recs, err := a.ap2.GetRecords(ctx, num, offset)
 	if errors.Is(err, model.ErrNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprint(w, err.Error())

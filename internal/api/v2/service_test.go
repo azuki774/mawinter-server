@@ -144,8 +144,9 @@ func TestAPIService_GetRecords(t *testing.T) {
 		Repo   DBRepository
 	}
 	type args struct {
-		ctx context.Context
-		num int
+		ctx    context.Context
+		num    int
+		offset int
 	}
 	tests := []struct {
 		name     string
@@ -247,6 +248,30 @@ func TestAPIService_GetRecords(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "ok (offset)",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx:    context.Background(),
+				offset: 1,
+			},
+			wantRecs: []openapi.Record{
+				{
+					CategoryId:   200,
+					CategoryName: "cat2",
+					Datetime:     time.Date(2000, 1, 25, 0, 0, 0, 0, jst),
+					From:         "",
+					Id:           2,
+					Memo:         "",
+					Price:        2345,
+					Type:         "",
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "zero",
 			fields: fields{
 				Logger: l,
@@ -279,7 +304,7 @@ func TestAPIService_GetRecords(t *testing.T) {
 				Logger: tt.fields.Logger,
 				Repo:   tt.fields.Repo,
 			}
-			gotRecs, err := a.GetRecords(tt.args.ctx, tt.args.num)
+			gotRecs, err := a.GetRecords(tt.args.ctx, tt.args.num, tt.args.offset)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("APIService.GetRecordsRecent() error = %v, wantErr %v", err, tt.wantErr)
 				return
