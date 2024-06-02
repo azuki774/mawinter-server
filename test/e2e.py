@@ -118,6 +118,23 @@ else:
     print(response.status_code)
     sys.exit(1)
 
+print("# get records all count")
+url = "http://localhost:8080/v2/record/count"
+response = requests.get(url)
+if response.status_code == 200:
+    json_data = response.json()
+    want = {"num": 3}
+    if want != json_data:
+        print("[NG] {}".format(url))
+        print(json_data)
+        print(want)
+        sys.exit(1)
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
 print("# get records with record 200004 category_id")
 url = "http://localhost:8080/v2/record/200004?category_id=100"
 response = requests.get(url)

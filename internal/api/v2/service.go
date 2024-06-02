@@ -24,6 +24,7 @@ func init() {
 type DBRepository interface {
 	InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error)
 	GetRecords(ctx context.Context, num int) (recs []openapi.Record, err error)
+	GetRecordsCount(ctx context.Context) (num int, err error)
 	GetMonthRecords(yyyymm string) (recs []openapi.Record, err error)
 	GetMonthRecordsRecent(yyyymm string, num int) (recs []openapi.Record, err error)
 	MakeCategoryNameMap() (cnf map[int]string, err error)
@@ -116,6 +117,19 @@ func (a *APIService) GetRecords(ctx context.Context, num int) (recs []openapi.Re
 
 	a.Logger.Info("complete GetRecordsRecent", zap.Int("num", num))
 	return recs, nil
+}
+
+// GetRecordsCount は レコード件数の総数を返す
+func (a *APIService) GetRecordsCount(ctx context.Context) (rec openapi.RecordCount, err error) {
+	a.Logger.Info("called GetRecordsCount")
+	num, err := a.Repo.GetRecordsCount(ctx)
+	if err != nil {
+		a.Logger.Error("failed to get the number of records", zap.Error(err))
+		return openapi.RecordCount{}, err
+	}
+
+	rec.Num = int2ptr(num)
+	return rec, nil
 }
 
 func (a *APIService) PostMonthlyFixRecord(ctx context.Context, yyyymm string) (recs []openapi.Record, err error) {
