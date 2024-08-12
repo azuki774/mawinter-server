@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
+const CategoryTableName = "Category"
 const RecordTableName = "Record"
 
 type DBRepository struct {
@@ -58,6 +59,11 @@ func (d *DBRepository) GetRecordsCount(ctx context.Context) (num int, err error)
 		return 0, res.Error
 	}
 	return num, nil
+}
+
+func (d *DBRepository) GetCategories(ctx context.Context) (cats []model.Category, err error) {
+	err = d.Conn.Table(CategoryTableName).Find(&cats).Error
+	return cats, err
 }
 
 func (d *DBRepository) GetMonthRecords(yyyymm string) (recs []openapi.Record, err error) {

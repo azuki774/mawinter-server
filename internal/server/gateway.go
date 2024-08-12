@@ -340,6 +340,26 @@ func (a *apigateway) GetVersion(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, string(outputJson))
 }
 
+func (a *apigateway) GetCategories(w http.ResponseWriter, r *http.Request) {
+	cats, err := a.ap2.GetCategories(r.Context())
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	outputJson, err := json.Marshal(&cats)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(outputJson))
+}
+
 func str2ptr(a string) *string {
 	return &a
 }

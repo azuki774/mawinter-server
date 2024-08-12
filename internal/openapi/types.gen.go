@@ -7,6 +7,12 @@ import (
 	"time"
 )
 
+// Category defines model for category.
+type Category struct {
+	CategoryId   int    `json:"category_id"`
+	CategoryName string `json:"category_name"`
+}
+
 // CategoryYearSummary defines model for category_year_summary.
 type CategoryYearSummary struct {
 	CategoryId   int    `json:"category_id"`

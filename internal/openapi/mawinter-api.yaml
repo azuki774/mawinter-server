@@ -269,6 +269,21 @@ paths:
           description: Not Found
       servers:
         - url: 'http://localhost:8080'
+  /categories:
+    get:
+      summary: Your GET endpoint
+      operationId: get-categories
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/category'
+      servers:
+        - url: 'http://localhost:8080'
 components:
   schemas:
     req_record:
@@ -393,3 +408,14 @@ components:
             - 300
             - 300
           total: 0
+    category:
+      type: object
+      title: category
+      properties:
+        category_id:
+          type: integer
+        category_name:
+          type: string
+      required:
+        - category_id
+        - category_name
