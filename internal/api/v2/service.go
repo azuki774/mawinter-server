@@ -25,6 +25,7 @@ type DBRepository interface {
 	InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error)
 	GetRecords(ctx context.Context, num int, offset int) (recs []openapi.Record, err error)
 	GetRecordsCount(ctx context.Context) (num int, err error)
+	GetCategories(ctx context.Context) (cats []model.Category, err error)
 	GetMonthRecords(yyyymm string) (recs []openapi.Record, err error)
 	GetMonthRecordsRecent(yyyymm string, num int) (recs []openapi.Record, err error)
 	MakeCategoryNameMap() (cnf map[int]string, err error)
@@ -130,6 +131,25 @@ func (a *APIService) GetRecordsCount(ctx context.Context) (rec openapi.RecordCou
 
 	rec.Num = int2ptr(num)
 	return rec, nil
+}
+
+// GetCategories は管理しているカテゴリ情報を返却する
+func (a *APIService) GetCategories(ctx context.Context) (cats []openapi.Category, err error) {
+	a.Logger.Info("called get categories")
+	cs, err := a.Repo.GetCategories(ctx)
+	if err != nil {
+		a.Logger.Error("failed to get categories from DB", zap.Error(err))
+		return []openapi.Category{}, err
+	}
+
+	for _, c := range cs {
+		var tmpC openapi.Category
+		tmpC.CategoryId = int(c.CategoryID)
+		tmpC.CategoryName = c.Name
+		cats = append(cats, tmpC)
+	}
+
+	return cats, nil
 }
 
 func (a *APIService) PostMonthlyFixRecord(ctx context.Context, yyyymm string) (recs []openapi.Record, err error) {

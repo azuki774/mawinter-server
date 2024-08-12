@@ -98,6 +98,11 @@ func (m *mockRepo) GetRecordsCount(ctx context.Context) (num int, err error) {
 	return 123, nil // 正常系
 }
 
+// empty return
+func (m *mockRepo) GetCategories(ctx context.Context) (cats []model.Category, err error) {
+	return []model.Category{}, nil
+}
+
 func (m *mockRepo) GetMonthRecords(yyyymm string) (recs []openapi.Record, err error) {
 	recs = []openapi.Record{
 		{

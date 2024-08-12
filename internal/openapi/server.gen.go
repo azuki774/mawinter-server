@@ -16,6 +16,9 @@ type ServerInterface interface {
 	// health check
 	// (GET /)
 	Get(w http.ResponseWriter, r *http.Request)
+	// Your GET endpoint
+	// (GET /categories)
+	GetCategories(w http.ResponseWriter, r *http.Request)
 	// get records
 	// (GET /v2/record)
 	GetV2Record(w http.ResponseWriter, r *http.Request, params GetV2RecordParams)
@@ -55,6 +58,12 @@ type Unimplemented struct{}
 // health check
 // (GET /)
 func (_ Unimplemented) Get(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Your GET endpoint
+// (GET /categories)
+func (_ Unimplemented) GetCategories(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -131,6 +140,21 @@ func (siw *ServerInterfaceWrapper) Get(w http.ResponseWriter, r *http.Request) {
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.Get(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetCategories operation middleware
+func (siw *ServerInterfaceWrapper) GetCategories(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetCategories(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -524,6 +548,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/", wrapper.Get)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/categories", wrapper.GetCategories)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/v2/record", wrapper.GetV2Record)

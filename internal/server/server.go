@@ -23,6 +23,7 @@ type APIServiceV2 interface {
 	PostMonthlyFixRecord(ctx context.Context, yyyymm string) (recs []openapi.Record, err error)
 	GetRecords(ctx context.Context, num int, offset int) (recs []openapi.Record, err error)
 	GetRecordsCount(ctx context.Context) (rec openapi.RecordCount, err error)
+	GetCategories(ctx context.Context) (recs []openapi.Category, err error)
 	GetYYYYMMRecords(ctx context.Context, yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error)
 	GetYYYYMMRecordsRecent(ctx context.Context, yyyymm string, num int) (recs []openapi.Record, err error)
 	GetV2YearSummary(ctx context.Context, year int) (sums []openapi.CategoryYearSummary, err error)
