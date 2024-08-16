@@ -41,12 +41,9 @@ test:
 	staticcheck ./...
 	go test -v ./...
 
-doc:
-	docker build -t $(container_name_doc):$(VERSION_API) -f build/Dockerfile-doc .
-	docker compose -f deployment/compose-local-doc.yml up
-	# req: create doc by tbls
-	./docs/build_md.sh 2> /dev/null # required pandoc
-	cp -a docs/schema/*.svg docs/build/
+coverage:
+	go test -coverprofile=docs/coverage.out ./...
+	go tool cover -html=docs/coverage.out -o docs/coverage.html
 
 generate:
 	oapi-codegen -package "openapi" -generate "chi-server" internal/openapi/mawinter-api.yaml > internal/openapi/server.gen.go
