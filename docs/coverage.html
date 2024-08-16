@@ -1,0 +1,3395 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>mawinter-register: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">mawinter-server/cmd/mawinter-register/fixmonth.go (0.0%)</option>
+				
+				<option value="file1">mawinter-server/cmd/mawinter-register/main.go (0.0%)</option>
+				
+				<option value="file2">mawinter-server/cmd/mawinter-register/root.go (0.0%)</option>
+				
+				<option value="file3">mawinter-server/cmd/mawinter/duplicatecheck.go (0.0%)</option>
+				
+				<option value="file4">mawinter-server/cmd/mawinter/main.go (0.0%)</option>
+				
+				<option value="file5">mawinter-server/cmd/mawinter/root.go (0.0%)</option>
+				
+				<option value="file6">mawinter-server/cmd/mawinter/start.go (0.0%)</option>
+				
+				<option value="file7">mawinter-server/internal/api/v2/mock.go (93.3%)</option>
+				
+				<option value="file8">mawinter-server/internal/api/v2/service.go (79.3%)</option>
+				
+				<option value="file9">mawinter-server/internal/client/mail.go (0.0%)</option>
+				
+				<option value="file10">mawinter-server/internal/factory/db.go (0.0%)</option>
+				
+				<option value="file11">mawinter-server/internal/factory/default.go (0.0%)</option>
+				
+				<option value="file12">mawinter-server/internal/model/db.go (0.0%)</option>
+				
+				<option value="file13">mawinter-server/internal/model/register.go (12.5%)</option>
+				
+				<option value="file14">mawinter-server/internal/model/validate.go (0.0%)</option>
+				
+				<option value="file15">mawinter-server/internal/openapi/server.gen.go (0.0%)</option>
+				
+				<option value="file16">mawinter-server/internal/openapi/spec.gen.go (27.0%)</option>
+				
+				<option value="file17">mawinter-server/internal/register/mock.go (30.8%)</option>
+				
+				<option value="file18">mawinter-server/internal/register/service.go (48.0%)</option>
+				
+				<option value="file19">mawinter-server/internal/repository/v2/db.go (43.2%)</option>
+				
+				<option value="file20">mawinter-server/internal/repository/v2/db_register.go (0.0%)</option>
+				
+				<option value="file21">mawinter-server/internal/repository/v2/model.go (88.9%)</option>
+				
+				<option value="file22">mawinter-server/internal/server/gateway.go (0.0%)</option>
+				
+				<option value="file23">mawinter-server/internal/server/server.go (0.0%)</option>
+				
+				<option value="file24">mawinter-server/internal/service/duplicatecheck.go (84.2%)</option>
+				
+				<option value="file25">mawinter-server/internal/service/mock.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "context"
+        "fmt"
+        "mawinter-server/internal/factory"
+        "time"
+
+        "github.com/spf13/cobra"
+        "go.uber.org/zap"
+)
+
+type fixMonthlyOption struct {
+        Logger *zap.Logger
+        DBInfo struct {
+                Host string
+                Port string
+                User string
+                Pass string
+                Name string
+        }
+}
+
+var fixMonthlyOpt fixMonthlyOption
+
+// fixMonthlyOptCmd represents the start command
+var fixMonthlyOptCmd = &amp;cobra.Command{
+        Use:   "fixmonth",
+        Short: "A brief description of your command",
+        Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+        SilenceErrors: true,
+        SilenceUsage:  true,
+        RunE: func(cmd *cobra.Command, args []string) error <span class="cov0" title="0">{
+                return startFixMonthly()
+        }</span>,
+}
+
+func startFixMonthly() (err error) <span class="cov0" title="0">{
+        l, err := factory.NewLogger()
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Println(err)
+                return err
+        }</span>
+        <span class="cov0" title="0">defer l.Sync()
+        db, err := factory.NewDBRepositoryV1(fixMonthlyOpt.DBInfo.Host, fixMonthlyOpt.DBInfo.Port, fixMonthlyOpt.DBInfo.User, fixMonthlyOpt.DBInfo.Pass, fixMonthlyOpt.DBInfo.Name)
+        if err != nil </span><span class="cov0" title="0">{
+                l.Error("failed to connect DB", zap.Error(err))
+                return err
+        }</span>
+        <span class="cov0" title="0">defer db.CloseDB()
+        mc := factory.NewMailClient()
+        ap := factory.NewRegisterService(l, db, mc)
+        ctx := context.Background()
+        return ap.InsertMonthlyFixBilling(ctx, time.Now().Local().Format("200601"))</span>
+}
+
+func init() <span class="cov0" title="0">{
+        rootCmd.AddCommand(fixMonthlyOptCmd)
+        fixMonthlyOptCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+        fixMonthlyOptCmd.Flags().StringVar(&amp;fixMonthlyOpt.DBInfo.Host, "db-host", "mawinter-db", "DB Host")
+        fixMonthlyOptCmd.Flags().StringVar(&amp;fixMonthlyOpt.DBInfo.Port, "db-port", "3306", "DB Port")
+        fixMonthlyOptCmd.Flags().StringVar(&amp;fixMonthlyOpt.DBInfo.Name, "db-name", "mawinter", "DB Name")
+        fixMonthlyOptCmd.Flags().StringVar(&amp;fixMonthlyOpt.DBInfo.User, "db-user", "root", "DB User")
+        fixMonthlyOptCmd.Flags().StringVar(&amp;fixMonthlyOpt.DBInfo.Pass, "db-pass", "password", "DB Pass")
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package main
+
+func main() <span class="cov0" title="0">{
+        Execute()
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package main
+
+import (
+        "os"
+
+        "github.com/spf13/cobra"
+)
+
+// rootCmd represents the base command when called without any subcommands
+var rootCmd = &amp;cobra.Command{
+        Use:   "root",
+        Short: "A brief description of your application",
+        Long: `A longer description that spans multiple lines and likely contains
+examples and usage of using your application. For example:
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+}
+
+// Execute adds all child commands to the root command and sets flags appropriately.
+// This is called by main.main(). It only needs to happen once to the rootCmd.
+func Execute() <span class="cov0" title="0">{
+        err := rootCmd.Execute()
+        if err != nil </span><span class="cov0" title="0">{
+                os.Exit(1)
+        }</span>
+}
+func init() <span class="cov0" title="0">{
+        // Here you will define your flags and configuration settings.
+        // Cobra supports persistent flags, which, if defined here,
+        // will be global for your application.
+
+        // rootCmd.PersistentFlags().StringVar(&amp;cfgFile, "config", "", "config file (default is $HOME/.bill-manager.yaml)")
+
+        // Cobra also supports local flags, which will only run
+        // when this action is called directly.
+        rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package main
+
+import (
+        "context"
+        "fmt"
+        "mawinter-server/internal/factory"
+        "mawinter-server/internal/server"
+        "mawinter-server/internal/timeutil"
+        "time"
+
+        "github.com/spf13/cobra"
+        "go.uber.org/zap"
+)
+
+var jst *time.Location
+
+func init() <span class="cov0" title="0">{
+        j, err := time.LoadLocation("Asia/Tokyo")
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+        <span class="cov0" title="0">jst = j</span>
+}
+
+type DuplicateCheckOption struct {
+        Logger *zap.Logger
+        DBInfo struct {
+                Host string
+                Port string
+                User string
+                Pass string
+                Name string
+        }
+        Lastmonth bool // if true, process last month table
+}
+
+var duplicateCheckOpt DuplicateCheckOption
+
+// duplicateCheckCmd represents the duplicateCheck command
+var duplicateCheckCmd = &amp;cobra.Command{
+        Use:   "duplicateCheck",
+        Short: "A brief description of your command",
+        Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+        Run: func(cmd *cobra.Command, args []string) <span class="cov0" title="0">{
+                fmt.Println("duplicateCheck called")
+                Run()
+        }</span>,
+}
+
+func init() <span class="cov0" title="0">{
+        rootCmd.AddCommand(duplicateCheckCmd)
+
+        // Here you will define your flags and configuration settings.
+
+        // Cobra supports Persistent Flags which will work for this command
+        // and all subcommands, e.g.:
+        // duplicateCheckCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+        // Cobra supports local flags which will only run when this command
+        // is called directly, e.g.:
+        duplicateCheckCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+        duplicateCheckCmd.Flags().StringVar(&amp;duplicateCheckOpt.DBInfo.Host, "db-host", "mawinter-db", "DB Host")
+        duplicateCheckCmd.Flags().StringVar(&amp;duplicateCheckOpt.DBInfo.Port, "db-port", "3306", "DB Port")
+        duplicateCheckCmd.Flags().StringVar(&amp;duplicateCheckOpt.DBInfo.Name, "db-name", "mawinter", "DB Name")
+        duplicateCheckCmd.Flags().StringVar(&amp;duplicateCheckOpt.DBInfo.User, "db-user", "root", "DB User")
+        duplicateCheckCmd.Flags().StringVar(&amp;duplicateCheckOpt.DBInfo.Pass, "db-pass", "password", "DB Pass")
+        duplicateCheckCmd.Flags().BoolVar(&amp;duplicateCheckOpt.Lastmonth, "last-month", false, "if true, process last month table")
+}</span>
+
+func Run() (err error) <span class="cov0" title="0">{
+        var YYYYMM string // roc month table name (YYYYMM
+        thisMonth := time.Date(timeutil.NowFunc().Year(), timeutil.NowFunc().Month(), 1, 0, 0, 0, 0, jst)
+
+        if !duplicateCheckOpt.Lastmonth </span><span class="cov0" title="0">{
+                YYYYMM = timeutil.NowFunc().Format("200601")
+        }</span> else<span class="cov0" title="0"> {
+                // last month
+                YYYYMM = thisMonth.AddDate(0, -1, 0).Format("200601")
+        }</span>
+
+        <span class="cov0" title="0">l, err := factory.NewLogger()
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Println(err)
+                return err
+        }</span>
+        <span class="cov0" title="0">defer l.Sync()
+        l.Info("binary info", zap.String("version", version), zap.String("revision", revision), zap.String("build", build))
+        server.Version = version
+        server.Revision = revision
+        server.Build = build
+
+        db, err := factory.NewDBRepositoryV2(startOpt.DBInfo.Host, startOpt.DBInfo.Port, startOpt.DBInfo.User, startOpt.DBInfo.Pass, startOpt.DBInfo.Name)
+        if err != nil </span><span class="cov0" title="0">{
+                l.Error("failed to connect DB", zap.Error(err))
+                return err
+        }</span>
+        <span class="cov0" title="0">defer db.CloseDB()
+
+        ctx := context.Background()
+        ap := factory.NewServiceV2(l, db)
+        svc := factory.NewDuplicateCheckService(l, ap)
+
+        l.Info("proc month table name", zap.String("YYYYMM", YYYYMM))
+
+        return svc.DuplicateCheck(ctx, YYYYMM)</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package main
+
+func main() <span class="cov0" title="0">{
+        Execute()
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package main
+
+import (
+        "os"
+
+        "github.com/spf13/cobra"
+)
+
+// rootCmd represents the base command when called without any subcommands
+var rootCmd = &amp;cobra.Command{
+        Use:   "server",
+        Short: "A brief description of your application",
+        Long: `A longer description that spans multiple lines and likely contains
+examples and usage of using your application. For example:
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+}
+
+// Execute adds all child commands to the root command and sets flags appropriately.
+// This is called by main.main(). It only needs to happen once to the rootCmd.
+func Execute() <span class="cov0" title="0">{
+        err := rootCmd.Execute()
+        if err != nil </span><span class="cov0" title="0">{
+                os.Exit(1)
+        }</span>
+}
+func init() <span class="cov0" title="0">{
+        // Here you will define your flags and configuration settings.
+        // Cobra supports persistent flags, which, if defined here,
+        // will be global for your application.
+
+        // rootCmd.PersistentFlags().StringVar(&amp;cfgFile, "config", "", "config file (default is $HOME/.bill-manager.yaml)")
+
+        // Cobra also supports local flags, which will only run
+        // when this action is called directly.
+        rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package main
+
+import (
+        "context"
+        "fmt"
+        "mawinter-server/internal/factory"
+        "mawinter-server/internal/server"
+
+        "github.com/spf13/cobra"
+        "go.uber.org/zap"
+)
+
+type StartOption struct {
+        Logger *zap.Logger
+        DBInfo struct {
+                Host string
+                Port string
+                User string
+                Pass string
+                Name string
+        }
+        BasicAuth struct {
+                User string
+                Pass string
+        }
+}
+
+var (
+        version  string
+        revision string
+        build    string
+)
+
+var startOpt StartOption
+
+// startCmd represents the start command
+var startCmd = &amp;cobra.Command{
+        Use:   "start",
+        Short: "A brief description of your command",
+        Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+        SilenceErrors: true,
+        SilenceUsage:  true,
+        RunE: func(cmd *cobra.Command, args []string) error <span class="cov0" title="0">{
+                return start()
+        }</span>,
+}
+
+func start() (err error) <span class="cov0" title="0">{
+        l, err := factory.NewLogger()
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Println(err)
+                return err
+        }</span>
+        <span class="cov0" title="0">defer l.Sync()
+
+        db2, err := factory.NewDBRepositoryV2(startOpt.DBInfo.Host, startOpt.DBInfo.Port, startOpt.DBInfo.User, startOpt.DBInfo.Pass, startOpt.DBInfo.Name)
+        if err != nil </span><span class="cov0" title="0">{
+                l.Error("failed to connect DB", zap.Error(err))
+                return err
+        }</span>
+        <span class="cov0" title="0">defer db2.CloseDB()
+
+        ap2 := factory.NewServiceV2(l, db2)
+        srv := factory.NewServer(l, ap2)
+        ctx := context.Background()
+
+        l.Info("binary info", zap.String("version", version), zap.String("revision", revision), zap.String("build", build))
+        server.Version = version
+        server.Revision = revision
+        server.Build = build
+
+        return srv.Start(ctx)</span>
+}
+
+func init() <span class="cov0" title="0">{
+        rootCmd.AddCommand(startCmd)
+        startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+        startCmd.Flags().StringVar(&amp;startOpt.DBInfo.Host, "db-host", "mawinter-db", "DB Host")
+        startCmd.Flags().StringVar(&amp;startOpt.DBInfo.Port, "db-port", "3306", "DB Port")
+        startCmd.Flags().StringVar(&amp;startOpt.DBInfo.Name, "db-name", "mawinter", "DB Name")
+        startCmd.Flags().StringVar(&amp;startOpt.DBInfo.User, "db-user", "root", "DB User")
+        startCmd.Flags().StringVar(&amp;startOpt.DBInfo.Pass, "db-pass", "password", "DB Pass")
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package api
+
+import (
+        "context"
+        "fmt"
+        "mawinter-server/internal/model"
+        "mawinter-server/internal/openapi"
+        "mawinter-server/internal/timeutil"
+        "time"
+)
+
+type mockRepo struct {
+        GetMonthlyFixDoneReturn bool
+        ReturnConfirm           bool // ここが true ならば各テーブルは confirm していることにする
+}
+
+func (m *mockRepo) CreateTableYYYYMM(yyyymm string) (err error) <span class="cov0" title="0">{
+        return nil
+}</span>
+
+func (m *mockRepo) InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error) <span class="cov8" title="1">{
+        rec = openapi.Record{
+                CategoryId: 100,
+                // CategoryName string    `json:"category_name"`
+                Datetime: time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+                From:     "from",
+                Id:       1,
+                Memo:     "memo",
+                Price:    1234,
+                Type:     "type",
+        }
+        return rec, nil
+}</span>
+
+// GetRecords は mock だと num &lt;= 2 &amp;&amp; offset = 0 と num = 20 &amp;&amp; offset = 1 までしか対応しない
+func (m *mockRepo) GetRecords(ctx context.Context, num int, offset int) (recs []openapi.Record, err error) <span class="cov8" title="1">{
+        if offset == 1 </span><span class="cov8" title="1">{
+                recs = []openapi.Record{
+                        {
+                                CategoryId: 200,
+                                // CategoryName string    `json:"category_name"`
+                                Datetime: time.Date(2000, 1, 25, 0, 0, 0, 0, jst),
+                                From:     "",
+                                Id:       2,
+                                Memo:     "",
+                                Price:    2345,
+                                Type:     "",
+                        },
+                }
+        }</span> else<span class="cov8" title="1"> {
+                if num &gt;= 2 </span><span class="cov8" title="1">{
+                        recs = []openapi.Record{
+                                {
+                                        CategoryId: 100,
+                                        // CategoryName string    `json:"category_name"`
+                                        Datetime: time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+                                        From:     "from",
+                                        Id:       1,
+                                        Memo:     "memo",
+                                        Price:    1234,
+                                        Type:     "type",
+                                },
+                                {
+                                        CategoryId: 200,
+                                        // CategoryName string    `json:"category_name"`
+                                        Datetime: time.Date(2000, 1, 25, 0, 0, 0, 0, jst),
+                                        From:     "",
+                                        Id:       2,
+                                        Memo:     "",
+                                        Price:    2345,
+                                        Type:     "",
+                                },
+                        }
+                }</span> else<span class="cov8" title="1"> if num == 1 </span><span class="cov8" title="1">{
+                        recs = []openapi.Record{
+                                {
+                                        CategoryId: 100,
+                                        // CategoryName string    `json:"category_name"`
+                                        Datetime: time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+                                        From:     "from",
+                                        Id:       1,
+                                        Memo:     "memo",
+                                        Price:    1234,
+                                        Type:     "type",
+                                },
+                        }
+                }</span> else<span class="cov8" title="1"> if num == 0 </span><span class="cov8" title="1">{
+                        recs = []openapi.Record{}
+                }</span> else<span class="cov8" title="1"> {
+                        return []openapi.Record{}, fmt.Errorf("invalid args")
+                }</span>
+        }
+
+        <span class="cov8" title="1">return recs, nil</span>
+}
+
+func (m *mockRepo) GetRecordsCount(ctx context.Context) (num int, err error) <span class="cov8" title="1">{
+        return 123, nil // 正常系
+}</span>
+
+// empty return
+func (m *mockRepo) GetCategories(ctx context.Context) (cats []model.Category, err error) <span class="cov0" title="0">{
+        return []model.Category{}, nil
+}</span>
+
+func (m *mockRepo) GetMonthRecords(yyyymm string) (recs []openapi.Record, err error) <span class="cov8" title="1">{
+        recs = []openapi.Record{
+                {
+                        CategoryId: 100,
+                        // CategoryName string    `json:"category_name"`
+                        Datetime: time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+                        From:     "ope",
+                        Id:       1,
+                        Memo:     "memo",
+                        Price:    1234,
+                        Type:     "type",
+                },
+                {
+                        CategoryId: 200,
+                        // CategoryName string    `json:"category_name"`
+                        Datetime: time.Date(2000, 1, 25, 0, 0, 0, 0, jst),
+                        From:     "mawinter-web",
+                        Id:       2,
+                        Memo:     "",
+                        Price:    2345,
+                        Type:     "",
+                },
+        }
+
+        return recs, nil
+}</span>
+
+func (m *mockRepo) GetMonthRecordsRecent(yyyymm string, num int) (recs []openapi.Record, err error) <span class="cov8" title="1">{
+        recs = []openapi.Record{
+                {
+                        CategoryId: 100,
+                        // CategoryName string    `json:"category_name"`
+                        Datetime: time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+                        From:     "from",
+                        Id:       1,
+                        Memo:     "memo",
+                        Price:    1234,
+                        Type:     "type",
+                },
+                {
+                        CategoryId: 200,
+                        // CategoryName string    `json:"category_name"`
+                        Datetime: time.Date(2000, 1, 25, 0, 0, 0, 0, jst),
+                        From:     "",
+                        Id:       2,
+                        Memo:     "",
+                        Price:    2345,
+                        Type:     "",
+                },
+        }
+
+        return recs, nil
+}</span>
+
+func (m *mockRepo) MakeCategoryNameMap() (cnf map[int]string, err error) <span class="cov8" title="1">{
+        cnf = map[int]string{100: "cat1", 200: "cat2"}
+        return cnf, nil
+}</span>
+
+func (m *mockRepo) GetMonthMidSummary(yyyymm string) (summon []model.CategoryMidMonthSummary, err error) <span class="cov8" title="1">{
+        // テストのため、200008 の場合のみ catID: 200 は ノーレコードとする。
+        if yyyymm == "200008" </span><span class="cov8" title="1">{
+                return []model.CategoryMidMonthSummary{
+                        {
+                                CategoryId: 100,
+                                Count:      10,
+                                Price:      1000,
+                        },
+                }, nil
+        }</span>
+
+        <span class="cov8" title="1">return []model.CategoryMidMonthSummary{
+                {
+                        CategoryId: 100,
+                        Count:      10,
+                        Price:      1000,
+                },
+                {
+                        CategoryId: 200,
+                        Count:      20,
+                        Price:      2000,
+                },
+        }, nil</span>
+}
+
+func (m *mockRepo) InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record, err error) <span class="cov8" title="1">{
+        return []openapi.Record{
+                {
+                        CategoryId:   100,
+                        CategoryName: "cat1",
+                        Datetime:     time.Date(2021, 2, 15, 0, 0, 0, 0, jst),
+                        From:         "fixmonth",
+                        Id:           1,
+                        Memo:         "",
+                        Price:        1234,
+                        Type:         "",
+                },
+                {
+                        CategoryId:   200,
+                        CategoryName: "cat2",
+                        Datetime:     time.Date(2021, 2, 25, 0, 0, 0, 0, jst),
+                        From:         "fixmonth",
+                        Id:           2,
+                        Memo:         "",
+                        Price:        12345,
+                        Type:         "",
+                },
+        }, nil
+}</span>
+
+func (m *mockRepo) GetMonthlyFixDone(yyyymm string) (done bool, err error) <span class="cov8" title="1">{
+        return m.GetMonthlyFixDoneReturn, nil
+}</span>
+
+func (m *mockRepo) GetMonthlyConfirm(yyyymm string) (yc openapi.ConfirmInfo, err error) <span class="cov8" title="1">{
+        // 正常系
+        t := timeutil.NowFunc() // testconfig
+        return openapi.ConfirmInfo{
+                ConfirmDatetime: &amp;t,
+                Status:          &amp;m.ReturnConfirm,
+                Yyyymm:          &amp;yyyymm,
+        }, nil
+}</span>
+
+func (m *mockRepo) UpdateMonthlyConfirm(yyyymm string, confirm bool) (yc openapi.ConfirmInfo, err error) <span class="cov8" title="1">{
+        // 正常系
+        t := timeutil.NowFunc() // testconfig
+        return openapi.ConfirmInfo{
+                ConfirmDatetime: &amp;t,
+                Status:          &amp;confirm,
+                Yyyymm:          &amp;yyyymm,
+        }, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package api
+
+import (
+        "context"
+        "mawinter-server/internal/model"
+        "mawinter-server/internal/openapi"
+        "mawinter-server/internal/timeutil"
+        "sort"
+        "time"
+
+        "go.uber.org/zap"
+)
+
+var jst *time.Location
+
+func init() <span class="cov8" title="1">{
+        j, err := time.LoadLocation("Asia/Tokyo")
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+        <span class="cov8" title="1">jst = j</span>
+}
+
+type DBRepository interface {
+        InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error)
+        GetRecords(ctx context.Context, num int, offset int) (recs []openapi.Record, err error)
+        GetRecordsCount(ctx context.Context) (num int, err error)
+        GetCategories(ctx context.Context) (cats []model.Category, err error)
+        GetMonthRecords(yyyymm string) (recs []openapi.Record, err error)
+        GetMonthRecordsRecent(yyyymm string, num int) (recs []openapi.Record, err error)
+        MakeCategoryNameMap() (cnf map[int]string, err error)
+        GetMonthMidSummary(yyyymm string) (summon []model.CategoryMidMonthSummary, err error) // SELECT category_id, count(*), sum(price) FROM Record_202211 GROUP BY category_id;
+        InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record, err error)
+        GetMonthlyFixDone(yyyymm string) (done bool, err error)
+        GetMonthlyConfirm(yyyymm string) (yc openapi.ConfirmInfo, err error)
+        UpdateMonthlyConfirm(yyyymm string, confirm bool) (yc openapi.ConfirmInfo, err error)
+}
+
+type APIService struct {
+        Logger *zap.Logger
+        Repo   DBRepository
+}
+
+func int2ptr(i int) *int <span class="cov8" title="1">{
+        return &amp;i
+}</span>
+
+func (a *APIService) PostRecord(ctx context.Context, req openapi.ReqRecord) (rec openapi.Record, err error) <span class="cov8" title="1">{
+        a.Logger.Info("called post record")
+        a.Logger.Info("get monthly confirm")
+
+        // 確定した月でないかを確認する
+
+        // FIX: req.Datetime の変換タイミングが悪いので暫定対応
+        var yyyymm string
+        if req.Datetime == nil </span><span class="cov0" title="0">{
+                // Datetime が未設定なら現時刻がDBに挿入されるはずなので、今の時点でのYYYYMMをセットする
+                yyyymm = timeutil.NowFunc().Format("200601")
+        }</span> else<span class="cov8" title="1"> {
+                yyyymm = (*req.Datetime)[0:6]
+        }</span>
+
+        <span class="cov8" title="1">yc, err := a.Repo.GetMonthlyConfirm(yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                return openapi.Record{}, err
+        }</span>
+        <span class="cov8" title="1">if *yc.Status </span><span class="cov8" title="1">{
+                a.Logger.Info("already confirm month", zap.String("yyyymm", yyyymm))
+                return openapi.Record{}, model.ErrAlreadyRecorded
+        }</span>
+
+        <span class="cov8" title="1">a.Logger.Info("get category name mapping")
+        // categoryNameMap 取得
+        cnf, err := a.Repo.MakeCategoryNameMap()
+        if err != nil </span><span class="cov0" title="0">{
+                return openapi.Record{}, err
+        }</span>
+
+        <span class="cov8" title="1">_, ok := cnf[req.CategoryId] // DBにCategory IDがあるか確認
+        if !ok </span><span class="cov8" title="1">{
+                // Category ID がDBに未登録の場合
+                a.Logger.Warn("unknown category ID", zap.Int("category_id", rec.CategoryId))
+                return openapi.Record{}, model.ErrUnknownCategoryID
+        }</span>
+
+        <span class="cov8" title="1">rec, err = a.Repo.InsertRecord(req)
+        if err != nil </span><span class="cov0" title="0">{
+                a.Logger.Error("failed to insert", zap.String("msg", err.Error()), zap.Error(err))
+                return openapi.Record{}, err
+        }</span>
+        <span class="cov8" title="1">rec.CategoryName = cnf[rec.CategoryId]
+
+        a.Logger.Info("complete post record")
+        return rec, nil</span>
+}
+
+// GetRecords は num の数だけ ID 降順に Record を取得する
+func (a *APIService) GetRecords(ctx context.Context, num int, offset int) (recs []openapi.Record, err error) <span class="cov8" title="1">{
+        a.Logger.Info("called GetRecordsRecent", zap.Int("num", num))
+        recsRaw, err := a.Repo.GetRecords(ctx, num, offset)
+        if err != nil </span><span class="cov8" title="1">{
+                a.Logger.Error("failed to get records")
+                return []openapi.Record{}, err
+        }</span>
+
+        <span class="cov8" title="1">a.Logger.Info("get category name mapping")
+        // categoryNameMap 取得
+        cnf, err := a.Repo.MakeCategoryNameMap()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">for _, rec := range recsRaw </span><span class="cov8" title="1">{
+                // categoryName を付与
+                rec.CategoryName = cnf[rec.CategoryId]
+                recs = append(recs, rec)
+        }</span>
+
+        <span class="cov8" title="1">a.Logger.Info("complete GetRecordsRecent", zap.Int("num", num))
+        return recs, nil</span>
+}
+
+// GetRecordsCount は レコード件数の総数を返す
+func (a *APIService) GetRecordsCount(ctx context.Context) (rec openapi.RecordCount, err error) <span class="cov8" title="1">{
+        a.Logger.Info("called GetRecordsCount")
+        num, err := a.Repo.GetRecordsCount(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                a.Logger.Error("failed to get the number of records", zap.Error(err))
+                return openapi.RecordCount{}, err
+        }</span>
+
+        <span class="cov8" title="1">rec.Num = int2ptr(num)
+        return rec, nil</span>
+}
+
+// GetCategories は管理しているカテゴリ情報を返却する
+func (a *APIService) GetCategories(ctx context.Context) (cats []openapi.Category, err error) <span class="cov0" title="0">{
+        a.Logger.Info("called get categories")
+        cs, err := a.Repo.GetCategories(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                a.Logger.Error("failed to get categories from DB", zap.Error(err))
+                return []openapi.Category{}, err
+        }</span>
+
+        <span class="cov0" title="0">for _, c := range cs </span><span class="cov0" title="0">{
+                var tmpC openapi.Category
+                tmpC.CategoryId = int(c.CategoryID)
+                tmpC.CategoryName = c.Name
+                cats = append(cats, tmpC)
+        }</span>
+
+        <span class="cov0" title="0">return cats, nil</span>
+}
+
+func (a *APIService) PostMonthlyFixRecord(ctx context.Context, yyyymm string) (recs []openapi.Record, err error) <span class="cov8" title="1">{
+        a.Logger.Info("called post fixmonth records", zap.String("yyyymm", yyyymm))
+        done, err := a.Repo.GetMonthlyFixDone(yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                a.Logger.Error("failed to get monthly processed data", zap.String("yyyymm", yyyymm), zap.Error(err))
+                return []openapi.Record{}, err
+        }</span>
+        <span class="cov8" title="1">if done </span><span class="cov8" title="1">{
+                // 既に処理済の場合はスキップ
+                a.Logger.Info("called post monthly already registed", zap.String("yyyymm", yyyymm))
+                return []openapi.Record{}, model.ErrAlreadyRecorded
+        }</span>
+
+        <span class="cov8" title="1">recs, err = a.Repo.InsertMonthlyFixBilling(yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                a.Logger.Error("failed to insert data", zap.String("yyyymm", yyyymm), zap.Error(err))
+                return []openapi.Record{}, err
+        }</span>
+
+        <span class="cov8" title="1">a.Logger.Info("complete post fixmonth record", zap.String("yyyymm", yyyymm))
+        return recs, nil</span>
+}
+
+// FYyyyy の yyyymm をリストで返す
+func fyInterval(yyyy int) (yyyymm []string) <span class="cov8" title="1">{
+        t := time.Date(yyyy, 4, 1, 0, 0, 0, 0, jst)
+        for i := 0; i &lt; 12; i++ </span><span class="cov8" title="1">{
+                yyyymm = append(yyyymm, t.Format("200601"))
+                t = t.AddDate(0, 1, 0)
+        }</span>
+        <span class="cov8" title="1">return yyyymm</span>
+}
+
+// GetYYYYMMRecords は yyyymm 月のレコードを取得する
+func (a *APIService) GetYYYYMMRecords(ctx context.Context, yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error) <span class="cov8" title="1">{
+        recs = []openapi.Record{}
+        a.Logger.Info("called get month records")
+
+        a.Logger.Info("get category name mapping")
+        // categoryNameMap 取得
+        cnf, err := a.Repo.MakeCategoryNameMap()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">a.Logger.Info("get records from DB")
+        recsRaw, err := a.Repo.GetMonthRecords(yyyymm) // category_name なし
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        // parameters 抽出する
+        // category_id
+        <span class="cov8" title="1">var recRawExt1 []openapi.Record // category_id でフィルタリングしたもの
+        var recRawExt2 []openapi.Record // from でフィルタリングしたもの
+        for _, r := range recsRaw </span><span class="cov8" title="1">{
+                if params.CategoryId == nil || (r.CategoryId == *params.CategoryId) </span><span class="cov8" title="1">{
+                        recRawExt1 = append(recRawExt1, r)
+                }</span>
+        }
+
+        // from
+        <span class="cov8" title="1">for _, r := range recRawExt1 </span><span class="cov8" title="1">{
+                if params.From == nil || (r.From == *params.From) </span><span class="cov8" title="1">{
+                        recRawExt2 = append(recRawExt2, r)
+                }</span>
+        }
+
+        <span class="cov8" title="1">for _, rec := range recRawExt2 </span><span class="cov8" title="1">{
+                // categoryName を付与
+                rec.CategoryName = cnf[rec.CategoryId]
+                recs = append(recs, rec)
+        }</span>
+
+        <span class="cov8" title="1">a.Logger.Info("complete get month records")
+        return recs, nil</span>
+}
+
+func (a *APIService) GetYYYYMMRecordsRecent(ctx context.Context, yyyymm string, num int) (recs []openapi.Record, err error) <span class="cov8" title="1">{
+        recs = []openapi.Record{}
+        a.Logger.Info("called get month recent records")
+
+        a.Logger.Info("get records from DB")
+        recsRaw, err := a.Repo.GetMonthRecordsRecent(yyyymm, num)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">a.Logger.Info("get category name mapping")
+        // categoryNameMap 取得
+        cnf, err := a.Repo.MakeCategoryNameMap()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">for _, rec := range recsRaw </span><span class="cov8" title="1">{
+                // categoryName を付与
+                rec.CategoryName = cnf[rec.CategoryId]
+                recs = append(recs, rec)
+        }</span>
+
+        <span class="cov8" title="1">a.Logger.Info("complete get month recent records")
+        return recs, nil</span>
+}
+
+func (a *APIService) GetV2YearSummary(ctx context.Context, year int) (sums []openapi.CategoryYearSummary, err error) <span class="cov8" title="1">{
+        a.Logger.Info("called get year summary")
+
+        a.Logger.Info("get category name mapping")
+        // categoryNameMap 取得
+        cnf, err := a.Repo.MakeCategoryNameMap()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">sumsDec := make(map[int]*openapi.CategoryYearSummary) // CatID -&gt; openapi.CategoryYearSummary
+        // 初期化
+        for catId := range cnf </span><span class="cov8" title="1">{
+                sumsDec[catId] = &amp;openapi.CategoryYearSummary{
+                        CategoryId:   catId,
+                        CategoryName: cnf[catId],
+                        Count:        0,
+                        Price:        make([]int, 12),
+                        Total:        0,
+                }
+        }</span>
+
+        <span class="cov8" title="1">a.Logger.Info("get records from DB")
+        // 1月ずつ処理する
+        yyyymmList := fyInterval(year)
+        for mi, yyyymm := range yyyymmList </span><span class="cov8" title="1">{
+                monthSums, err := a.Repo.GetMonthMidSummary(yyyymm)
+                if err != nil </span><span class="cov0" title="0">{
+                        a.Logger.Error("failed to get info from DB", zap.Error(err))
+                        return nil, err
+                }</span>
+
+                <span class="cov8" title="1">for _, monthSum := range monthSums </span><span class="cov8" title="1">{
+                        catId := monthSum.CategoryId
+                        count := monthSum.Count
+                        price := monthSum.Price
+                        sumsDec[catId].Count += count
+                        sumsDec[catId].Price[mi] = price
+                        sumsDec[catId].Total += price
+                }</span>
+        }
+
+        <span class="cov8" title="1">a.Logger.Info("making month summary")
+        // 最終的に出力する構造体に挿入する
+        for _, v := range sumsDec </span><span class="cov8" title="1">{
+                newSum := openapi.CategoryYearSummary{
+                        CategoryId:   v.CategoryId,
+                        CategoryName: v.CategoryName,
+                        Count:        v.Count,
+                        Price:        v.Price,
+                        Total:        v.Total,
+                }
+                sums = append(sums, newSum)
+        }</span>
+
+        <span class="cov8" title="1">sort.Slice(sums, func(i, j int) bool </span><span class="cov8" title="1">{
+                return sums[i].CategoryId &lt; sums[j].CategoryId
+        }</span>)
+
+        <span class="cov8" title="1">a.Logger.Info("complete get year summary")
+
+        return sums, nil</span>
+}
+
+func (a *APIService) GetMonthlyConfirm(ctx context.Context, yyyymm string) (yc openapi.ConfirmInfo, err error) <span class="cov8" title="1">{
+        a.Logger.Info("called GetMonthlyConfirm")
+        yc.Yyyymm = &amp;yyyymm
+        yc, err = a.Repo.GetMonthlyConfirm(yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                // Internal error -&gt; error
+                a.Logger.Error("failed to get monthly confirm", zap.Error(err))
+                return openapi.ConfirmInfo{}, err
+        }</span> else<span class="cov8" title="1"> {
+                // success fetch data or not found (= false)
+                a.Logger.Info("fetch monthly confirm successfully", zap.Error(err))
+        }</span>
+
+        <span class="cov8" title="1">a.Logger.Info("complete GetMonthlyConfirm")
+        return yc, nil</span>
+}
+
+func (a *APIService) UpdateMonthlyConfirm(ctx context.Context, yyyymm string, confirm bool) (yc openapi.ConfirmInfo, err error) <span class="cov8" title="1">{
+        a.Logger.Info("called UpdateMonthlyConfirm")
+        yc.Yyyymm = &amp;yyyymm
+        yc, err = a.Repo.UpdateMonthlyConfirm(yyyymm, confirm)
+        if err != nil </span><span class="cov0" title="0">{
+                // Internal error -&gt; error
+                a.Logger.Error("failed to get monthly confirm", zap.Error(err))
+                return openapi.ConfirmInfo{}, err
+        }</span>
+
+        <span class="cov8" title="1">a.Logger.Info("update monthly confirm successfully", zap.Error(err))
+
+        a.Logger.Info("complete UpdateMonthlyConfirm")
+        return yc, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package client
+
+import (
+        "context"
+        "fmt"
+        "net/smtp"
+)
+
+type MailClient struct {
+        SMTPHost string
+        SMTPPort string
+        SMTPUser string
+        SMTPPass string
+}
+
+func (m *MailClient) Send(ctx context.Context, to string, title string, body string) (err error) <span class="cov0" title="0">{
+        recipients := []string{to}
+
+        from := m.SMTPUser
+        auth := smtp.PlainAuth("", m.SMTPUser, m.SMTPPass, m.SMTPHost)
+
+        // 送信先は１つのみ対応
+        msg := []byte("To: " + to + "\r\n" + "Subject:" + title + "\r\n" + "\r\n" + body)
+        if err := smtp.SendMail(fmt.Sprintf("%s:%s", m.SMTPHost, m.SMTPPort), auth, from, recipients, msg); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package factory
+
+import (
+        "net"
+        "time"
+
+        v2db "mawinter-server/internal/repository/v2"
+
+        "go.uber.org/zap"
+        "gorm.io/driver/mysql"
+        "gorm.io/gorm"
+)
+
+const DBConnectRetry = 5
+const DBConnectRetryInterval = 10
+
+func NewDBRepositoryV1(host, port, user, pass, name string) (dbR *v2db.DBRepository, err error) <span class="cov0" title="0">{
+        l, err := NewLogger()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">addr := net.JoinHostPort(host, port)
+        dsn := user + ":" + pass + "@(" + addr + ")/" + name + "?parseTime=true&amp;loc=Local"
+        var gormdb *gorm.DB
+        for i := 0; i &lt; DBConnectRetry; i++ </span><span class="cov0" title="0">{
+                gormdb, err = gorm.Open(mysql.Open(dsn), &amp;gorm.Config{})
+                if err == nil </span><span class="cov0" title="0">{
+                        // Success DB connect
+                        l.Info("DB connect")
+                        break</span>
+                }
+                <span class="cov0" title="0">l.Warn("DB connection retry")
+
+                if i == DBConnectRetry </span><span class="cov0" title="0">{
+                        l.Error("failed to connect DB", zap.Error(err))
+                        return nil, err
+                }</span>
+
+                <span class="cov0" title="0">time.Sleep(DBConnectRetryInterval * time.Second)</span>
+        }
+
+        <span class="cov0" title="0">return &amp;v2db.DBRepository{Conn: gormdb}, nil</span>
+}
+
+func NewDBRepositoryV2(host, port, user, pass, name string) (dbR *v2db.DBRepository, err error) <span class="cov0" title="0">{
+        l, err := NewLogger()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">addr := net.JoinHostPort(host, port)
+        dsn := user + ":" + pass + "@(" + addr + ")/" + name + "?parseTime=true&amp;loc=Local"
+        var gormdb *gorm.DB
+        for i := 0; i &lt; DBConnectRetry; i++ </span><span class="cov0" title="0">{
+                gormdb, err = gorm.Open(mysql.Open(dsn), &amp;gorm.Config{})
+                if err == nil </span><span class="cov0" title="0">{
+                        // Success DB connect
+                        l.Info("DB connect")
+                        break</span>
+                }
+                <span class="cov0" title="0">l.Warn("DB connection retry")
+
+                if i == DBConnectRetry </span><span class="cov0" title="0">{
+                        l.Error("failed to connect DB", zap.Error(err))
+                        return nil, err
+                }</span>
+
+                <span class="cov0" title="0">time.Sleep(DBConnectRetryInterval * time.Second)</span>
+        }
+
+        <span class="cov0" title="0">return &amp;v2db.DBRepository{Conn: gormdb}, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package factory
+
+import (
+        "fmt"
+        v2 "mawinter-server/internal/api/v2"
+        "mawinter-server/internal/client"
+        "mawinter-server/internal/register"
+        v2db "mawinter-server/internal/repository/v2"
+        "mawinter-server/internal/server"
+        "mawinter-server/internal/service"
+        "os"
+        "time"
+
+        "go.uber.org/zap"
+        "go.uber.org/zap/zapcore"
+)
+
+func NewLogger() (*zap.Logger, error) <span class="cov0" title="0">{
+        config := zap.NewProductionConfig()
+        // config.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+        config.EncoderConfig.EncodeTime = JSTTimeEncoder
+        l, err := config.Build()
+
+        l.WithOptions(zap.AddStacktrace(zap.ErrorLevel))
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Printf("failed to create logger: %v\n", err)
+        }</span>
+        <span class="cov0" title="0">return l, err</span>
+}
+
+func JSTTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) <span class="cov0" title="0">{
+        const layout = "2006-01-02T15:04:05+09:00"
+        jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+        enc.AppendString(t.In(jst).Format(layout))
+}</span>
+
+func NewServiceV2(l *zap.Logger, db *v2db.DBRepository) (ap *v2.APIService) <span class="cov0" title="0">{
+        return &amp;v2.APIService{Logger: l, Repo: db}
+}</span>
+
+func NewRegisterService(l *zap.Logger, db *v2db.DBRepository, mc *client.MailClient) (ap *register.RegisterService) <span class="cov0" title="0">{
+        return &amp;register.RegisterService{Logger: l, DB: db, MailClient: mc}
+}</span>
+
+func NewServer(l *zap.Logger, ap2 *v2.APIService) *server.Server <span class="cov0" title="0">{
+        return &amp;server.Server{Logger: l, Ap2: ap2, BasicAuth: struct {
+                User string
+                Pass string
+        }{os.Getenv("BASIC_AUTH_USERNAME"), os.Getenv("BASIC_AUTH_PASSWORD")}}
+}</span>
+
+func NewMailClient() *client.MailClient <span class="cov0" title="0">{
+        host := os.Getenv("MAIL_HOST")
+        port := os.Getenv("MAIL_PORT")
+        user := os.Getenv("MAIL_USER")
+        pass := os.Getenv("MAIL_PASS")
+        return &amp;client.MailClient{
+                SMTPHost: host,
+                SMTPPort: port,
+                SMTPUser: user,
+                SMTPPass: pass,
+        }
+}</span>
+
+func NewDuplicateCheckService(l *zap.Logger, ap *v2.APIService) (svc *service.DuplicateCheckService) <span class="cov0" title="0">{
+        return &amp;service.DuplicateCheckService{Logger: l, Ap: ap, MailClient: NewMailClient()}
+}</span>
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package model
+
+import (
+        "time"
+)
+
+func (Category) TableName() string <span class="cov0" title="0">{
+        return "Category"
+}</span>
+
+func (MonthlyFixBillingDB) TableName() string <span class="cov0" title="0">{
+        return "Monthly_Fix_Billing"
+}</span>
+
+func (MonthlyFixDoneDB) TableName() string <span class="cov0" title="0">{
+        return "Monthly_Fix_Done"
+}</span>
+
+type Category struct {
+        ID         int64  `gorm:"id"`
+        CategoryID int64  `gorm:"column:category_id"`
+        Name       string `gorm:"column:name"`
+}
+
+type Record struct {
+        ID         int64     `gorm:"id;primaryKey"`
+        CategoryID int64     `gorm:"column:category_id;index;not null"`
+        Datetime   time.Time `gorm:"column:datetime;autoCreateTime;index;not null"`
+        Price      int64     `gorm:"column:price"`
+        From       string    `gorm:"column:from"`
+        Type       string    `gorm:"column:type"`
+        Memo       string    `gorm:"column:memo"`
+        CreatedAt  time.Time `gorm:"column:created_at"`
+        UpdatedAt  time.Time `gorm:"column:updated_at"`
+}
+
+type MonthlyFixBillingDB struct {
+        ID         int64     `gorm:"id;primaryKey"`
+        CategoryID int64     `gorm:"column:category_id"`
+        Day        int64     `gorm:"column:day"`
+        Price      int64     `gorm:"column:price"`
+        Type       string    `gorm:"column:type"`
+        Memo       string    `gorm:"column:memo"`
+        CreatedAt  time.Time `gorm:"column:created_at"`
+        UpdatedAt  time.Time `gorm:"column:updated_at"`
+}
+
+type MonthlyFixDoneDB struct {
+        YYYYMM    string    `gorm:"column:yyyymm;primaryKey"`
+        Done      uint8     `gorm:"column:done"`
+        CreatedAt time.Time `gorm:"column:created_at"`
+        UpdatedAt time.Time `gorm:"column:updated_at"`
+}
+
+// SumPriceCategoryID uses v1.
+type SumPriceCategoryID struct {
+        CategoryID int64
+        Count      int64
+        Sum        int64
+}
+
+type MonthlyConfirm struct {
+        YYYYMM          string    `gorm:"column:yyyymm;primaryKey"`
+        Confirm         uint8     `gorm:"column:confirm"`
+        ConfirmDatetime time.Time `gorm:"column:confirm_datetime"`
+        CreatedAt       time.Time `gorm:"column:created_at"`
+        UpdatedAt       time.Time `gorm:"column:updated_at"`
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package model
+
+import (
+        "fmt"
+        "mawinter-server/internal/openapi"
+        "strconv"
+        "time"
+)
+
+var jst *time.Location
+
+func init() <span class="cov8" title="1">{
+        j, err := time.LoadLocation("Asia/Tokyo")
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+        <span class="cov8" title="1">jst = j</span>
+}
+
+type BillAPIResponse struct {
+        BillName string `json:"bill_name"`
+        Price    int    `json:"price"`
+}
+
+func (b *BillAPIResponse) NewRecordstruct() (req openapi.Record, err error) <span class="cov0" title="0">{
+        req = openapi.Record{
+                Datetime: time.Now().Local(),
+                From:     "bill-manager-api",
+                Price:    b.Price,
+        }
+
+        switch b.BillName </span>{
+        case "elect":<span class="cov0" title="0">
+                req.CategoryId = 220</span>
+        case "gas":<span class="cov0" title="0">
+                req.CategoryId = 221</span>
+        case "water":<span class="cov0" title="0">
+                req.CategoryId = 222</span>
+        default:<span class="cov0" title="0">
+                return openapi.Record{}, fmt.Errorf("unknown billname")</span>
+        }
+
+        <span class="cov0" title="0">return req, nil</span>
+}
+
+func NewMailMonthlyFixBilling(recs []openapi.Record) (text string) <span class="cov0" title="0">{
+        for _, rec := range recs </span><span class="cov0" title="0">{
+                text += fmt.Sprintf("%v,%v,%v,%v\n", rec.CategoryId, rec.Price, rec.Type, rec.Memo)
+        }</span>
+        <span class="cov0" title="0">return text</span>
+}
+
+func NewMailMonthlyRegistBill(ress []BillAPIResponse) (text string) <span class="cov0" title="0">{
+        for _, res := range ress </span><span class="cov0" title="0">{
+                text += fmt.Sprintf("%s,%d\n", res.BillName, res.Price)
+        }</span>
+        <span class="cov0" title="0">return text</span>
+}
+
+type MonthlyFixBilling struct {
+        CategoryID int
+        Day        int
+        Price      int
+        Type       string
+        Memo       string
+}
+
+func (m *MonthlyFixBilling) ConvAddDBModel(yyyymm string) (Record, error) <span class="cov0" title="0">{
+        yyyynum, err := strconv.Atoi(yyyymm[0:4])
+        if err != nil </span><span class="cov0" title="0">{
+                return Record{}, err
+        }</span>
+
+        <span class="cov0" title="0">mmnum, err := strconv.Atoi(yyyymm[5:6])
+        if err != nil </span><span class="cov0" title="0">{
+                return Record{}, err
+        }</span>
+
+        <span class="cov0" title="0">return Record{
+                CategoryID: int64(m.CategoryID),
+                Datetime:   time.Date(yyyynum, time.Month(mmnum), m.Day, 0, 0, 0, 0, jst),
+                From:       "fixmonth", // 固定値
+                Price:      int64(m.Price),
+                Type:       m.Type,
+                Memo:       m.Memo,
+        }, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package model
+
+import (
+        "fmt"
+        "strconv"
+
+        validation "github.com/go-ozzo/ozzo-validation"
+        "github.com/go-ozzo/ozzo-validation/is"
+)
+
+func ValidYYYY(yyyy string) (yyyyint int, err error) <span class="cov0" title="0">{
+        if err := validation.Validate(yyyy, validation.Length(4, 4), is.Digit); err != nil </span><span class="cov0" title="0">{
+                return 0, fmt.Errorf("invalid YYYY: %w", ErrInvalidValue)
+        }</span>
+
+        <span class="cov0" title="0">yyyyint, err = strconv.Atoi(yyyy)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+
+        <span class="cov0" title="0">return yyyyint, err</span>
+}
+
+func ValidYYYYMM(yyyymm string) (err error) <span class="cov0" title="0">{
+        if err := validation.Validate(yyyymm, validation.Length(6, 6), is.Digit); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("invalid YYYYMM")
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">// Package openapi provides primitives to interact with the openapi HTTP API.
+//
+// Code generated by github.com/deepmap/oapi-codegen version v1.15.0 DO NOT EDIT.
+package openapi
+
+import (
+        "fmt"
+        "net/http"
+
+        "github.com/go-chi/chi/v5"
+        "github.com/oapi-codegen/runtime"
+)
+
+// ServerInterface represents all server handlers.
+type ServerInterface interface {
+        // health check
+        // (GET /)
+        Get(w http.ResponseWriter, r *http.Request)
+        // Your GET endpoint
+        // (GET /categories)
+        GetCategories(w http.ResponseWriter, r *http.Request)
+        // get records
+        // (GET /v2/record)
+        GetV2Record(w http.ResponseWriter, r *http.Request, params GetV2RecordParams)
+        // create record
+        // (POST /v2/record)
+        PostV2Record(w http.ResponseWriter, r *http.Request)
+        // /v2/record/count
+        // (GET /v2/record/count)
+        GetV2RecordCount(w http.ResponseWriter, r *http.Request)
+        // create fixmonth record
+        // (POST /v2/record/fixmonth)
+        PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request, params PostV2RecordFixmonthParams)
+        // get year summary
+        // (GET /v2/record/summary/{year})
+        GetV2RecordYear(w http.ResponseWriter, r *http.Request, year int)
+        // get month records
+        // (GET /v2/record/{yyyymm})
+        GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request, yyyymm string, params GetV2RecordYyyymmParams)
+
+        // (GET /v2/record/{yyyymm}/confirm)
+        GetV2RecordYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string)
+
+        // (PUT /v2/record/{yyyymm}/confirm)
+        PutV2TableYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string)
+        // Your GET endpoint
+        // (GET /v2/record/{yyyymm}/recent)
+        GetV2RecordYyyymmRecent(w http.ResponseWriter, r *http.Request, yyyymm string, params GetV2RecordYyyymmRecentParams)
+        // get version
+        // (GET /version)
+        GetVersion(w http.ResponseWriter, r *http.Request)
+}
+
+// Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
+
+type Unimplemented struct{}
+
+// health check
+// (GET /)
+func (_ Unimplemented) Get(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        w.WriteHeader(http.StatusNotImplemented)
+}</span>
+
+// Your GET endpoint
+// (GET /categories)
+func (_ Unimplemented) GetCategories(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        w.WriteHeader(http.StatusNotImplemented)
+}</span>
+
+// get records
+// (GET /v2/record)
+func (_ Unimplemented) GetV2Record(w http.ResponseWriter, r *http.Request, params GetV2RecordParams) <span class="cov0" title="0">{
+        w.WriteHeader(http.StatusNotImplemented)
+}</span>
+
+// create record
+// (POST /v2/record)
+func (_ Unimplemented) PostV2Record(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        w.WriteHeader(http.StatusNotImplemented)
+}</span>
+
+// /v2/record/count
+// (GET /v2/record/count)
+func (_ Unimplemented) GetV2RecordCount(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        w.WriteHeader(http.StatusNotImplemented)
+}</span>
+
+// create fixmonth record
+// (POST /v2/record/fixmonth)
+func (_ Unimplemented) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request, params PostV2RecordFixmonthParams) <span class="cov0" title="0">{
+        w.WriteHeader(http.StatusNotImplemented)
+}</span>
+
+// get year summary
+// (GET /v2/record/summary/{year})
+func (_ Unimplemented) GetV2RecordYear(w http.ResponseWriter, r *http.Request, year int) <span class="cov0" title="0">{
+        w.WriteHeader(http.StatusNotImplemented)
+}</span>
+
+// get month records
+// (GET /v2/record/{yyyymm})
+func (_ Unimplemented) GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request, yyyymm string, params GetV2RecordYyyymmParams) <span class="cov0" title="0">{
+        w.WriteHeader(http.StatusNotImplemented)
+}</span>
+
+// (GET /v2/record/{yyyymm}/confirm)
+func (_ Unimplemented) GetV2RecordYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string) <span class="cov0" title="0">{
+        w.WriteHeader(http.StatusNotImplemented)
+}</span>
+
+// (PUT /v2/record/{yyyymm}/confirm)
+func (_ Unimplemented) PutV2TableYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string) <span class="cov0" title="0">{
+        w.WriteHeader(http.StatusNotImplemented)
+}</span>
+
+// Your GET endpoint
+// (GET /v2/record/{yyyymm}/recent)
+func (_ Unimplemented) GetV2RecordYyyymmRecent(w http.ResponseWriter, r *http.Request, yyyymm string, params GetV2RecordYyyymmRecentParams) <span class="cov0" title="0">{
+        w.WriteHeader(http.StatusNotImplemented)
+}</span>
+
+// get version
+// (GET /version)
+func (_ Unimplemented) GetVersion(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        w.WriteHeader(http.StatusNotImplemented)
+}</span>
+
+// ServerInterfaceWrapper converts contexts to parameters.
+type ServerInterfaceWrapper struct {
+        Handler            ServerInterface
+        HandlerMiddlewares []MiddlewareFunc
+        ErrorHandlerFunc   func(w http.ResponseWriter, r *http.Request, err error)
+}
+
+type MiddlewareFunc func(http.Handler) http.Handler
+
+// Get operation middleware
+func (siw *ServerInterfaceWrapper) Get(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ctx := r.Context()
+
+        handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                siw.Handler.Get(w, r)
+        }</span>))
+
+        <span class="cov0" title="0">for _, middleware := range siw.HandlerMiddlewares </span><span class="cov0" title="0">{
+                handler = middleware(handler)
+        }</span>
+
+        <span class="cov0" title="0">handler.ServeHTTP(w, r.WithContext(ctx))</span>
+}
+
+// GetCategories operation middleware
+func (siw *ServerInterfaceWrapper) GetCategories(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ctx := r.Context()
+
+        handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                siw.Handler.GetCategories(w, r)
+        }</span>))
+
+        <span class="cov0" title="0">for _, middleware := range siw.HandlerMiddlewares </span><span class="cov0" title="0">{
+                handler = middleware(handler)
+        }</span>
+
+        <span class="cov0" title="0">handler.ServeHTTP(w, r.WithContext(ctx))</span>
+}
+
+// GetV2Record operation middleware
+func (siw *ServerInterfaceWrapper) GetV2Record(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ctx := r.Context()
+
+        var err error
+
+        // Parameter object where we will unmarshal all parameters from the context
+        var params GetV2RecordParams
+
+        // ------------- Optional query parameter "num" -------------
+
+        err = runtime.BindQueryParameter("form", true, false, "num", r.URL.Query(), &amp;params.Num)
+        if err != nil </span><span class="cov0" title="0">{
+                siw.ErrorHandlerFunc(w, r, &amp;InvalidParamFormatError{ParamName: "num", Err: err})
+                return
+        }</span>
+
+        // ------------- Optional query parameter "offset" -------------
+
+        <span class="cov0" title="0">err = runtime.BindQueryParameter("form", true, false, "offset", r.URL.Query(), &amp;params.Offset)
+        if err != nil </span><span class="cov0" title="0">{
+                siw.ErrorHandlerFunc(w, r, &amp;InvalidParamFormatError{ParamName: "offset", Err: err})
+                return
+        }</span>
+
+        <span class="cov0" title="0">handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                siw.Handler.GetV2Record(w, r, params)
+        }</span>))
+
+        <span class="cov0" title="0">for _, middleware := range siw.HandlerMiddlewares </span><span class="cov0" title="0">{
+                handler = middleware(handler)
+        }</span>
+
+        <span class="cov0" title="0">handler.ServeHTTP(w, r.WithContext(ctx))</span>
+}
+
+// PostV2Record operation middleware
+func (siw *ServerInterfaceWrapper) PostV2Record(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ctx := r.Context()
+
+        handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                siw.Handler.PostV2Record(w, r)
+        }</span>))
+
+        <span class="cov0" title="0">for _, middleware := range siw.HandlerMiddlewares </span><span class="cov0" title="0">{
+                handler = middleware(handler)
+        }</span>
+
+        <span class="cov0" title="0">handler.ServeHTTP(w, r.WithContext(ctx))</span>
+}
+
+// GetV2RecordCount operation middleware
+func (siw *ServerInterfaceWrapper) GetV2RecordCount(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ctx := r.Context()
+
+        handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                siw.Handler.GetV2RecordCount(w, r)
+        }</span>))
+
+        <span class="cov0" title="0">for _, middleware := range siw.HandlerMiddlewares </span><span class="cov0" title="0">{
+                handler = middleware(handler)
+        }</span>
+
+        <span class="cov0" title="0">handler.ServeHTTP(w, r.WithContext(ctx))</span>
+}
+
+// PostV2RecordFixmonth operation middleware
+func (siw *ServerInterfaceWrapper) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ctx := r.Context()
+
+        var err error
+
+        // Parameter object where we will unmarshal all parameters from the context
+        var params PostV2RecordFixmonthParams
+
+        // ------------- Optional query parameter "yyyymm" -------------
+
+        err = runtime.BindQueryParameter("form", true, false, "yyyymm", r.URL.Query(), &amp;params.Yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                siw.ErrorHandlerFunc(w, r, &amp;InvalidParamFormatError{ParamName: "yyyymm", Err: err})
+                return
+        }</span>
+
+        <span class="cov0" title="0">handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                siw.Handler.PostV2RecordFixmonth(w, r, params)
+        }</span>))
+
+        <span class="cov0" title="0">for _, middleware := range siw.HandlerMiddlewares </span><span class="cov0" title="0">{
+                handler = middleware(handler)
+        }</span>
+
+        <span class="cov0" title="0">handler.ServeHTTP(w, r.WithContext(ctx))</span>
+}
+
+// GetV2RecordYear operation middleware
+func (siw *ServerInterfaceWrapper) GetV2RecordYear(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ctx := r.Context()
+
+        var err error
+
+        // ------------- Path parameter "year" -------------
+        var year int
+
+        err = runtime.BindStyledParameterWithLocation("simple", false, "year", runtime.ParamLocationPath, chi.URLParam(r, "year"), &amp;year)
+        if err != nil </span><span class="cov0" title="0">{
+                siw.ErrorHandlerFunc(w, r, &amp;InvalidParamFormatError{ParamName: "year", Err: err})
+                return
+        }</span>
+
+        <span class="cov0" title="0">handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                siw.Handler.GetV2RecordYear(w, r, year)
+        }</span>))
+
+        <span class="cov0" title="0">for _, middleware := range siw.HandlerMiddlewares </span><span class="cov0" title="0">{
+                handler = middleware(handler)
+        }</span>
+
+        <span class="cov0" title="0">handler.ServeHTTP(w, r.WithContext(ctx))</span>
+}
+
+// GetV2RecordYyyymm operation middleware
+func (siw *ServerInterfaceWrapper) GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ctx := r.Context()
+
+        var err error
+
+        // ------------- Path parameter "yyyymm" -------------
+        var yyyymm string
+
+        err = runtime.BindStyledParameterWithLocation("simple", false, "yyyymm", runtime.ParamLocationPath, chi.URLParam(r, "yyyymm"), &amp;yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                siw.ErrorHandlerFunc(w, r, &amp;InvalidParamFormatError{ParamName: "yyyymm", Err: err})
+                return
+        }</span>
+
+        // Parameter object where we will unmarshal all parameters from the context
+        <span class="cov0" title="0">var params GetV2RecordYyyymmParams
+
+        // ------------- Optional query parameter "category_id" -------------
+
+        err = runtime.BindQueryParameter("form", true, false, "category_id", r.URL.Query(), &amp;params.CategoryId)
+        if err != nil </span><span class="cov0" title="0">{
+                siw.ErrorHandlerFunc(w, r, &amp;InvalidParamFormatError{ParamName: "category_id", Err: err})
+                return
+        }</span>
+
+        // ------------- Optional query parameter "from" -------------
+
+        <span class="cov0" title="0">err = runtime.BindQueryParameter("form", true, false, "from", r.URL.Query(), &amp;params.From)
+        if err != nil </span><span class="cov0" title="0">{
+                siw.ErrorHandlerFunc(w, r, &amp;InvalidParamFormatError{ParamName: "from", Err: err})
+                return
+        }</span>
+
+        <span class="cov0" title="0">handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                siw.Handler.GetV2RecordYyyymm(w, r, yyyymm, params)
+        }</span>))
+
+        <span class="cov0" title="0">for _, middleware := range siw.HandlerMiddlewares </span><span class="cov0" title="0">{
+                handler = middleware(handler)
+        }</span>
+
+        <span class="cov0" title="0">handler.ServeHTTP(w, r.WithContext(ctx))</span>
+}
+
+// GetV2RecordYyyymmConfirm operation middleware
+func (siw *ServerInterfaceWrapper) GetV2RecordYyyymmConfirm(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ctx := r.Context()
+
+        var err error
+
+        // ------------- Path parameter "yyyymm" -------------
+        var yyyymm string
+
+        err = runtime.BindStyledParameterWithLocation("simple", false, "yyyymm", runtime.ParamLocationPath, chi.URLParam(r, "yyyymm"), &amp;yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                siw.ErrorHandlerFunc(w, r, &amp;InvalidParamFormatError{ParamName: "yyyymm", Err: err})
+                return
+        }</span>
+
+        <span class="cov0" title="0">handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                siw.Handler.GetV2RecordYyyymmConfirm(w, r, yyyymm)
+        }</span>))
+
+        <span class="cov0" title="0">for _, middleware := range siw.HandlerMiddlewares </span><span class="cov0" title="0">{
+                handler = middleware(handler)
+        }</span>
+
+        <span class="cov0" title="0">handler.ServeHTTP(w, r.WithContext(ctx))</span>
+}
+
+// PutV2TableYyyymmConfirm operation middleware
+func (siw *ServerInterfaceWrapper) PutV2TableYyyymmConfirm(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ctx := r.Context()
+
+        var err error
+
+        // ------------- Path parameter "yyyymm" -------------
+        var yyyymm string
+
+        err = runtime.BindStyledParameterWithLocation("simple", false, "yyyymm", runtime.ParamLocationPath, chi.URLParam(r, "yyyymm"), &amp;yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                siw.ErrorHandlerFunc(w, r, &amp;InvalidParamFormatError{ParamName: "yyyymm", Err: err})
+                return
+        }</span>
+
+        <span class="cov0" title="0">handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                siw.Handler.PutV2TableYyyymmConfirm(w, r, yyyymm)
+        }</span>))
+
+        <span class="cov0" title="0">for _, middleware := range siw.HandlerMiddlewares </span><span class="cov0" title="0">{
+                handler = middleware(handler)
+        }</span>
+
+        <span class="cov0" title="0">handler.ServeHTTP(w, r.WithContext(ctx))</span>
+}
+
+// GetV2RecordYyyymmRecent operation middleware
+func (siw *ServerInterfaceWrapper) GetV2RecordYyyymmRecent(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ctx := r.Context()
+
+        var err error
+
+        // ------------- Path parameter "yyyymm" -------------
+        var yyyymm string
+
+        err = runtime.BindStyledParameterWithLocation("simple", false, "yyyymm", runtime.ParamLocationPath, chi.URLParam(r, "yyyymm"), &amp;yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                siw.ErrorHandlerFunc(w, r, &amp;InvalidParamFormatError{ParamName: "yyyymm", Err: err})
+                return
+        }</span>
+
+        // Parameter object where we will unmarshal all parameters from the context
+        <span class="cov0" title="0">var params GetV2RecordYyyymmRecentParams
+
+        // ------------- Optional query parameter "num" -------------
+
+        err = runtime.BindQueryParameter("form", true, false, "num", r.URL.Query(), &amp;params.Num)
+        if err != nil </span><span class="cov0" title="0">{
+                siw.ErrorHandlerFunc(w, r, &amp;InvalidParamFormatError{ParamName: "num", Err: err})
+                return
+        }</span>
+
+        <span class="cov0" title="0">handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                siw.Handler.GetV2RecordYyyymmRecent(w, r, yyyymm, params)
+        }</span>))
+
+        <span class="cov0" title="0">for _, middleware := range siw.HandlerMiddlewares </span><span class="cov0" title="0">{
+                handler = middleware(handler)
+        }</span>
+
+        <span class="cov0" title="0">handler.ServeHTTP(w, r.WithContext(ctx))</span>
+}
+
+// GetVersion operation middleware
+func (siw *ServerInterfaceWrapper) GetVersion(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ctx := r.Context()
+
+        handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                siw.Handler.GetVersion(w, r)
+        }</span>))
+
+        <span class="cov0" title="0">for _, middleware := range siw.HandlerMiddlewares </span><span class="cov0" title="0">{
+                handler = middleware(handler)
+        }</span>
+
+        <span class="cov0" title="0">handler.ServeHTTP(w, r.WithContext(ctx))</span>
+}
+
+type UnescapedCookieParamError struct {
+        ParamName string
+        Err       error
+}
+
+func (e *UnescapedCookieParamError) Error() string <span class="cov0" title="0">{
+        return fmt.Sprintf("error unescaping cookie parameter '%s'", e.ParamName)
+}</span>
+
+func (e *UnescapedCookieParamError) Unwrap() error <span class="cov0" title="0">{
+        return e.Err
+}</span>
+
+type UnmarshalingParamError struct {
+        ParamName string
+        Err       error
+}
+
+func (e *UnmarshalingParamError) Error() string <span class="cov0" title="0">{
+        return fmt.Sprintf("Error unmarshaling parameter %s as JSON: %s", e.ParamName, e.Err.Error())
+}</span>
+
+func (e *UnmarshalingParamError) Unwrap() error <span class="cov0" title="0">{
+        return e.Err
+}</span>
+
+type RequiredParamError struct {
+        ParamName string
+}
+
+func (e *RequiredParamError) Error() string <span class="cov0" title="0">{
+        return fmt.Sprintf("Query argument %s is required, but not found", e.ParamName)
+}</span>
+
+type RequiredHeaderError struct {
+        ParamName string
+        Err       error
+}
+
+func (e *RequiredHeaderError) Error() string <span class="cov0" title="0">{
+        return fmt.Sprintf("Header parameter %s is required, but not found", e.ParamName)
+}</span>
+
+func (e *RequiredHeaderError) Unwrap() error <span class="cov0" title="0">{
+        return e.Err
+}</span>
+
+type InvalidParamFormatError struct {
+        ParamName string
+        Err       error
+}
+
+func (e *InvalidParamFormatError) Error() string <span class="cov0" title="0">{
+        return fmt.Sprintf("Invalid format for parameter %s: %s", e.ParamName, e.Err.Error())
+}</span>
+
+func (e *InvalidParamFormatError) Unwrap() error <span class="cov0" title="0">{
+        return e.Err
+}</span>
+
+type TooManyValuesForParamError struct {
+        ParamName string
+        Count     int
+}
+
+func (e *TooManyValuesForParamError) Error() string <span class="cov0" title="0">{
+        return fmt.Sprintf("Expected one value for %s, got %d", e.ParamName, e.Count)
+}</span>
+
+// Handler creates http.Handler with routing matching OpenAPI spec.
+func Handler(si ServerInterface) http.Handler <span class="cov0" title="0">{
+        return HandlerWithOptions(si, ChiServerOptions{})
+}</span>
+
+type ChiServerOptions struct {
+        BaseURL          string
+        BaseRouter       chi.Router
+        Middlewares      []MiddlewareFunc
+        ErrorHandlerFunc func(w http.ResponseWriter, r *http.Request, err error)
+}
+
+// HandlerFromMux creates http.Handler with routing matching OpenAPI spec based on the provided mux.
+func HandlerFromMux(si ServerInterface, r chi.Router) http.Handler <span class="cov0" title="0">{
+        return HandlerWithOptions(si, ChiServerOptions{
+                BaseRouter: r,
+        })
+}</span>
+
+func HandlerFromMuxWithBaseURL(si ServerInterface, r chi.Router, baseURL string) http.Handler <span class="cov0" title="0">{
+        return HandlerWithOptions(si, ChiServerOptions{
+                BaseURL:    baseURL,
+                BaseRouter: r,
+        })
+}</span>
+
+// HandlerWithOptions creates http.Handler with additional options
+func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handler <span class="cov0" title="0">{
+        r := options.BaseRouter
+
+        if r == nil </span><span class="cov0" title="0">{
+                r = chi.NewRouter()
+        }</span>
+        <span class="cov0" title="0">if options.ErrorHandlerFunc == nil </span><span class="cov0" title="0">{
+                options.ErrorHandlerFunc = func(w http.ResponseWriter, r *http.Request, err error) </span><span class="cov0" title="0">{
+                        http.Error(w, err.Error(), http.StatusBadRequest)
+                }</span>
+        }
+        <span class="cov0" title="0">wrapper := ServerInterfaceWrapper{
+                Handler:            si,
+                HandlerMiddlewares: options.Middlewares,
+                ErrorHandlerFunc:   options.ErrorHandlerFunc,
+        }
+
+        r.Group(func(r chi.Router) </span><span class="cov0" title="0">{
+                r.Get(options.BaseURL+"/", wrapper.Get)
+        }</span>)
+        <span class="cov0" title="0">r.Group(func(r chi.Router) </span><span class="cov0" title="0">{
+                r.Get(options.BaseURL+"/categories", wrapper.GetCategories)
+        }</span>)
+        <span class="cov0" title="0">r.Group(func(r chi.Router) </span><span class="cov0" title="0">{
+                r.Get(options.BaseURL+"/v2/record", wrapper.GetV2Record)
+        }</span>)
+        <span class="cov0" title="0">r.Group(func(r chi.Router) </span><span class="cov0" title="0">{
+                r.Post(options.BaseURL+"/v2/record", wrapper.PostV2Record)
+        }</span>)
+        <span class="cov0" title="0">r.Group(func(r chi.Router) </span><span class="cov0" title="0">{
+                r.Get(options.BaseURL+"/v2/record/count", wrapper.GetV2RecordCount)
+        }</span>)
+        <span class="cov0" title="0">r.Group(func(r chi.Router) </span><span class="cov0" title="0">{
+                r.Post(options.BaseURL+"/v2/record/fixmonth", wrapper.PostV2RecordFixmonth)
+        }</span>)
+        <span class="cov0" title="0">r.Group(func(r chi.Router) </span><span class="cov0" title="0">{
+                r.Get(options.BaseURL+"/v2/record/summary/{year}", wrapper.GetV2RecordYear)
+        }</span>)
+        <span class="cov0" title="0">r.Group(func(r chi.Router) </span><span class="cov0" title="0">{
+                r.Get(options.BaseURL+"/v2/record/{yyyymm}", wrapper.GetV2RecordYyyymm)
+        }</span>)
+        <span class="cov0" title="0">r.Group(func(r chi.Router) </span><span class="cov0" title="0">{
+                r.Get(options.BaseURL+"/v2/record/{yyyymm}/confirm", wrapper.GetV2RecordYyyymmConfirm)
+        }</span>)
+        <span class="cov0" title="0">r.Group(func(r chi.Router) </span><span class="cov0" title="0">{
+                r.Put(options.BaseURL+"/v2/record/{yyyymm}/confirm", wrapper.PutV2TableYyyymmConfirm)
+        }</span>)
+        <span class="cov0" title="0">r.Group(func(r chi.Router) </span><span class="cov0" title="0">{
+                r.Get(options.BaseURL+"/v2/record/{yyyymm}/recent", wrapper.GetV2RecordYyyymmRecent)
+        }</span>)
+        <span class="cov0" title="0">r.Group(func(r chi.Router) </span><span class="cov0" title="0">{
+                r.Get(options.BaseURL+"/version", wrapper.GetVersion)
+        }</span>)
+
+        <span class="cov0" title="0">return r</span>
+}
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">// Package openapi provides primitives to interact with the openapi HTTP API.
+//
+// Code generated by github.com/deepmap/oapi-codegen version v1.15.0 DO NOT EDIT.
+package openapi
+
+import (
+        "bytes"
+        "compress/gzip"
+        "encoding/base64"
+        "fmt"
+        "net/url"
+        "path"
+        "strings"
+
+        "github.com/getkin/kin-openapi/openapi3"
+)
+
+// Base64 encoded, gzipped, json marshaled Swagger object
+var swaggerSpec = []string{
+
+        "H4sIAAAAAAAC/9RZ7W7URhe+FWveV+KPw3odVFH/JAWEKrUIISQUomhiz2ZNbY8Zj0NWq5XwbqFfoKqp",
+        "gNIKBBLio2nTihakkLZczGT5uItq7LHXXo93s0k2qD+IdndmzjznPM85c2ZoAxO7PvaQRwNgtEFgNpEL",
+        "448mpGgZkxb/7BPsI0JtVBhZtC3+lbZ8BAxgexQtIwI66mCCB12UmxJQYnvLoNNRAUGXQpsgCxjzBXvD",
+        "ixdUQG3q8NUZIDW1h5cuIpMWdmwhSBaD0HVhghytQtd3OO75IeBaCWeKTwUmDj0aT/GJbSJgzM9qmjrB",
+        "Pw4bU+gAQ+ssqPsdvwygbLFA3AY2RW68n4UaMHQSf3LxEDBLBly4eipZWtdV4Npe7puYDQmBLT5XOFnG",
+        "MQHFqTcp9NSqhPoivTIdYK9hE3fR9hpYIlwxakGKqJ2EtoGJCykwAP9xJv5VLcc7oJCGQc7RJYwdBD0+",
+        "1mq1Wq4rl3nmQB6XBDdBJibWkGCnIZzJXW8Q7EpNVYFwkYulCzJlltckv4wrFEXxSKWU+SeAC9MDbcXo",
+        "ctISka/kZDFLtSIXXuhW6L5oeTEVt8T+pUUp70NE13UtzxvQNX1Wq2v11EUDWHYgnEhiDzJ/Db2uZVuD",
+        "XZSivF5yEIGuaR9odU3nofQhpYh4wADz2syHCxOJaHpiKeokMVfgPYt+iRtuKq0g6XwXXuYQyAz0baCC",
+        "FUQCG3Of64c1Dgr7yONDBpg9zH+Kw9KMg1zjf5YRTWpxYBLbp8naJoIObSpmE5mfXfCgcxm2AoUgGhJP",
+        "OXSKKnag0CZSCMZU8eEyOgTijQjk609ZwAAnEdcWQYGPvSDmlFcrRDi+WEohcfhGlPpGreZgEzpNHFDj",
+        "qHZUi/WQnZUFMHE0ayKEQivCg9L+c4NZRSRcJKLsUpTkEPR9xzbj5bWLAY9B2nMUTqz/E9QABvhfbdCd",
+        "1ERrUsvagM7wccQxF+P76cexI7uLx3kcEuXk8bMK8iwf2x5NgrKi1wZZK2XVtli08e7OjXf3r7Fo/Uw8",
+        "mXXX+t/e6v9zm0V3WPcbdqV7wWO9L1jvJus+Zb111vuSRY9Z9JuubW+9GJoqY/2cfiZVrw8JdBFNPSyC",
+        "4frxQncJEQU3lAQ5J8rmg5dCFJ+jov/hNU3N8ZE1DrqmSipdW2oENxpBLMqBndLShSRVUUCPYatV1EiS",
+        "x9NWkaBw2hpaRjSLOS9qOJDohfV+Yd0/WO8v1vuKddfqLHr49tXf/a/vJwIosX8aB3n6KyM5Jk6jw5NV",
+        "x05Hwkh9H3cSu6gFI6uuswsbJfLmCIIUWXtg0IwtKDmYgwpQy3oDaR3YfnW3/+sPLLrJutdZ9IhFn/N0",
+        "zpMdbfSvPtneevH65u+su/b2wZM3D1/uKOvnRFOxi0QZnOJtcDz5rMR0rkAnRFlrU9dnj8QBnYQC0ezs",
+        "dxaVIj5EQ8NedbFHm3GXJk2xj46xaP3Nna1315+x6HZGRv+nl/2NH98+22K9azElt3gpjjb61672NzZZ",
+        "d41diZKAKyxa33FSnkjxlGqzrGCK+8P4grmHDNznmpillQp07Ug53J9gZU5A23PmpeRWpKCYX2vzq2Gn",
+        "Mhf5qNLf/LP/8hGLNlj3OevdY72fOenFxBuVdecRJBWc8mYvR2kycdCOUhKiCQmeYutUvEbv8AxUwRE5",
+        "1VQ5gUPP2uMpGROUQSpy3E5SZAS78bjCmS2epZzTaJNFj4ZqK+t9x7qb/G/vKes9iGXwikWPX999sL31",
+        "gnXX3jy/x2dG37PoCYuux73ZjfF1+XyayzvI++IFZYQ2Khotcb8tLRzch+TaTCGOVWdmaOG9dmQqcEOH",
+        "2j4ktNbAxJ2xIIX70RwcgKrzlSuoknVNvA6NumQVBTYnFuyoFu2S72m15yMLVP6Z7GAY4115KIn56ZCe",
+        "08/CJQe995CPCWjxRaf6pbIjeec4QDLH9PeSJ5jpc1+RjwSZqNDXj0nHM8n8MTdxF66KSiAu5Du8hVee",
+        "B//xun7Q9bjqPSd9yRvBtpiyXzm6FNqOJX31JGjFTtGUBnNIJf/TMCa193SMpTt3JsyvfwMAAP//MW6J",
+        "wF8cAAA=",
+}
+
+// GetSwagger returns the content of the embedded swagger specification file
+// or error if failed to decode
+func decodeSpec() ([]byte, error) <span class="cov8" title="1">{
+        zipped, err := base64.StdEncoding.DecodeString(strings.Join(swaggerSpec, ""))
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("error base64 decoding spec: %w", err)
+        }</span>
+        <span class="cov8" title="1">zr, err := gzip.NewReader(bytes.NewReader(zipped))
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("error decompressing spec: %w", err)
+        }</span>
+        <span class="cov8" title="1">var buf bytes.Buffer
+        _, err = buf.ReadFrom(zr)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("error decompressing spec: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return buf.Bytes(), nil</span>
+}
+
+var rawSpec = decodeSpecCached()
+
+// a naive cached of a decoded swagger spec
+func decodeSpecCached() func() ([]byte, error) <span class="cov8" title="1">{
+        data, err := decodeSpec()
+        return func() ([]byte, error) </span><span class="cov0" title="0">{
+                return data, err
+        }</span>
+}
+
+// Constructs a synthetic filesystem for resolving external references when loading openapi specifications.
+func PathToRawSpec(pathToFile string) map[string]func() ([]byte, error) <span class="cov0" title="0">{
+        res := make(map[string]func() ([]byte, error))
+        if len(pathToFile) &gt; 0 </span><span class="cov0" title="0">{
+                res[pathToFile] = rawSpec
+        }</span>
+
+        <span class="cov0" title="0">return res</span>
+}
+
+// GetSwagger returns the Swagger specification corresponding to the generated code
+// in this file. The external references of Swagger specification are resolved.
+// The logic of resolving external references is tightly connected to "import-mapping" feature.
+// Externally referenced files must be embedded in the corresponding golang packages.
+// Urls can be supported but this task was out of the scope.
+func GetSwagger() (swagger *openapi3.T, err error) <span class="cov0" title="0">{
+        resolvePath := PathToRawSpec("")
+
+        loader := openapi3.NewLoader()
+        loader.IsExternalRefsAllowed = true
+        loader.ReadFromURIFunc = func(loader *openapi3.Loader, url *url.URL) ([]byte, error) </span><span class="cov0" title="0">{
+                pathToFile := url.String()
+                pathToFile = path.Clean(pathToFile)
+                getSpec, ok := resolvePath[pathToFile]
+                if !ok </span><span class="cov0" title="0">{
+                        err1 := fmt.Errorf("path not found: %s", pathToFile)
+                        return nil, err1
+                }</span>
+                <span class="cov0" title="0">return getSpec()</span>
+        }
+        <span class="cov0" title="0">var specData []byte
+        specData, err = rawSpec()
+        if err != nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov0" title="0">swagger, err = loader.LoadFromData(specData)
+        if err != nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov0" title="0">return</span>
+}
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package register
+
+import (
+        "context"
+        "mawinter-server/internal/model"
+        "mawinter-server/internal/openapi"
+        "time"
+)
+
+type mockRepo struct {
+        err            error
+        monthlyFixDone bool
+        errGetMonthly  error
+}
+
+type mockMailClient struct {
+        err error
+}
+
+func (m *mockRepo) InsertUniqueCatIDRecord(req openapi.Record) (res openapi.Record, err error) <span class="cov0" title="0">{
+        if m.err != nil </span><span class="cov0" title="0">{
+                return openapi.Record{}, m.err
+        }</span>
+
+        <span class="cov0" title="0">return openapi.Record{
+                Id:         1,
+                CategoryId: 210,
+                Datetime:   time.Now(),
+                From:       "bill-manager-api",
+                Type:       "",
+                Price:      1234,
+        }, nil</span>
+}
+
+func (m *mockRepo) GetMonthlyFixDone(yyyymm string) (flag bool, err error) <span class="cov8" title="1">{
+        if m.errGetMonthly != nil </span><span class="cov8" title="1">{
+                return false, m.errGetMonthly
+        }</span>
+        <span class="cov8" title="1">return m.monthlyFixDone, nil</span>
+}
+
+func (m *mockRepo) GetMonthlyFixBilling() (fixBills []model.MonthlyFixBilling, err error) <span class="cov0" title="0">{
+        if m.errGetMonthly != nil </span><span class="cov0" title="0">{
+                return []model.MonthlyFixBilling{}, m.errGetMonthly
+        }</span>
+        <span class="cov0" title="0">return []model.MonthlyFixBilling{
+                {
+                        CategoryID: 100,
+                        Day:        2,
+                        Type:       "type1",
+                        Memo:       "memo1",
+                },
+                {
+                        CategoryID: 101,
+                        Day:        4,
+                        Type:       "type2",
+                        Memo:       "memo2",
+                },
+        }, nil</span>
+}
+func (m *mockRepo) InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record, err error) <span class="cov8" title="1">{
+        return []openapi.Record{}, m.errGetMonthly
+}</span>
+
+func (m *mockMailClient) Send(ctx context.Context, to string, title string, body string) (err error) <span class="cov0" title="0">{
+        if m.err != nil </span><span class="cov0" title="0">{
+                return m.err
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package register
+
+import (
+        "context"
+        "errors"
+        "mawinter-server/internal/model"
+        "mawinter-server/internal/openapi"
+        "os"
+
+        "go.uber.org/zap"
+)
+
+var (
+        ErrAlreadyRegisted = errors.New("already registed")
+)
+
+type DBRepository interface {
+        InsertUniqueCatIDRecord(req openapi.Record) (res openapi.Record, err error)
+        GetMonthlyFixDone(yyyymm string) (flag bool, err error)
+        GetMonthlyFixBilling() (fixBills []model.MonthlyFixBilling, err error)
+        InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record, err error)
+}
+
+type MailClient interface {
+        Send(ctx context.Context, to string, title string, body string) (err error)
+}
+type RegisterService struct {
+        Logger     *zap.Logger
+        DB         DBRepository
+        MailClient MailClient
+}
+
+// InsertMonthlyFixBilling は 固定費を登録する
+func (r *RegisterService) InsertMonthlyFixBilling(ctx context.Context, yyyymm string) (err error) <span class="cov8" title="1">{
+        // すでに処理済なら skip
+        done, err := r.DB.GetMonthlyFixDone(yyyymm)
+        if err != nil </span><span class="cov8" title="1">{
+                r.Logger.Error("failed to get done status", zap.Error(err))
+                return err
+        }</span>
+
+        <span class="cov8" title="1">if done </span><span class="cov0" title="0">{
+                r.Logger.Warn("this month is processed")
+                return model.ErrAlreadyRecorded
+        }</span>
+        <span class="cov8" title="1">lg := r.Logger.With(zap.String("yyyymm", yyyymm))
+
+        // Insert
+        recs, err := r.DB.InsertMonthlyFixBilling(yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                lg.Error("failed to insert fix billing records", zap.Error(err))
+                return err
+        }</span>
+
+        <span class="cov8" title="1">lg.Info("insert fix billing records to DB")
+
+        // 環境変数 MAIL_TO に何か入ったときのみ通知メールを送信する。
+        if os.Getenv("MAIL_TO") != "" </span><span class="cov0" title="0">{
+                err = notifyMailInsertMonthlyFixBilling(ctx, r.MailClient, recs)
+                if err != nil </span><span class="cov0" title="0">{
+                        // send error
+                        r.Logger.Error("notify mail send error", zap.Error(err))
+                        return err
+                }</span>
+                <span class="cov0" title="0">r.Logger.Info("send notify mail", zap.String("mail_address", os.Getenv("MAIL_TO")))</span>
+        } else<span class="cov8" title="1"> {
+                r.Logger.Info("MAIL_TO is not set. sending a notify mail skipped.")
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func notifyMailInsertMonthlyFixBilling(ctx context.Context, MailClient MailClient, recs []openapi.Record) (err error) <span class="cov0" title="0">{
+        to := os.Getenv("MAIL_TO")
+        title := "[Mawinter] 月次固定費の登録完了"
+        body := model.NewMailMonthlyFixBilling(recs)
+
+        return MailClient.Send(ctx, to, title, body)
+}</span>
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">package repository
+
+import (
+        "context"
+        "errors"
+        "fmt"
+        "mawinter-server/internal/model"
+        "mawinter-server/internal/openapi"
+        "mawinter-server/internal/timeutil"
+
+        "gorm.io/gorm"
+)
+
+const CategoryTableName = "Category"
+const RecordTableName = "Record"
+
+type DBRepository struct {
+        Conn *gorm.DB
+}
+
+func (d *DBRepository) CloseDB() (err error) <span class="cov0" title="0">{
+        dbconn, err := d.Conn.DB()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">return dbconn.Close()</span>
+}
+
+func (d *DBRepository) InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error) <span class="cov0" title="0">{
+        dbRec, err := NewDBModelRecord(req)
+        if err != nil </span><span class="cov0" title="0">{
+                return openapi.Record{}, err
+        }</span>
+
+        <span class="cov0" title="0">dbRes := d.Conn.Table(RecordTableName).Create(&amp;dbRec)
+        if dbRes.Error != nil </span><span class="cov0" title="0">{
+                return openapi.Record{}, dbRes.Error
+        }</span>
+
+        <span class="cov0" title="0">rec, err = NewRecordFromDB(dbRec)
+        if err != nil </span><span class="cov0" title="0">{
+                return openapi.Record{}, err
+        }</span>
+
+        <span class="cov0" title="0">return rec, nil</span>
+}
+
+func (d *DBRepository) GetRecords(ctx context.Context, num int, offset int) (recs []openapi.Record, err error) <span class="cov0" title="0">{
+        res := d.Conn.Table(RecordTableName).Order("id DESC").Limit(num).Offset(offset).Find(&amp;recs)
+        if res.Error != nil </span><span class="cov0" title="0">{
+                return []openapi.Record{}, res.Error
+        }</span>
+        <span class="cov0" title="0">return recs, nil</span>
+}
+
+func (d *DBRepository) GetRecordsCount(ctx context.Context) (num int, err error) <span class="cov0" title="0">{
+        res := d.Conn.Table(RecordTableName).Raw("SELECT count(1) FROM Record").Scan(&amp;num)
+        if res.Error != nil </span><span class="cov0" title="0">{
+                return 0, res.Error
+        }</span>
+        <span class="cov0" title="0">return num, nil</span>
+}
+
+func (d *DBRepository) GetCategories(ctx context.Context) (cats []model.Category, err error) <span class="cov0" title="0">{
+        err = d.Conn.Table(CategoryTableName).Find(&amp;cats).Error
+        return cats, err
+}</span>
+
+func (d *DBRepository) GetMonthRecords(yyyymm string) (recs []openapi.Record, err error) <span class="cov0" title="0">{
+        var res *gorm.DB
+        startDate, err := yyyymmToInitDayTime(yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                return []openapi.Record{}, err
+        }</span>
+        <span class="cov0" title="0">endDate := startDate.AddDate(0, 1, 0)
+
+        res = d.Conn.Debug().Table(RecordTableName).
+                Where("datetime &gt;= ? AND datetime &lt; ?", startDate, endDate).
+                Find(&amp;recs)
+
+        if errors.Is(res.Error, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{ // TODO: 正しくは Error 1146 をハンドリングする
+                return []openapi.Record{}, model.ErrNotFound
+        }</span> else<span class="cov0" title="0"> if res.Error != nil </span><span class="cov0" title="0">{
+                return []openapi.Record{}, res.Error
+        }</span>
+
+        <span class="cov0" title="0">return recs, nil</span>
+}
+
+func (d *DBRepository) GetMonthRecordsRecent(yyyymm string, num int) (recs []openapi.Record, err error) <span class="cov0" title="0">{
+        startDate, err := yyyymmToInitDayTime(yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                return []openapi.Record{}, err
+        }</span>
+        <span class="cov0" title="0">endDate := startDate.AddDate(0, 1, 0)
+
+        res := d.Conn.Table(RecordTableName).Where("datetime &gt;= ? AND datetime &lt; ?", startDate, endDate).Order("id DESC").Limit(num).Find(&amp;recs)
+        if errors.Is(res.Error, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{ // TODO: 正しくは Error 1146 をハンドリングする
+                return []openapi.Record{}, model.ErrNotFound
+        }</span> else<span class="cov0" title="0"> if res.Error != nil </span><span class="cov0" title="0">{
+                return []openapi.Record{}, res.Error
+        }</span>
+
+        <span class="cov0" title="0">return recs, nil</span>
+}
+
+func (d *DBRepository) MakeCategoryNameMap() (cnf map[int]string, err error) <span class="cov8" title="1">{
+        cnf = make(map[int]string)
+        var catTable []model.Category
+        res := d.Conn.Table("Category").Find(&amp;catTable)
+        if res.Error != nil </span><span class="cov8" title="1">{
+                return nil, res.Error
+        }</span>
+
+        <span class="cov8" title="1">for _, c := range catTable </span><span class="cov8" title="1">{
+                cnf[int(c.CategoryID)] = c.Name
+        }</span>
+
+        <span class="cov8" title="1">return cnf, nil</span>
+}
+
+// SumPriceForEachCatID は月間サマリ中間構造体を取得する（category_id 昇順）。
+func (d *DBRepository) GetMonthMidSummary(yyyymm string) (summon []model.CategoryMidMonthSummary, err error) <span class="cov8" title="1">{
+        startDate, err := yyyymmToInitDayTime(yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                return []model.CategoryMidMonthSummary{}, err
+        }</span>
+        <span class="cov8" title="1">endDate := startDate.AddDate(0, 1, 0)
+        sqlWhere := fmt.Sprintf("datetime &gt;= \"%s\" AND datetime &lt; \"%s\"", startDate.Format("20060102"), endDate.Format("20060102"))
+        sql := fmt.Sprintf(`SELECT category_id, count(1), sum(price) FROM Record WHERE %s GROUP BY category_id ORDER BY category_id`, sqlWhere)
+
+        rows, err := d.Conn.Raw(sql).Rows()
+        if err != nil </span><span class="cov0" title="0">{
+                return []model.CategoryMidMonthSummary{}, err
+        }</span>
+        <span class="cov8" title="1">defer rows.Close()
+        for rows.Next() </span><span class="cov8" title="1">{
+                var cm model.CategoryMidMonthSummary
+                err = rows.Scan(&amp;cm.CategoryId, &amp;cm.Count, &amp;cm.Price)
+                if err != nil </span><span class="cov0" title="0">{
+                        return []model.CategoryMidMonthSummary{}, err
+                }</span>
+                <span class="cov8" title="1">summon = append(summon, cm)</span>
+        }
+
+        <span class="cov8" title="1">return summon, nil</span>
+}
+
+// InsertMonthlyFixBilling は Record に固定費を登録する
+func (d *DBRepository) InsertMonthlyFixBilling(yyyymm string) (recs []openapi.Record, err error) <span class="cov8" title="1">{
+        var mfb []model.MonthlyFixBillingDB    // DBのモデル
+        var fixBills []model.MonthlyFixBilling // 中間構造体
+        var records []model.Record             // レコードDB追加用の構造体
+
+        err = d.Conn.Transaction(func(tx *gorm.DB) error </span><span class="cov8" title="1">{
+                nerr := tx.Table("Monthly_Fix_Billing").Find(&amp;fixBills).Error // 固定費テーブルからデータ取得
+                if nerr != nil </span><span class="cov0" title="0">{
+                        return nerr
+                }</span>
+                <span class="cov8" title="1">for _, v := range mfb </span><span class="cov0" title="0">{
+                        fixBills = append(fixBills,
+                                model.MonthlyFixBilling{
+                                        CategoryID: int(v.CategoryID),
+                                        Day:        int(v.Day),
+                                        Price:      int(v.Price),
+                                        Type:       v.Type,
+                                        Memo:       v.Memo,
+                                },
+                        )
+                }</span>
+                <span class="cov8" title="1">for _, v := range fixBills </span><span class="cov8" title="1">{
+                        addrec, nerr := v.ConvAddDBModel(yyyymm)
+                        if err != nil </span><span class="cov0" title="0">{
+                                return nerr
+                        }</span>
+                        <span class="cov8" title="1">records = append(records, addrec)</span>
+                }
+
+                <span class="cov8" title="1">doneRec := model.MonthlyFixDoneDB{
+                        YYYYMM: yyyymm,
+                        Done:   1,
+                }
+
+                nerr = tx.Create(&amp;doneRec).Error // 月固定データ追加記録
+                if nerr != nil </span><span class="cov0" title="0">{
+                        return nerr
+                }</span>
+
+                <span class="cov8" title="1">if len(records) &gt; 0 </span><span class="cov8" title="1">{
+                        // 挿入すべきデータがある場合: issse #62
+                        nerr = tx.Table(RecordTableName).Create(&amp;records).Error // 月固定データ追加
+                        if nerr != nil </span><span class="cov0" title="0">{
+                                return nerr
+                        }</span>
+                }
+
+                // commit
+                <span class="cov8" title="1">return nil</span>
+        })
+        <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
+                return []openapi.Record{}, err
+        }</span>
+
+        // API返却用に構造体を変換
+        <span class="cov8" title="1">cnf, err := d.MakeCategoryNameMap()
+        if err != nil </span><span class="cov0" title="0">{
+                return []openapi.Record{}, err
+        }</span>
+
+        <span class="cov8" title="1">for _, v := range records </span><span class="cov8" title="1">{
+                rec, err := NewRecordFromDB(v)
+                if err != nil </span><span class="cov0" title="0">{
+                        return []openapi.Record{}, err
+                }</span>
+                <span class="cov8" title="1">rec.CategoryName = cnf[rec.CategoryId]
+                recs = append(recs, rec)</span>
+        }
+
+        <span class="cov8" title="1">return recs, nil</span>
+}
+
+// GetMonthlyFixDone は 固定費が登録済かどうかを取得する
+// done = false なら未登録
+func (d *DBRepository) GetMonthlyFixDone(yyyymm string) (done bool, err error) <span class="cov8" title="1">{
+        var mfd model.MonthlyFixDoneDB
+        err = d.Conn.Where("yyyymm = ?", yyyymm).Take(&amp;mfd).Error
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov8" title="1">{
+                        return false, nil
+                }</span> else<span class="cov8" title="1"> {
+                        return false, err
+                }</span>
+        }
+        // already registed
+        <span class="cov8" title="1">return true, nil</span>
+}
+
+func dbModelToConfirmInfo(mc model.MonthlyConfirm) (yc openapi.ConfirmInfo) <span class="cov8" title="1">{
+        var statusBool bool
+        if mc.Confirm == uint8(1) </span><span class="cov8" title="1">{
+                statusBool = true
+        }</span> else<span class="cov8" title="1"> {
+                statusBool = false
+        }</span>
+        <span class="cov8" title="1">yc = openapi.ConfirmInfo{
+                Status: &amp;statusBool,
+                Yyyymm: &amp;mc.YYYYMM,
+        }
+        // status = false の場合は、ConfirmDatetime はDBにあっても無視する
+        if statusBool </span><span class="cov8" title="1">{
+                yc.ConfirmDatetime = &amp;mc.ConfirmDatetime
+        }</span>
+
+        <span class="cov8" title="1">return yc</span>
+}
+
+func (d *DBRepository) GetMonthlyConfirm(yyyymm string) (yc openapi.ConfirmInfo, err error) <span class="cov0" title="0">{
+        var mc model.MonthlyConfirm
+        boolFalse := false
+        err = d.Conn.Debug().Table("Monthly_Confirm").Where("yyyymm = ?", yyyymm).Take(&amp;mc).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        return openapi.ConfirmInfo{
+                                ConfirmDatetime: nil,
+                                Status:          &amp;boolFalse,
+                                Yyyymm:          &amp;yyyymm,
+                        }, nil
+                }</span> else<span class="cov0" title="0"> {
+                        return openapi.ConfirmInfo{}, err
+                }</span>
+        }
+
+        <span class="cov0" title="0">yc = dbModelToConfirmInfo(mc)
+        return yc, nil</span>
+}
+
+func (d *DBRepository) UpdateMonthlyConfirm(yyyymm string, confirm bool) (yc openapi.ConfirmInfo, err error) <span class="cov0" title="0">{
+        var mc model.MonthlyConfirm
+        var confirmNum uint8
+        t := timeutil.NowFunc()
+        // confirm
+        if confirm </span><span class="cov0" title="0">{
+                confirmNum = uint8(1)
+        }</span> else<span class="cov0" title="0"> {
+                confirmNum = uint8(0)
+        }</span>
+
+        <span class="cov0" title="0">err = d.Conn.Transaction(func(tx *gorm.DB) error </span><span class="cov0" title="0">{
+                // GET
+                nerr := tx.Debug().Table("Monthly_Confirm").Where("yyyymm = ?", yyyymm).Take(&amp;mc).Error
+                if nerr != nil &amp;&amp; !errors.Is(nerr, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        return nerr
+                }</span>
+
+                // UPSERT
+                <span class="cov0" title="0">mc = model.MonthlyConfirm{
+                        YYYYMM:          yyyymm,
+                        Confirm:         confirmNum,
+                        ConfirmDatetime: t,
+                }
+
+                nerr = tx.Debug().Table("Monthly_Confirm").Save(&amp;mc).Error
+                if nerr != nil </span><span class="cov0" title="0">{
+                        return nerr
+                }</span>
+
+                // commit
+                <span class="cov0" title="0">return nil</span>
+        })
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return openapi.ConfirmInfo{}, err
+        }</span>
+
+        <span class="cov0" title="0">yc = dbModelToConfirmInfo(mc)
+        return yc, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file20" style="display: none">package repository
+
+import (
+        "errors"
+        "mawinter-server/internal/model"
+        "mawinter-server/internal/openapi"
+        "mawinter-server/internal/register"
+
+        "gorm.io/gorm"
+)
+
+// InsertUniqueCatIDRecord は 同一のカテゴリIDがない場合ときに挿入、既にあればエラーを返す
+func (d *DBRepository) InsertUniqueCatIDRecord(req openapi.Record) (res openapi.Record, err error) <span class="cov0" title="0">{
+        yyyymm := req.Datetime.Format("200601")
+        startDate, err := yyyymmToInitDayTime(yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                return openapi.Record{}, err
+        }</span>
+        <span class="cov0" title="0">endDate := startDate.AddDate(0, 1, 0)
+
+        err = d.Conn.Table(RecordTableName).
+                Where("category_id = ?", req.CategoryId).
+                Where("datetime &gt;= ? AND datetime &lt; ?", startDate, endDate).
+                Take(&amp;model.Record{}).Error
+
+        if err == nil </span><span class="cov0" title="0">{
+                // already recorded
+                return openapi.Record{}, register.ErrAlreadyRegisted
+        }</span> else<span class="cov0" title="0"> if !errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                // unknown error
+                return openapi.Record{}, err
+        }</span>
+        <span class="cov0" title="0">dbres := d.Conn.Table(RecordTableName).Create(&amp;req)
+        if dbres.Error != nil </span><span class="cov0" title="0">{
+                return openapi.Record{}, dbres.Error
+        }</span>
+
+        <span class="cov0" title="0">res = req
+        return res, nil</span>
+}
+
+func (d *DBRepository) GetMonthlyFixBilling() (fixBills []model.MonthlyFixBilling, err error) <span class="cov0" title="0">{
+        var recs []model.MonthlyFixBillingDB
+        err = d.Conn.Find(&amp;recs).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return []model.MonthlyFixBilling{}, err
+        }</span>
+        <span class="cov0" title="0">for _, v := range recs </span><span class="cov0" title="0">{
+                fixBills = append(fixBills,
+                        model.MonthlyFixBilling{
+                                CategoryID: int(v.CategoryID),
+                                Day:        int(v.Day),
+                                Price:      int(v.Price),
+                                Type:       v.Type,
+                                Memo:       v.Memo,
+                        },
+                )
+        }</span>
+        <span class="cov0" title="0">return fixBills, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file21" style="display: none">package repository
+
+import (
+        "mawinter-server/internal/model"
+        "mawinter-server/internal/openapi"
+        "mawinter-server/internal/timeutil"
+        "time"
+)
+
+var jst *time.Location
+
+func init() <span class="cov8" title="1">{
+        j, err := time.LoadLocation("Asia/Tokyo")
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+        <span class="cov8" title="1">jst = j</span>
+}
+
+func yyyymmToInitDayTime(yyyymm string) (t time.Time, err error) <span class="cov8" title="1">{
+        // yyyymm -&gt; time.Time
+        // yyyymm から その月の1日目の time.Time を返す
+        t, err = time.ParseInLocation("200601", yyyymm, jst)
+        if err != nil </span><span class="cov0" title="0">{
+                return time.Time{}, err
+        }</span>
+        <span class="cov8" title="1">return t, nil</span>
+}
+
+func NewDBModelRecord(req openapi.ReqRecord) (rec model.Record, err error) <span class="cov8" title="1">{
+        // ID is not set
+        rec.CategoryID = int64(req.CategoryId)
+
+        if req.Datetime != nil </span><span class="cov8" title="1">{
+                // YYYYMMDD
+                rec.Datetime, err = time.ParseInLocation("20060102", *req.Datetime, jst)
+                if err != nil </span><span class="cov0" title="0">{
+                        return model.Record{}, nil
+                }</span>
+        } else<span class="cov8" title="1"> {
+                // default
+                rec.Datetime = timeutil.NowFunc()
+        }</span>
+
+        <span class="cov8" title="1">rec.Price = int64(req.Price)
+        if req.From != nil </span><span class="cov8" title="1">{
+                rec.From = *req.From
+        }</span> else<span class="cov8" title="1"> {
+                rec.From = ""
+        }</span>
+
+        <span class="cov8" title="1">if req.Type != nil </span><span class="cov8" title="1">{
+                rec.Type = *req.Type
+        }</span> else<span class="cov8" title="1"> {
+                rec.Type = ""
+        }</span>
+
+        <span class="cov8" title="1">if req.Memo != nil </span><span class="cov8" title="1">{
+                rec.Memo = *req.Memo
+        }</span> else<span class="cov8" title="1"> {
+                rec.Memo = ""
+        }</span>
+
+        // CreatedAt  time.Time `gorm:"column:created_at"`
+        // UpdatedAt  time.Time `gorm:"column:updated_at"`
+
+        <span class="cov8" title="1">return rec, nil</span>
+}
+
+// NewRecordFromDB では Record テーブルをもとに、API Structを出力する。
+func NewRecordFromDB(req model.Record) (rec openapi.Record, err error) <span class="cov8" title="1">{
+        rec = openapi.Record{
+                CategoryId: int(req.CategoryID),
+                // CategoryName: req.CategoryName : ここでは取得しない
+                Datetime: req.Datetime,
+                From:     req.From,
+                Id:       int(req.ID),
+                Memo:     req.Memo,
+                Price:    int(req.Price),
+                Type:     req.Type,
+        }
+        return rec, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file22" style="display: none">package server
+
+import (
+        "context"
+        "encoding/json"
+        "errors"
+        "fmt"
+        "mawinter-server/internal/model"
+        "mawinter-server/internal/openapi"
+        "mawinter-server/internal/timeutil"
+        "net/http"
+        "strconv"
+
+        "go.uber.org/zap"
+)
+
+type apigateway struct {
+        Logger *zap.Logger
+        ap2    APIServiceV2
+}
+
+func (a *apigateway) Get(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        fmt.Fprintf(w, "It is the root page.\n")
+}</span>
+
+// V2
+
+// (POST /v2/record)
+func (a *apigateway) PostV2Record(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        var req openapi.ReqRecord
+        err := json.NewDecoder(r.Body).Decode(&amp;req)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusBadRequest)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">ctx := context.Background()
+        rec, err := a.ap2.PostRecord(ctx, req)
+        if err != nil &amp;&amp; errors.Is(err, model.ErrUnknownCategoryID) </span><span class="cov0" title="0">{
+                // Category ID情報がDBにない場合
+                w.WriteHeader(http.StatusBadRequest)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span> else<span class="cov0" title="0"> if err != nil &amp;&amp; errors.Is(err, model.ErrAlreadyRecorded) </span><span class="cov0" title="0">{
+                // confirm month 確定済の月だった場合
+                w.WriteHeader(http.StatusBadRequest)
+                fmt.Fprint(w, "already confirmed month")
+                return
+        }</span> else<span class="cov0" title="0"> if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">outputJson, err := json.Marshal(&amp;rec)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusCreated)
+        fmt.Fprint(w, string(outputJson))</span>
+}
+
+// (GET /v2/record/count)
+func (a *apigateway) GetV2RecordCount(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        ctx := context.Background()
+        rec, err := a.ap2.GetRecordsCount(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">outputJson, err := json.Marshal(&amp;rec)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+        <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        fmt.Fprint(w, string(outputJson))</span>
+}
+
+// (POST /v2/record/fixmonth)
+func (a *apigateway) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request, params openapi.PostV2RecordFixmonthParams) <span class="cov0" title="0">{
+        ctx := context.Background()
+        var yms string
+        if params.Yyyymm == nil </span><span class="cov0" title="0">{
+                // default value
+                yms = timeutil.NowFunc().Format("200601")
+        }</span> else<span class="cov0" title="0"> {
+                yms = strconv.Itoa(*params.Yyyymm)
+        }</span>
+
+        <span class="cov0" title="0">recs, err := a.ap2.PostMonthlyFixRecord(ctx, yms)
+        if errors.Is(err, model.ErrAlreadyRecorded) </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusNoContent)
+                return
+        }</span> else<span class="cov0" title="0"> if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                return
+        }</span>
+
+        <span class="cov0" title="0">outputJson, err := json.Marshal(&amp;recs)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusCreated)
+        fmt.Fprint(w, string(outputJson))</span>
+}
+
+// (GET /v2/record)
+func (a *apigateway) GetV2Record(w http.ResponseWriter, r *http.Request, params openapi.GetV2RecordParams) <span class="cov0" title="0">{
+        ctx := context.Background()
+        num := 20 // default value
+
+        if params.Num != nil </span><span class="cov0" title="0">{
+                num = *params.Num
+        }</span>
+
+        <span class="cov0" title="0">offset := 0 // default value
+
+        if params.Offset != nil </span><span class="cov0" title="0">{
+                offset = *params.Offset
+        }</span>
+
+        <span class="cov0" title="0">recs, err := a.ap2.GetRecords(ctx, num, offset)
+        if errors.Is(err, model.ErrNotFound) </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusNotFound)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span> else<span class="cov0" title="0"> if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">outputJson, err := json.Marshal(&amp;recs)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        fmt.Fprint(w, string(outputJson))</span>
+}
+
+// Your GET endpoint
+// (GET /v2/record/summary/{year})
+func (a *apigateway) GetV2RecordYear(w http.ResponseWriter, r *http.Request, year int) <span class="cov0" title="0">{
+        ctx := context.Background()
+        yearSummary, err := a.ap2.GetV2YearSummary(ctx, year)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, model.ErrInvalidValue) </span><span class="cov0" title="0">{
+                        w.WriteHeader(http.StatusBadRequest)
+                        fmt.Fprint(w, err.Error())
+                        return
+                }</span>
+
+                <span class="cov0" title="0">w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return</span>
+        }
+
+        <span class="cov0" title="0">outputJson, err := json.Marshal(&amp;yearSummary)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+        fmt.Fprint(w, string(outputJson))</span>
+}
+
+// Your GET endpoint
+// (GET /v2/record/{yyyymm})
+func (a *apigateway) GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request, yyyymm string, params openapi.GetV2RecordYyyymmParams) <span class="cov0" title="0">{
+        ctx := context.Background()
+
+        err := model.ValidYYYYMM(yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusBadRequest)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">recs, err := a.ap2.GetYYYYMMRecords(ctx, yyyymm, params)
+        if errors.Is(err, model.ErrNotFound) </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusNotFound)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span> else<span class="cov0" title="0"> if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">outputJson, err := json.Marshal(&amp;recs)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        fmt.Fprint(w, string(outputJson))</span>
+}
+
+// GET v2/record/{yyyymm}/recent?num=x
+func (a *apigateway) GetV2RecordYyyymmRecent(w http.ResponseWriter, r *http.Request, yyyymm string, params openapi.GetV2RecordYyyymmRecentParams) <span class="cov0" title="0">{
+        const defaultNum = 10
+        ctx := context.Background()
+
+        if params.Num == nil </span><span class="cov0" title="0">{
+                params.Num = int2ptr(defaultNum)
+        }</span>
+
+        <span class="cov0" title="0">err := model.ValidYYYYMM(yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusBadRequest)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">recs, err := a.ap2.GetYYYYMMRecordsRecent(ctx, yyyymm, *params.Num)
+        if errors.Is(err, model.ErrNotFound) </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusNotFound)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span> else<span class="cov0" title="0"> if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">outputJson, err := json.Marshal(&amp;recs)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        fmt.Fprint(w, string(outputJson))</span>
+}
+
+// (GET /v2/record/{yyyymm}/confirm)
+func (a *apigateway) GetV2RecordYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string) <span class="cov0" title="0">{
+        ctx := context.Background()
+        err := model.ValidYYYYMM(yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusBadRequest)
+                fmt.Fprint(w, err.Error())
+        }</span>
+        <span class="cov0" title="0">yc, err := a.ap2.GetMonthlyConfirm(ctx, yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">outputJson, err := json.Marshal(&amp;yc)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        fmt.Fprint(w, string(outputJson))</span>
+}
+
+// (PUT /v2/record/{yyyymm}/confirm)
+func (a *apigateway) PutV2TableYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string) <span class="cov0" title="0">{
+        ctx := context.Background()
+        err := model.ValidYYYYMM(yyyymm)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusBadRequest)
+                fmt.Fprint(w, err.Error())
+        }</span>
+
+        <span class="cov0" title="0">var req openapi.ConfirmInfo
+        err = json.NewDecoder(r.Body).Decode(&amp;req)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusBadRequest)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">yc, err := a.ap2.UpdateMonthlyConfirm(ctx, yyyymm, *req.Status)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">outputJson, err := json.Marshal(&amp;yc)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        fmt.Fprint(w, string(outputJson))</span>
+}
+
+// (GET /version)
+func (a *apigateway) GetVersion(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        vers := openapi.GetVersionJSONBody{
+                Version:  str2ptr(Version),
+                Revision: str2ptr(Revision),
+                Build:    str2ptr(Build),
+        }
+        outputJson, err := json.Marshal(&amp;vers)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        fmt.Fprint(w, string(outputJson))</span>
+}
+
+func (a *apigateway) GetCategories(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        cats, err := a.ap2.GetCategories(r.Context())
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">outputJson, err := json.Marshal(&amp;cats)
+        if err != nil </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusInternalServerError)
+                fmt.Fprint(w, err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        fmt.Fprint(w, string(outputJson))</span>
+}
+
+func str2ptr(a string) *string <span class="cov0" title="0">{
+        return &amp;a
+}</span>
+
+func int2ptr(a int) *int <span class="cov0" title="0">{
+        return &amp;a
+}</span>
+</pre>
+		
+		<pre class="file" id="file23" style="display: none">package server
+
+import (
+        "context"
+        "mawinter-server/internal/openapi"
+        "net/http"
+
+        "github.com/go-chi/chi/v5"
+        "go.uber.org/zap"
+)
+
+// Binary Info
+var (
+        Version  string
+        Revision string
+        Build    string
+)
+
+// V2
+type APIServiceV2 interface {
+        // V2
+        PostRecord(ctx context.Context, req openapi.ReqRecord) (rec openapi.Record, err error)
+        PostMonthlyFixRecord(ctx context.Context, yyyymm string) (recs []openapi.Record, err error)
+        GetRecords(ctx context.Context, num int, offset int) (recs []openapi.Record, err error)
+        GetRecordsCount(ctx context.Context) (rec openapi.RecordCount, err error)
+        GetCategories(ctx context.Context) (recs []openapi.Category, err error)
+        GetYYYYMMRecords(ctx context.Context, yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error)
+        GetYYYYMMRecordsRecent(ctx context.Context, yyyymm string, num int) (recs []openapi.Record, err error)
+        GetV2YearSummary(ctx context.Context, year int) (sums []openapi.CategoryYearSummary, err error)
+        GetMonthlyConfirm(ctx context.Context, yyyymm string) (yc openapi.ConfirmInfo, err error)
+        UpdateMonthlyConfirm(ctx context.Context, yyyymm string, confirm bool) (yc openapi.ConfirmInfo, err error)
+}
+type Server struct {
+        Logger    *zap.Logger
+        Ap2       APIServiceV2
+        BasicAuth struct {
+                User string
+                Pass string
+        }
+}
+
+func (s *Server) Start(ctx context.Context) error <span class="cov0" title="0">{
+        swagger, err := openapi.GetSwagger()
+        if err != nil </span><span class="cov0" title="0">{
+                s.Logger.Error("failed to get swagger spec", zap.Error(err))
+                return err
+        }</span>
+        <span class="cov0" title="0">swagger.Servers = nil
+        r := chi.NewRouter()
+        r.Use(s.middlewareLogging)
+
+        openapi.HandlerFromMux(&amp;apigateway{Logger: s.Logger, ap2: s.Ap2}, r)
+        addr := ":8080"
+        if err := http.ListenAndServe(addr, r); err != nil </span><span class="cov0" title="0">{
+                s.Logger.Error("failed to listen and serve", zap.Error(err))
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (s *Server) middlewareLogging(h http.Handler) http.Handler <span class="cov0" title="0">{
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                if r.URL.Path != "/" </span><span class="cov0" title="0">{
+                        s.Logger.Info("access", zap.String("url", r.URL.Path), zap.String("X-Forwarded-For", r.Header.Get("X-Forwarded-For")))
+                }</span>
+                <span class="cov0" title="0">h.ServeHTTP(w, r)</span>
+        })
+}
+</pre>
+		
+		<pre class="file" id="file24" style="display: none">package service
+
+import (
+        "context"
+        "fmt"
+        "mawinter-server/internal/openapi"
+        "os"
+        "strings"
+        "time"
+
+        "go.uber.org/zap"
+)
+
+var jst *time.Location
+
+func init() <span class="cov8" title="1">{
+        j, err := time.LoadLocation("Asia/Tokyo")
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+        <span class="cov8" title="1">jst = j</span>
+}
+
+type APIServiceDup interface {
+        GetYYYYMMRecords(ctx context.Context, yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error)
+}
+
+type MailClient interface {
+        Send(ctx context.Context, to string, title string, body string) (err error)
+}
+type DuplicateCheckService struct {
+        Logger     *zap.Logger
+        Ap         APIServiceDup
+        MailClient MailClient
+}
+
+func judgeDuplicateRecords(d1 openapi.Record, d2 openapi.Record) bool <span class="cov8" title="1">{
+        // CategoryID と Price と Datetime の日付までが一致していれば True（重複可能性あり）とする
+        if d1.CategoryId != d2.CategoryId </span><span class="cov8" title="1">{
+                return false
+        }</span>
+
+        <span class="cov8" title="1">if d1.Price != d2.Price </span><span class="cov0" title="0">{
+                return false
+        }</span>
+
+        <span class="cov8" title="1">if d1.Datetime.Format("20060102") != d2.Datetime.Format("20060102") </span><span class="cov8" title="1">{
+                return false
+        }</span>
+
+        <span class="cov8" title="1">return true</span>
+}
+
+func (d *DuplicateCheckService) DuplicateCheck(ctx context.Context, yyyymm string) (err error) <span class="cov8" title="1">{
+        d.Logger.Info("DuplicateCheck start")
+        var dupInt = 0
+
+        recs, err := d.Ap.GetYYYYMMRecords(ctx, yyyymm, openapi.GetV2RecordYyyymmParams{})
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">var targets []openapi.Record // 重複判定する対象
+        for _, r := range recs </span><span class="cov8" title="1">{
+                if strings.Contains(r.Type, "D") </span><span class="cov0" title="0">{
+                        // Type に 'D' が入っているレコードは重複判定の対象外
+                        continue</span>
+                }
+                <span class="cov8" title="1">targets = append(targets, r)</span>
+        }
+
+        <span class="cov8" title="1">d.Logger.Info("fetch all records from monthly table")
+
+        mailbody := "duplicate data: \n"
+        // targets 内全体に重複の判定をかける
+        for i, u := range targets </span><span class="cov8" title="1">{
+                for j, v := range targets </span><span class="cov8" title="1">{
+                        // ダブルカウントを防ぐため、i &lt; j とする
+                        if i &gt;= j </span><span class="cov8" title="1">{
+                                continue</span>
+                        }
+
+                        <span class="cov8" title="1">if judgeDuplicateRecords(u, v) </span><span class="cov8" title="1">{
+                                mailbody += fmt.Sprintf("date = %s, category_id = %d, price = %d\n", u.Datetime, u.CategoryId, u.Price)
+                                d.Logger.Info("detect duplicate data", zap.Time("Date", u.Datetime))
+                                dupInt++
+                        }</span>
+                }
+        }
+
+        <span class="cov8" title="1">d.Logger.Info("DuplicateCheck complete", zap.Int("rec_num", len(recs)), zap.Int("target_num", len(targets)), zap.Int("duplicate_num", dupInt))
+        if dupInt &gt; 0 </span><span class="cov8" title="1">{
+                err = d.MailClient.Send(ctx, os.Getenv("MAIL_TO"), "[mawinter] detect duplicate report", mailbody)
+                if err != nil </span><span class="cov0" title="0">{
+                        d.Logger.Error("detect duplicate send mail error", zap.Error(err))
+                        return err
+                }</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file25" style="display: none">package service
+
+import (
+        "context"
+        "mawinter-server/internal/openapi"
+        "time"
+)
+
+type mockAp struct{}
+type mockMailClient struct{}
+
+func (m *mockAp) GetYYYYMMRecords(ctx context.Context, yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error) <span class="cov8" title="1">{
+        return []openapi.Record{
+                {
+                        CategoryId: 100,
+                        Datetime:   time.Date(2000, 1, 23, 12, 0, 0, 0, jst),
+                        From:       "from1",
+                        Price:      1234,
+                },
+                {
+                        CategoryId: 100,
+                        Datetime:   time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+                        From:       "from1",
+                        Price:      1234,
+                },
+                {
+                        CategoryId: 200,
+                        Datetime:   time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+                        From:       "from1",
+                        Price:      1234,
+                },
+        }, nil
+}</span>
+
+func (m *mockMailClient) Send(ctx context.Context, to string, title string, body string) (err error) <span class="cov8" title="1">{
+        return nil
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
