@@ -10,6 +10,7 @@ import (
 )
 
 type mockRepo struct {
+	err error
 	GetMonthlyFixDoneReturn bool
 	ReturnConfirm           bool // ここが true ならば各テーブルは confirm していることにする
 }
@@ -92,6 +93,32 @@ func (m *mockRepo) GetRecords(ctx context.Context, num int, offset int) (recs []
 	}
 
 	return recs, nil
+}
+
+func (m *mockRepo) GetRecordByID(ctx context.Context, id int) (rec openapi.Record, err error){
+	if m.err != nil{
+		return openapi.Record{}, m.err
+	}
+
+	rec = openapi.Record{
+		CategoryId: 210,
+		CategoryName: "食費",
+		Datetime: time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+		From:     "ope",
+		Id:       id,
+		Memo:     "memo",
+		Price:    1234,
+		Type:     "type",
+	}
+
+	return rec, nil
+}
+
+func (m *mockRepo) DeleteRecordByID(ctx context.Context, id int) (err error){
+	if m.err != nil{
+		return m.err
+	}
+	return nil
 }
 
 func (m *mockRepo) GetRecordsCount(ctx context.Context) (num int, err error) {

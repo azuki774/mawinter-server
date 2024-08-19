@@ -24,6 +24,8 @@ func init() {
 type DBRepository interface {
 	InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error)
 	GetRecords(ctx context.Context, num int, offset int) (recs []openapi.Record, err error)
+	GetRecordByID(ctx context.Context, id int) (rec openapi.Record, err error)
+	DeleteRecordByID(ctx context.Context, id int) (err error)
 	GetRecordsCount(ctx context.Context) (num int, err error)
 	GetCategories(ctx context.Context) (cats []model.Category, err error)
 	GetMonthRecords(yyyymm string) (recs []openapi.Record, err error)
@@ -118,6 +120,28 @@ func (a *APIService) GetRecords(ctx context.Context, num int, offset int) (recs 
 
 	a.Logger.Info("complete GetRecordsRecent", zap.Int("num", num))
 	return recs, nil
+}
+
+func (a *APIService) GetRecordByID(ctx context.Context, id int) (rec openapi.Record, err error){
+	a.Logger.Info("called GetRecordByID")
+	rec, err = a.Repo.GetRecordByID(ctx, id)
+	if err != nil {
+		a.Logger.Error("failed to get record by ID", zap.Int("id", id), zap.Error(err))
+		return openapi.Record{}, err
+	}
+
+	return rec, nil
+}
+
+func (a *APIService) DeleteRecordByID(ctx context.Context, id int) (err error){
+	a.Logger.Info("called DeleteRecordByID")
+	err = a.Repo.DeleteRecordByID(ctx, id)
+	if err != nil {
+		a.Logger.Error("failed to delete record by ID", zap.Int("id", id), zap.Error(err))
+		return err
+	}
+
+	return nil
 }
 
 // GetRecordsCount は レコード件数の総数を返す
