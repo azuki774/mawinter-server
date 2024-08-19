@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
 	"mawinter-server/internal/timeutil"
 	"reflect"
@@ -904,6 +905,117 @@ func TestAPIService_GetRecordsCount(t *testing.T) {
 			}
 			if !reflect.DeepEqual(gotRec, tt.wantRec) {
 				t.Errorf("APIService.GetRecordsCount() = %v, want %v", gotRec, tt.wantRec)
+			}
+		})
+	}
+}
+
+func TestAPIService_GetRecordByID(t *testing.T) {
+	type fields struct {
+		Logger *zap.Logger
+		Repo   DBRepository
+	}
+	type args struct {
+		ctx context.Context
+		id  int
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantRec openapi.Record
+		wantErr bool
+	}{
+		{
+			name: "ok",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{ctx: context.Background(), id: 10},
+			wantRec: openapi.Record{
+				CategoryId:   210,
+				CategoryName: "食費",
+				Datetime:     time.Date(2000, 1, 23, 0, 0, 0, 0, jst),
+				From:         "ope",
+				Id:           10,
+				Memo:         "memo",
+				Price:        1234,
+				Type:         "type",
+			},
+			wantErr: false,
+		},
+		{
+			name: "error",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{err: model.ErrNotFound},
+			},
+			args:    args{ctx: context.Background(), id: 10},
+			wantRec: openapi.Record{},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := &APIService{
+				Logger: tt.fields.Logger,
+				Repo:   tt.fields.Repo,
+			}
+			gotRec, err := a.GetRecordByID(tt.args.ctx, tt.args.id)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("APIService.GetRecordByID() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotRec, tt.wantRec) {
+				t.Errorf("APIService.GetRecordByID() = %v, want %v", gotRec, tt.wantRec)
+			}
+		})
+	}
+}
+
+func TestAPIService_DeleteRecordByID(t *testing.T) {
+	type fields struct {
+		Logger *zap.Logger
+		Repo   DBRepository
+	}
+	type args struct {
+		ctx context.Context
+		id  int
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "ok",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{err: model.ErrNotFound},
+			},
+			args:    args{ctx: context.Background(), id: 10},
+			wantErr: true,
+		},
+		{
+			name: "error",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{err: model.ErrNotFound},
+			},
+			args:    args{ctx: context.Background(), id: 10},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := &APIService{
+				Logger: tt.fields.Logger,
+				Repo:   tt.fields.Repo,
+			}
+			if err := a.DeleteRecordByID(tt.args.ctx, tt.args.id); (err != nil) != tt.wantErr {
+				t.Errorf("APIService.DeleteRecordByID() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
