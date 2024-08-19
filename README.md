@@ -5,7 +5,7 @@
 - 家計簿 API サーバ
 
 ## API Information
-See https://azuki774.github.io/mawinter-server/build/mawinter-api.html
+See https://azk774.stoplight.io/docs/azk-home-project/iayxih3222x5z-mawinter-api
 ## DB Schema
 See https://azuki774.github.io/mawinter-server/build/README.htm
 ## Coverage

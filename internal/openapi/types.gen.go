@@ -68,21 +68,9 @@ type PostV2RecordFixmonthParams struct {
 	Yyyymm *int `form:"yyyymm,omitempty" json:"yyyymm,omitempty"`
 }
 
-// GetV2RecordYyyymmParams defines parameters for GetV2RecordYyyymm.
-type GetV2RecordYyyymmParams struct {
-	CategoryId *int    `form:"category_id,omitempty" json:"category_id,omitempty"`
-	From       *string `form:"from,omitempty" json:"from,omitempty"`
-}
-
 // PutV2TableYyyymmConfirmJSONBody defines parameters for PutV2TableYyyymmConfirm.
 type PutV2TableYyyymmConfirmJSONBody struct {
 	Status *bool `json:"status,omitempty"`
-}
-
-// GetV2RecordYyyymmRecentParams defines parameters for GetV2RecordYyyymmRecent.
-type GetV2RecordYyyymmRecentParams struct {
-	// Num max record number
-	Num *int `form:"num,omitempty" json:"num,omitempty"`
 }
 
 // GetVersionJSONBody defines parameters for GetVersion.
