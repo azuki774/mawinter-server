@@ -16,7 +16,7 @@ type ServerInterface interface {
 	// health check
 	// (GET /)
 	Get(w http.ResponseWriter, r *http.Request)
-	// Your GET endpoint
+	// get categories
 	// (GET /categories)
 	GetCategories(w http.ResponseWriter, r *http.Request)
 	// get records
@@ -34,18 +34,18 @@ type ServerInterface interface {
 	// get year summary
 	// (GET /v2/record/summary/{year})
 	GetV2RecordYear(w http.ResponseWriter, r *http.Request, year int)
-	// get month records
-	// (GET /v2/record/{yyyymm})
-	GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request, yyyymm string, params GetV2RecordYyyymmParams)
-
+	// delete record from id
+	// (DELETE /v2/record/{id})
+	DeleteV2RecordId(w http.ResponseWriter, r *http.Request, id int)
+	// get record from id
+	// (GET /v2/record/{id})
+	GetV2RecordId(w http.ResponseWriter, r *http.Request, id int)
+	// get records confirm
 	// (GET /v2/record/{yyyymm}/confirm)
 	GetV2RecordYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string)
-
+	// update record confirm
 	// (PUT /v2/record/{yyyymm}/confirm)
 	PutV2TableYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string)
-	// Your GET endpoint
-	// (GET /v2/record/{yyyymm}/recent)
-	GetV2RecordYyyymmRecent(w http.ResponseWriter, r *http.Request, yyyymm string, params GetV2RecordYyyymmRecentParams)
 	// get version
 	// (GET /version)
 	GetVersion(w http.ResponseWriter, r *http.Request)
@@ -61,7 +61,7 @@ func (_ Unimplemented) Get(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Your GET endpoint
+// get categories
 // (GET /categories)
 func (_ Unimplemented) GetCategories(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
@@ -97,25 +97,27 @@ func (_ Unimplemented) GetV2RecordYear(w http.ResponseWriter, r *http.Request, y
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// get month records
-// (GET /v2/record/{yyyymm})
-func (_ Unimplemented) GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request, yyyymm string, params GetV2RecordYyyymmParams) {
+// delete record from id
+// (DELETE /v2/record/{id})
+func (_ Unimplemented) DeleteV2RecordId(w http.ResponseWriter, r *http.Request, id int) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// get record from id
+// (GET /v2/record/{id})
+func (_ Unimplemented) GetV2RecordId(w http.ResponseWriter, r *http.Request, id int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// get records confirm
 // (GET /v2/record/{yyyymm}/confirm)
 func (_ Unimplemented) GetV2RecordYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// update record confirm
 // (PUT /v2/record/{yyyymm}/confirm)
 func (_ Unimplemented) PutV2TableYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// Your GET endpoint
-// (GET /v2/record/{yyyymm}/recent)
-func (_ Unimplemented) GetV2RecordYyyymmRecent(w http.ResponseWriter, r *http.Request, yyyymm string, params GetV2RecordYyyymmRecentParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -284,42 +286,49 @@ func (siw *ServerInterfaceWrapper) GetV2RecordYear(w http.ResponseWriter, r *htt
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// GetV2RecordYyyymm operation middleware
-func (siw *ServerInterfaceWrapper) GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request) {
+// DeleteV2RecordId operation middleware
+func (siw *ServerInterfaceWrapper) DeleteV2RecordId(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
 
-	// ------------- Path parameter "yyyymm" -------------
-	var yyyymm string
+	// ------------- Path parameter "id" -------------
+	var id int
 
-	err = runtime.BindStyledParameterWithLocation("simple", false, "yyyymm", runtime.ParamLocationPath, chi.URLParam(r, "yyyymm"), &yyyymm)
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, chi.URLParam(r, "id"), &id)
 	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "yyyymm", Err: err})
-		return
-	}
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params GetV2RecordYyyymmParams
-
-	// ------------- Optional query parameter "category_id" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "category_id", r.URL.Query(), &params.CategoryId)
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "category_id", Err: err})
-		return
-	}
-
-	// ------------- Optional query parameter "from" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "from", r.URL.Query(), &params.From)
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "from", Err: err})
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
 		return
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetV2RecordYyyymm(w, r, yyyymm, params)
+		siw.Handler.DeleteV2RecordId(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetV2RecordId operation middleware
+func (siw *ServerInterfaceWrapper) GetV2RecordId(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, chi.URLParam(r, "id"), &id)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetV2RecordId(w, r, id)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -372,43 +381,6 @@ func (siw *ServerInterfaceWrapper) PutV2TableYyyymmConfirm(w http.ResponseWriter
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PutV2TableYyyymmConfirm(w, r, yyyymm)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
-// GetV2RecordYyyymmRecent operation middleware
-func (siw *ServerInterfaceWrapper) GetV2RecordYyyymmRecent(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	var err error
-
-	// ------------- Path parameter "yyyymm" -------------
-	var yyyymm string
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "yyyymm", runtime.ParamLocationPath, chi.URLParam(r, "yyyymm"), &yyyymm)
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "yyyymm", Err: err})
-		return
-	}
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params GetV2RecordYyyymmRecentParams
-
-	// ------------- Optional query parameter "num" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "num", r.URL.Query(), &params.Num)
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "num", Err: err})
-		return
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetV2RecordYyyymmRecent(w, r, yyyymm, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -568,16 +540,16 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Get(options.BaseURL+"/v2/record/summary/{year}", wrapper.GetV2RecordYear)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/v2/record/{yyyymm}", wrapper.GetV2RecordYyyymm)
+		r.Delete(options.BaseURL+"/v2/record/{id}", wrapper.DeleteV2RecordId)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/v2/record/{id}", wrapper.GetV2RecordId)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/v2/record/{yyyymm}/confirm", wrapper.GetV2RecordYyyymmConfirm)
 	})
 	r.Group(func(r chi.Router) {
 		r.Put(options.BaseURL+"/v2/record/{yyyymm}/confirm", wrapper.PutV2TableYyyymmConfirm)
-	})
-	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/v2/record/{yyyymm}/recent", wrapper.GetV2RecordYyyymmRecent)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/version", wrapper.GetVersion)

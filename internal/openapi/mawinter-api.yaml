@@ -130,7 +130,7 @@ paths:
         - url: 'http://localhost:8080'
   '/v2/record/{yyyymm}/confirm':
     put:
-      summary: ''
+      summary: update record confirm
       operationId: put-v2-table-yyyymm-confirm
       parameters:
         - name: yyyymm
@@ -158,10 +158,11 @@ paths:
                 type: object
         '404':
           description: Not Found
+      deprecated: true
       servers:
         - url: 'http://localhost:8080'
     get:
-      summary: ''
+      summary: get records confirm
       operationId: get-v2-record-yyyymm-confirm
       parameters:
         - name: yyyymm
@@ -180,41 +181,7 @@ paths:
                 $ref: '#/components/schemas/confirm_info'
         '404':
           description: Not Found
-      servers:
-        - url: 'http://localhost:8080'
-  '/v2/record/{yyyymm}':
-    get:
-      summary: get month records
-      description: yyyymm のレコードをすべて表示する。パスパラメータで条件を絞ることができる。
-      operationId: get-v2-record-yyyymm
-      parameters:
-        - name: category_id
-          in: query
-          schema:
-            type: integer
-        - name: from
-          in: query
-          schema:
-            type: string
-        - name: yyyymm
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/record'
-            multipart/form-data:
-              schema:
-                $ref: '#/components/schemas/record'
-        '404':
-          description: Not Found
+      deprecated: true
       servers:
         - url: 'http://localhost:8080'
   '/v2/record/summary/{year}':
@@ -241,37 +208,9 @@ paths:
           description: Not Found
       servers:
         - url: 'http://localhost:8080'
-  '/v2/record/{yyyymm}/recent':
-    get:
-      summary: Your GET endpoint
-      operationId: get-v2-record-yyyymm-recent
-      parameters:
-        - name: num
-          in: query
-          description: max record number
-          schema:
-            type: integer
-        - name: yyyymm
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/record'
-        '404':
-          description: Not Found
-      servers:
-        - url: 'http://localhost:8080'
   /categories:
     get:
-      summary: Your GET endpoint
+      summary: get categories
       operationId: get-categories
       responses:
         '200':
@@ -282,6 +221,39 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/category'
+      servers:
+        - url: 'http://localhost:8080'
+  '/v2/record/{id}':
+    delete:
+      summary: delete record from id
+      operationId: delete-v2-record-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: No Content
+      servers:
+        - url: 'http://localhost:8080'
+    get:
+      summary: get record from id
+      operationId: get-v2-record-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/record'
       servers:
         - url: 'http://localhost:8080'
 components:
