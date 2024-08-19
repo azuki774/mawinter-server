@@ -233,6 +233,7 @@ func TestDBRepository_GetMonthlyFixDone(t *testing.T) {
 	}
 }
 
+
 func TestDBRepository_InsertMonthlyFixBilling(t *testing.T) {
 	type fields struct {
 		Conn *gorm.DB
@@ -394,3 +395,4 @@ func Test_dbModelToConfirmInfo(t *testing.T) {
 		})
 	}
 }
+

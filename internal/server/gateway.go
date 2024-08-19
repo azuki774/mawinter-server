@@ -184,80 +184,6 @@ func (a *apigateway) GetV2RecordYear(w http.ResponseWriter, r *http.Request, yea
 	fmt.Fprint(w, string(outputJson))
 }
 
-// Your GET endpoint
-// (GET /v2/record/{yyyymm})
-func (a *apigateway) GetV2RecordYyyymm(w http.ResponseWriter, r *http.Request, yyyymm string, params openapi.GetV2RecordYyyymmParams) {
-	ctx := context.Background()
-
-	err := model.ValidYYYYMM(yyyymm)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, err.Error())
-		return
-	}
-
-	recs, err := a.ap2.GetYYYYMMRecords(ctx, yyyymm, params)
-	if errors.Is(err, model.ErrNotFound) {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(w, err.Error())
-		return
-	} else if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
-		return
-	}
-
-	outputJson, err := json.Marshal(&recs)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, string(outputJson))
-}
-
-// GET v2/record/{yyyymm}/recent?num=x
-func (a *apigateway) GetV2RecordYyyymmRecent(w http.ResponseWriter, r *http.Request, yyyymm string, params openapi.GetV2RecordYyyymmRecentParams) {
-	const defaultNum = 10
-	ctx := context.Background()
-
-	if params.Num == nil {
-		params.Num = int2ptr(defaultNum)
-	}
-
-	err := model.ValidYYYYMM(yyyymm)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, err.Error())
-		return
-	}
-
-	recs, err := a.ap2.GetYYYYMMRecordsRecent(ctx, yyyymm, *params.Num)
-	if errors.Is(err, model.ErrNotFound) {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(w, err.Error())
-		return
-	} else if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
-		return
-	}
-
-	outputJson, err := json.Marshal(&recs)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, string(outputJson))
-}
-
 // (GET /v2/record/{yyyymm}/confirm)
 func (a *apigateway) GetV2RecordYyyymmConfirm(w http.ResponseWriter, r *http.Request, yyyymm string) {
 	ctx := context.Background()
@@ -360,10 +286,46 @@ func (a *apigateway) GetCategories(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, string(outputJson))
 }
 
-func str2ptr(a string) *string {
-	return &a
+// (GET /v2/record/{id})
+func (a *apigateway) GetV2RecordId(w http.ResponseWriter, r *http.Request, id int){
+	rec, err := a.ap2.GetRecordByID(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound){
+			w.WriteHeader(http.StatusNotFound)
+		}else{
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprint(w, err.Error())
+		}
+		return
+	}
+
+	outputJson, err := json.Marshal(&rec)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(outputJson))
 }
 
-func int2ptr(a int) *int {
+// (DELETE /v2/record/{id})
+func (a *apigateway) DeleteV2RecordId(w http.ResponseWriter, r *http.Request, id int){
+	err := a.ap2.DeleteRecordByID(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound){
+			w.WriteHeader(http.StatusNotFound)
+		}else{
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprint(w, err.Error())
+		}
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func str2ptr(a string) *string {
 	return &a
 }

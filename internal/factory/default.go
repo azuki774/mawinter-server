@@ -7,7 +7,6 @@ import (
 	"mawinter-server/internal/register"
 	v2db "mawinter-server/internal/repository/v2"
 	"mawinter-server/internal/server"
-	"mawinter-server/internal/service"
 	"os"
 	"time"
 
@@ -60,8 +59,4 @@ func NewMailClient() *client.MailClient {
 		SMTPUser: user,
 		SMTPPass: pass,
 	}
-}
-
-func NewDuplicateCheckService(l *zap.Logger, ap *v2.APIService) (svc *service.DuplicateCheckService) {
-	return &service.DuplicateCheckService{Logger: l, Ap: ap, MailClient: NewMailClient()}
 }

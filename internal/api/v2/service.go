@@ -28,7 +28,6 @@ type DBRepository interface {
 	DeleteRecordByID(ctx context.Context, id int) (err error)
 	GetRecordsCount(ctx context.Context) (num int, err error)
 	GetCategories(ctx context.Context) (cats []model.Category, err error)
-	GetMonthRecords(yyyymm string) (recs []openapi.Record, err error)
 	GetMonthRecordsRecent(yyyymm string, num int) (recs []openapi.Record, err error)
 	MakeCategoryNameMap() (cnf map[int]string, err error)
 	GetMonthMidSummary(yyyymm string) (summon []model.CategoryMidMonthSummary, err error) // SELECT category_id, count(*), sum(price) FROM Record_202211 GROUP BY category_id;
@@ -207,51 +206,6 @@ func fyInterval(yyyy int) (yyyymm []string) {
 		t = t.AddDate(0, 1, 0)
 	}
 	return yyyymm
-}
-
-// GetYYYYMMRecords は yyyymm 月のレコードを取得する
-func (a *APIService) GetYYYYMMRecords(ctx context.Context, yyyymm string, params openapi.GetV2RecordYyyymmParams) (recs []openapi.Record, err error) {
-	recs = []openapi.Record{}
-	a.Logger.Info("called get month records")
-
-	a.Logger.Info("get category name mapping")
-	// categoryNameMap 取得
-	cnf, err := a.Repo.MakeCategoryNameMap()
-	if err != nil {
-		return nil, err
-	}
-
-	a.Logger.Info("get records from DB")
-	recsRaw, err := a.Repo.GetMonthRecords(yyyymm) // category_name なし
-	if err != nil {
-		return nil, err
-	}
-
-	// parameters 抽出する
-	// category_id
-	var recRawExt1 []openapi.Record // category_id でフィルタリングしたもの
-	var recRawExt2 []openapi.Record // from でフィルタリングしたもの
-	for _, r := range recsRaw {
-		if params.CategoryId == nil || (r.CategoryId == *params.CategoryId) {
-			recRawExt1 = append(recRawExt1, r)
-		}
-	}
-
-	// from
-	for _, r := range recRawExt1 {
-		if params.From == nil || (r.From == *params.From) {
-			recRawExt2 = append(recRawExt2, r)
-		}
-	}
-
-	for _, rec := range recRawExt2 {
-		// categoryName を付与
-		rec.CategoryName = cnf[rec.CategoryId]
-		recs = append(recs, rec)
-	}
-
-	a.Logger.Info("complete get month records")
-	return recs, nil
 }
 
 func (a *APIService) GetYYYYMMRecordsRecent(ctx context.Context, yyyymm string, num int) (recs []openapi.Record, err error) {

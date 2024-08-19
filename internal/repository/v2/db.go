@@ -53,6 +53,21 @@ func (d *DBRepository) GetRecords(ctx context.Context, num int, offset int) (rec
 	return recs, nil
 }
 
+func (d *DBRepository) GetRecordByID(ctx context.Context, id int) (rec openapi.Record, err error){
+	err = d.Conn.Table(RecordTableName).Where("id = ?", id).First(&rec).Error
+	if err != nil{
+		if errors.Is(err,gorm.ErrRecordNotFound){
+			return openapi.Record{}, model.ErrNotFound
+		}
+		return openapi.Record{}, err
+	}
+	return rec, nil
+}
+
+func (d *DBRepository) DeleteRecordByID(ctx context.Context, id int) (err error){
+	return d.Conn.Table(RecordTableName).Delete(&model.Record{}, id).Error
+}
+
 func (d *DBRepository) GetRecordsCount(ctx context.Context) (num int, err error) {
 	res := d.Conn.Table(RecordTableName).Raw("SELECT count(1) FROM Record").Scan(&num)
 	if res.Error != nil {
