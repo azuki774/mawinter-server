@@ -4,7 +4,6 @@ import (
 	"fmt"
 	v2 "mawinter-server/internal/api/v2"
 	"mawinter-server/internal/client"
-	"mawinter-server/internal/register"
 	v2db "mawinter-server/internal/repository/v2"
 	"mawinter-server/internal/server"
 	"os"
@@ -35,10 +34,6 @@ func JSTTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 
 func NewServiceV2(l *zap.Logger, db *v2db.DBRepository) (ap *v2.APIService) {
 	return &v2.APIService{Logger: l, Repo: db}
-}
-
-func NewRegisterService(l *zap.Logger, db *v2db.DBRepository, mc *client.MailClient) (ap *register.RegisterService) {
-	return &register.RegisterService{Logger: l, DB: db, MailClient: mc}
 }
 
 func NewServer(l *zap.Logger, ap2 *v2.APIService) *server.Server {
