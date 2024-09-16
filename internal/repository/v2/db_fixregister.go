@@ -4,7 +4,6 @@ import (
 	"errors"
 	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
-	"mawinter-server/internal/register"
 
 	"gorm.io/gorm"
 )
@@ -25,7 +24,7 @@ func (d *DBRepository) InsertUniqueCatIDRecord(req openapi.Record) (res openapi.
 
 	if err == nil {
 		// already recorded
-		return openapi.Record{}, register.ErrAlreadyRegisted
+		return openapi.Record{}, model.ErrAlreadyRecorded
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		// unknown error
 		return openapi.Record{}, err
