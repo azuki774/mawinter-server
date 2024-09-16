@@ -6,7 +6,6 @@
 
 ## API Information
 See https://azk774.stoplight.io/docs/azk-home-project/iayxih3222x5z-mawinter-api
-## DB Schema
-See https://azuki774.github.io/mawinter-server/build/README.htm
+
 ## Coverage
 See https://azuki774.github.io/mawinter-server/coverage.html
