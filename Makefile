@@ -2,13 +2,11 @@ SHELL=/bin/bash
 VERSION_API=latest
 container_name_api=mawinter-api
 container_name_doc=mawinter-doc
-container_name_register=mawinter-register
 
 .PHONY: build bin bin-linux-amd64 start stop migration test doc generate
 
 build:
 	docker build -t $(container_name_api):$(VERSION_API) -f build/Dockerfile .
-	# docker build -t $(container_name_register):$(VERSION_API) -f build/Dockerfile-register .
 
 bin:
 	go build -a -tags "netgo" -installsuffix netgo  -ldflags="-s -w -extldflags \"-static\" \
