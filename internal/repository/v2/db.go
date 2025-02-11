@@ -45,18 +45,35 @@ func (d *DBRepository) InsertRecord(req openapi.ReqRecord) (rec openapi.Record, 
 	return rec, nil
 }
 
-func (d *DBRepository) GetRecords(ctx context.Context, num int, offset int) (recs []openapi.Record, err error) {
-	res := d.Conn.Table(RecordTableName).Order("id DESC").Limit(num).Offset(offset).Find(&recs)
+func (d *DBRepository) GetRecords(ctx context.Context, getRecordOpt model.GetRecordOption) (recs []openapi.Record, err error) {
+	num := getRecordOpt.Num
+	offset := getRecordOpt.Offset
+	var q *gorm.DB = d.Conn.Table(RecordTableName).Order("id DESC")
+
+	if getRecordOpt.YYYYMM != "" {
+		startDate, err := yyyymmToInitDayTime(getRecordOpt.YYYYMM)
+		if err != nil {
+			return []openapi.Record{}, err
+		}
+		endDate := startDate.AddDate(0, 1, 0)
+		q = q.Where("datetime >= ?", startDate).Where("datetime < ?", endDate)
+	}
+
+	if getRecordOpt.CategoryID != 0 {
+		q = q.Where("category_id = ?", getRecordOpt.CategoryID)
+	}
+
+	res := q.Limit(num).Offset(offset).Find(&recs)
 	if res.Error != nil {
 		return []openapi.Record{}, res.Error
 	}
 	return recs, nil
 }
 
-func (d *DBRepository) GetRecordByID(ctx context.Context, id int) (rec openapi.Record, err error){
+func (d *DBRepository) GetRecordByID(ctx context.Context, id int) (rec openapi.Record, err error) {
 	err = d.Conn.Table(RecordTableName).Where("id = ?", id).First(&rec).Error
-	if err != nil{
-		if errors.Is(err,gorm.ErrRecordNotFound){
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return openapi.Record{}, model.ErrNotFound
 		}
 		return openapi.Record{}, err
@@ -64,7 +81,7 @@ func (d *DBRepository) GetRecordByID(ctx context.Context, id int) (rec openapi.R
 	return rec, nil
 }
 
-func (d *DBRepository) DeleteRecordByID(ctx context.Context, id int) (err error){
+func (d *DBRepository) DeleteRecordByID(ctx context.Context, id int) (err error) {
 	return d.Conn.Table(RecordTableName).Delete(&model.Record{}, id).Error
 }
 

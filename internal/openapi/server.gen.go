@@ -25,7 +25,7 @@ type ServerInterface interface {
 	// create record
 	// (POST /v2/record)
 	PostV2Record(w http.ResponseWriter, r *http.Request)
-	// /v2/record/count
+	// record count
 	// (GET /v2/record/count)
 	GetV2RecordCount(w http.ResponseWriter, r *http.Request)
 	// create fixmonth record
@@ -79,7 +79,7 @@ func (_ Unimplemented) PostV2Record(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// /v2/record/count
+// record count
 // (GET /v2/record/count)
 func (_ Unimplemented) GetV2RecordCount(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
@@ -188,6 +188,22 @@ func (siw *ServerInterfaceWrapper) GetV2Record(w http.ResponseWriter, r *http.Re
 	err = runtime.BindQueryParameter("form", true, false, "offset", r.URL.Query(), &params.Offset)
 	if err != nil {
 		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "offset", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "yyyymm" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "yyyymm", r.URL.Query(), &params.Yyyymm)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "yyyymm", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "category_id" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "category_id", r.URL.Query(), &params.CategoryId)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "category_id", Err: err})
 		return
 	}
 

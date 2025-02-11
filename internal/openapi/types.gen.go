@@ -59,8 +59,10 @@ type ReqRecord struct {
 // GetV2RecordParams defines parameters for GetV2Record.
 type GetV2RecordParams struct {
 	// Num the number of records
-	Num    *int `form:"num,omitempty" json:"num,omitempty"`
-	Offset *int `form:"offset,omitempty" json:"offset,omitempty"`
+	Num        *int    `form:"num,omitempty" json:"num,omitempty"`
+	Offset     *int    `form:"offset,omitempty" json:"offset,omitempty"`
+	Yyyymm     *string `form:"yyyymm,omitempty" json:"yyyymm,omitempty"`
+	CategoryId *int    `form:"category_id,omitempty" json:"category_id,omitempty"`
 }
 
 // PostV2RecordFixmonthParams defines parameters for PostV2RecordFixmonth.

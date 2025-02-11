@@ -6,3 +6,11 @@ type CategoryMidMonthSummary struct {
 	Count      int `json:"count"`
 	Price      int `json:"price"`
 }
+
+// GetRecordOption は GetRecord する際にAPI/DB共通で参照するためのオプション
+type GetRecordOption struct {
+	Num    int
+	Offset int
+	YYYYMM string
+	CategoryID int
+}

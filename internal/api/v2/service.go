@@ -23,7 +23,7 @@ func init() {
 
 type DBRepository interface {
 	InsertRecord(req openapi.ReqRecord) (rec openapi.Record, err error)
-	GetRecords(ctx context.Context, num int, offset int) (recs []openapi.Record, err error)
+	GetRecords(ctx context.Context, GetRecordOpt model.GetRecordOption) (recs []openapi.Record, err error)
 	GetRecordByID(ctx context.Context, id int) (rec openapi.Record, err error)
 	DeleteRecordByID(ctx context.Context, id int) (err error)
 	GetRecordsCount(ctx context.Context) (num int, err error)
@@ -96,9 +96,9 @@ func (a *APIService) PostRecord(ctx context.Context, req openapi.ReqRecord) (rec
 }
 
 // GetRecords は num の数だけ ID 降順に Record を取得する
-func (a *APIService) GetRecords(ctx context.Context, num int, offset int) (recs []openapi.Record, err error) {
-	a.Logger.Info("called GetRecordsRecent", zap.Int("num", num))
-	recsRaw, err := a.Repo.GetRecords(ctx, num, offset)
+func (a *APIService) GetRecords(ctx context.Context, GetRecordOpt model.GetRecordOption) (recs []openapi.Record, err error) {
+	a.Logger.Info("called GetRecordsRecent", zap.Int("num", GetRecordOpt.Num))
+	recsRaw, err := a.Repo.GetRecords(ctx, GetRecordOpt)
 	if err != nil {
 		a.Logger.Error("failed to get records")
 		return []openapi.Record{}, err
@@ -117,11 +117,11 @@ func (a *APIService) GetRecords(ctx context.Context, num int, offset int) (recs 
 		recs = append(recs, rec)
 	}
 
-	a.Logger.Info("complete GetRecordsRecent", zap.Int("num", num))
+	a.Logger.Info("complete GetRecordsRecent", zap.Int("num", GetRecordOpt.Num))
 	return recs, nil
 }
 
-func (a *APIService) GetRecordByID(ctx context.Context, id int) (rec openapi.Record, err error){
+func (a *APIService) GetRecordByID(ctx context.Context, id int) (rec openapi.Record, err error) {
 	a.Logger.Info("called GetRecordByID")
 	rec, err = a.Repo.GetRecordByID(ctx, id)
 	if err != nil {
@@ -132,7 +132,7 @@ func (a *APIService) GetRecordByID(ctx context.Context, id int) (rec openapi.Rec
 	return rec, nil
 }
 
-func (a *APIService) DeleteRecordByID(ctx context.Context, id int) (err error){
+func (a *APIService) DeleteRecordByID(ctx context.Context, id int) (err error) {
 	a.Logger.Info("called DeleteRecordByID")
 	err = a.Repo.DeleteRecordByID(ctx, id)
 	if err != nil {
