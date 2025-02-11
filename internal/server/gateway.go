@@ -14,6 +14,8 @@ import (
 	"go.uber.org/zap"
 )
 
+const defaultGetRecordNum = 20
+
 type apigateway struct {
 	Logger *zap.Logger
 	ap2    APIServiceV2
@@ -121,21 +123,30 @@ func (a *apigateway) PostV2RecordFixmonth(w http.ResponseWriter, r *http.Request
 // (GET /v2/record)
 func (a *apigateway) GetV2Record(w http.ResponseWriter, r *http.Request, params openapi.GetV2RecordParams) {
 	ctx := context.Background()
-	num := 20 // default value
+	opts := model.GetRecordOption{ // default value
+		Num:    defaultGetRecordNum,
+		Offset: 0,
+	}
 
 	if params.Num != nil {
-		num = *params.Num
+		opts.Num = *params.Num
 	}
-
-	offset := 0 // default value
 
 	if params.Offset != nil {
-		offset = *params.Offset
+		opts.Offset = *params.Offset
 	}
 
-	opts := model.GetRecordOption{
-		Num:    num,
-		Offset: offset,
+	if params.Yyyymm != nil {
+		err := model.ValidYYYYMM(*params.Yyyymm)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprint(w, err.Error())
+		}
+		opts.YYYYMM = *params.Yyyymm
+	}
+
+	if params.CategoryId != nil {
+		opts.CategoryID = *params.CategoryId
 	}
 
 	recs, err := a.ap2.GetRecords(ctx, opts)

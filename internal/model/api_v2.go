@@ -11,4 +11,6 @@ type CategoryMidMonthSummary struct {
 type GetRecordOption struct {
 	Num    int
 	Offset int
+	YYYYMM string
+	CategoryID int
 }
