@@ -45,10 +45,25 @@ func (d *DBRepository) InsertRecord(req openapi.ReqRecord) (rec openapi.Record, 
 	return rec, nil
 }
 
-func (d *DBRepository) GetRecords(ctx context.Context, GetRecordOpt model.GetRecordOption) (recs []openapi.Record, err error) {
-	num := GetRecordOpt.Num
-	offset := GetRecordOpt.Offset
-	res := d.Conn.Table(RecordTableName).Order("id DESC").Limit(num).Offset(offset).Find(&recs)
+func (d *DBRepository) GetRecords(ctx context.Context, getRecordOpt model.GetRecordOption) (recs []openapi.Record, err error) {
+	num := getRecordOpt.Num
+	offset := getRecordOpt.Offset
+	var q *gorm.DB = d.Conn.Table(RecordTableName).Order("id DESC")
+
+	if getRecordOpt.YYYYMM != "" {
+		startDate, err := yyyymmToInitDayTime(getRecordOpt.YYYYMM)
+		if err != nil {
+			return []openapi.Record{}, err
+		}
+		endDate := startDate.AddDate(0, 1, 0)
+		q = q.Where("datetime >= ?", startDate).Where("datetime < ?", endDate)
+	}
+
+	if getRecordOpt.CategoryID != 0 {
+		q = q.Where("category_id = ?", getRecordOpt.CategoryID)
+	}
+
+	res := q.Limit(num).Offset(offset).Find(&recs)
 	if res.Error != nil {
 		return []openapi.Record{}, res.Error
 	}
