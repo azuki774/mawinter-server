@@ -74,6 +74,14 @@ paths:
           in: query
           schema:
             type: integer
+        - name: yyyymm
+          in: query
+          schema:
+            type: string
+        - name: category_id
+          in: query
+          schema:
+            type: integer
       requestBody:
         content: {}
       responses:
@@ -89,7 +97,7 @@ paths:
         - url: 'http://localhost:8080'
   /v2/record/count:
     get:
-      summary: /v2/record/count
+      summary: record count
       description: 保存されているレコードの全件数を表示する。
       operationId: get-v2-record-count
       responses:
@@ -126,6 +134,7 @@ paths:
                   $ref: '#/components/schemas/record'
         '204':
           description: No Content
+      deprecated: true
       servers:
         - url: 'http://localhost:8080'
   '/v2/record/{yyyymm}/confirm':

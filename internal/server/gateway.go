@@ -133,7 +133,12 @@ func (a *apigateway) GetV2Record(w http.ResponseWriter, r *http.Request, params 
 		offset = *params.Offset
 	}
 
-	recs, err := a.ap2.GetRecords(ctx, num, offset)
+	opts := model.GetRecordOption{
+		Num:    num,
+		Offset: offset,
+	}
+
+	recs, err := a.ap2.GetRecords(ctx, opts)
 	if errors.Is(err, model.ErrNotFound) {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprint(w, err.Error())
@@ -287,12 +292,12 @@ func (a *apigateway) GetCategories(w http.ResponseWriter, r *http.Request) {
 }
 
 // (GET /v2/record/{id})
-func (a *apigateway) GetV2RecordId(w http.ResponseWriter, r *http.Request, id int){
+func (a *apigateway) GetV2RecordId(w http.ResponseWriter, r *http.Request, id int) {
 	rec, err := a.ap2.GetRecordByID(r.Context(), id)
 	if err != nil {
-		if errors.Is(err, model.ErrNotFound){
+		if errors.Is(err, model.ErrNotFound) {
 			w.WriteHeader(http.StatusNotFound)
-		}else{
+		} else {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprint(w, err.Error())
 		}
@@ -312,12 +317,12 @@ func (a *apigateway) GetV2RecordId(w http.ResponseWriter, r *http.Request, id in
 }
 
 // (DELETE /v2/record/{id})
-func (a *apigateway) DeleteV2RecordId(w http.ResponseWriter, r *http.Request, id int){
+func (a *apigateway) DeleteV2RecordId(w http.ResponseWriter, r *http.Request, id int) {
 	err := a.ap2.DeleteRecordByID(r.Context(), id)
 	if err != nil {
-		if errors.Is(err, model.ErrNotFound){
+		if errors.Is(err, model.ErrNotFound) {
 			w.WriteHeader(http.StatusNotFound)
-		}else{
+		} else {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprint(w, err.Error())
 		}

@@ -145,9 +145,8 @@ func TestAPIService_GetRecords(t *testing.T) {
 		Repo   DBRepository
 	}
 	type args struct {
-		ctx    context.Context
-		num    int
-		offset int
+		ctx          context.Context
+		GetRecordOpt model.GetRecordOption
 	}
 	tests := []struct {
 		name     string
@@ -164,7 +163,9 @@ func TestAPIService_GetRecords(t *testing.T) {
 			},
 			args: args{
 				ctx: context.Background(),
-				num: 3,
+				GetRecordOpt: model.GetRecordOption{
+					Num: 3,
+				},
 			},
 			wantRecs: []openapi.Record{
 				{
@@ -198,7 +199,9 @@ func TestAPIService_GetRecords(t *testing.T) {
 			},
 			args: args{
 				ctx: context.Background(),
-				num: 2,
+				GetRecordOpt: model.GetRecordOption{
+					Num: 2,
+				},
 			},
 			wantRecs: []openapi.Record{
 				{
@@ -232,7 +235,9 @@ func TestAPIService_GetRecords(t *testing.T) {
 			},
 			args: args{
 				ctx: context.Background(),
-				num: 1,
+				GetRecordOpt: model.GetRecordOption{
+					Num: 1,
+				},
 			},
 			wantRecs: []openapi.Record{
 				{
@@ -255,8 +260,10 @@ func TestAPIService_GetRecords(t *testing.T) {
 				Repo:   &mockRepo{},
 			},
 			args: args{
-				ctx:    context.Background(),
-				offset: 1,
+				ctx: context.Background(),
+				GetRecordOpt: model.GetRecordOption{
+					Offset: 1,
+				},
 			},
 			wantRecs: []openapi.Record{
 				{
@@ -280,7 +287,9 @@ func TestAPIService_GetRecords(t *testing.T) {
 			},
 			args: args{
 				ctx: context.Background(),
-				num: 0,
+				GetRecordOpt: model.GetRecordOption{
+					Num: 0,
+				},
 			},
 			wantRecs: nil,
 			wantErr:  false,
@@ -293,7 +302,9 @@ func TestAPIService_GetRecords(t *testing.T) {
 			},
 			args: args{
 				ctx: context.Background(),
-				num: -1,
+				GetRecordOpt: model.GetRecordOption{
+					Num: -1,
+				},
 			},
 			wantRecs: []openapi.Record{},
 			wantErr:  true,
@@ -305,7 +316,7 @@ func TestAPIService_GetRecords(t *testing.T) {
 				Logger: tt.fields.Logger,
 				Repo:   tt.fields.Repo,
 			}
-			gotRecs, err := a.GetRecords(tt.args.ctx, tt.args.num, tt.args.offset)
+			gotRecs, err := a.GetRecords(tt.args.ctx, tt.args.GetRecordOpt)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("APIService.GetRecordsRecent() error = %v, wantErr %v", err, tt.wantErr)
 				return

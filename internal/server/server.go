@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
 	"net/http"
 
@@ -21,7 +22,7 @@ type APIServiceV2 interface {
 	// V2
 	PostRecord(ctx context.Context, req openapi.ReqRecord) (rec openapi.Record, err error)
 	PostMonthlyFixRecord(ctx context.Context, yyyymm string) (recs []openapi.Record, err error)
-	GetRecords(ctx context.Context, num int, offset int) (recs []openapi.Record, err error)
+	GetRecords(ctx context.Context, GetRecordOpt model.GetRecordOption) (recs []openapi.Record, err error)
 	GetRecordByID(ctx context.Context, id int) (rec openapi.Record, err error)
 	DeleteRecordByID(ctx context.Context, id int) (err error)
 	GetRecordsCount(ctx context.Context) (rec openapi.RecordCount, err error)
