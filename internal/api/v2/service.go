@@ -5,6 +5,7 @@ import (
 	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
 	"mawinter-server/internal/timeutil"
+	"mawinter-server/internal/util"
 	"sort"
 	"time"
 
@@ -27,6 +28,7 @@ type DBRepository interface {
 	GetRecordByID(ctx context.Context, id int) (rec openapi.Record, err error)
 	DeleteRecordByID(ctx context.Context, id int) (err error)
 	GetRecordsCount(ctx context.Context) (num int, err error)
+	GetRecordsAvailableYYYYMM(ctx context.Context) (yyyymms []string, err error)
 	GetCategories(ctx context.Context) (cats []model.Category, err error)
 	GetMonthRecordsRecent(yyyymm string, num int) (recs []openapi.Record, err error)
 	MakeCategoryNameMap() (cnf map[int]string, err error)
@@ -154,6 +156,24 @@ func (a *APIService) GetRecordsCount(ctx context.Context) (rec openapi.RecordCou
 
 	rec.Num = int2ptr(num)
 	return rec, nil
+}
+
+// GetRecordsAvailable は DBに保存されている FY / YYYYMM の一覧を返す
+func (a *APIService) GetRecordsAvailable(ctx context.Context) (res model.RecordsAvailable, err error) {
+	a.Logger.Info("called GetRecordsAvailable")
+	res.YYYYMMs, err = a.Repo.GetRecordsAvailableYYYYMM(ctx) // YYYYMM が降順に挿入される
+	if err != nil {
+		a.Logger.Error("failed to get records", zap.Error(err))
+		return model.RecordsAvailable{}, err
+	}
+
+	for _, yyyymm := range res.YYYYMMs {
+		fy := timeutil.ConvertToFiscalYear(yyyymm)
+		// fy に未追加なら追加
+		util.InsertStringIfNotExists(&res.FY, fy)
+	}
+
+	return res, nil
 }
 
 // GetCategories は管理しているカテゴリ情報を返却する

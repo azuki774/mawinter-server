@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"fmt"
 	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
@@ -233,7 +234,6 @@ func TestDBRepository_GetMonthlyFixDone(t *testing.T) {
 	}
 }
 
-
 func TestDBRepository_InsertMonthlyFixBilling(t *testing.T) {
 	type fields struct {
 		Conn *gorm.DB
@@ -396,3 +396,57 @@ func Test_dbModelToConfirmInfo(t *testing.T) {
 	}
 }
 
+func TestDBRepository_GetRecordsAvailableYYYYMM(t *testing.T) {
+	type fields struct {
+		Conn *gorm.DB
+	}
+	type args struct {
+		ctx context.Context
+	}
+	tests := []struct {
+		name        string
+		fields      fields
+		args        args
+		wantYyyymms []string
+		wantErr     bool
+		mockSetUp   func(mock sqlmock.Sqlmock)
+	}{
+		{
+			name:   "none",
+			fields: fields{},
+			args: args{
+				ctx: context.Background(),
+			},
+			wantErr:     false,
+			wantYyyymms: []string{"202504", "202503"},
+			mockSetUp: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery("SELECT DISTINCT").
+					WillReturnRows(sqlmock.NewRows([]string{"yyyymm"}).
+					AddRow("202504").
+					AddRow("202503"),
+				)
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gormDB, mock, _ := NewDBMock()
+			tt.fields.Conn = gormDB
+
+			d := &DBRepository{
+				Conn: tt.fields.Conn,
+			}
+
+			tt.mockSetUp(mock)
+
+			gotYyyymms, err := d.GetRecordsAvailableYYYYMM(tt.args.ctx)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("DBRepository.GetRecordsAvailableYYYYMM() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotYyyymms, tt.wantYyyymms) {
+				t.Errorf("DBRepository.GetRecordsAvailableYYYYMM() = %v, want %v", gotYyyymms, tt.wantYyyymms)
+			}
+		})
+	}
+}

@@ -61,3 +61,6 @@ jobs:
 
       - name: run e2e.py
         run: python test/e2e.py
+
+      - name: Show API log
+        run: docker logs mawinter-api

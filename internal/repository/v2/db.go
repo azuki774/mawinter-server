@@ -93,6 +93,18 @@ func (d *DBRepository) GetRecordsCount(ctx context.Context) (num int, err error)
 	return num, nil
 }
 
+func (d *DBRepository) GetRecordsAvailableYYYYMM(ctx context.Context) (yyyymms []string, err error) {
+	res := d.Conn.Table(RecordTableName).
+		Select("DISTINCT DATE_FORMAT(datetime, '%Y%m')").
+		Order("DATE_FORMAT(datetime, '%Y%m') DESC").
+		Pluck("DATE_FORMAT(datetime, '%Y%m')", &yyyymms)
+
+	if res.Error != nil {
+		return []string{}, res.Error
+	}
+	return yyyymms, nil
+}
+
 func (d *DBRepository) GetCategories(ctx context.Context) (cats []model.Category, err error) {
 	err = d.Conn.Table(CategoryTableName).Find(&cats).Error
 	return cats, err

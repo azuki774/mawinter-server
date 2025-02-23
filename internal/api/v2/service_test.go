@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"errors"
 	"mawinter-server/internal/model"
 	"mawinter-server/internal/openapi"
 	"mawinter-server/internal/timeutil"
@@ -323,6 +324,67 @@ func TestAPIService_GetRecords(t *testing.T) {
 			}
 			if !reflect.DeepEqual(gotRecs, tt.wantRecs) {
 				t.Errorf("APIService.GetRecordsRecent() = %v, want %v", gotRecs, tt.wantRecs)
+			}
+		})
+	}
+}
+
+func TestAPIService_GetRecordsAvailable(t *testing.T) {
+	type fields struct {
+		Logger *zap.Logger
+		Repo   DBRepository
+	}
+	type args struct {
+		ctx context.Context
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantRes model.RecordsAvailable
+		wantErr bool
+	}{
+		{
+			name: "normal",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{},
+			},
+			args: args{
+				ctx: context.Background(),
+			},
+			wantRes: model.RecordsAvailable{
+				FY:      []string{"2025", "2024"},
+				YYYYMMs: []string{"202504", "202503", "202412"},
+			},
+			wantErr: false,
+		},
+		{
+			name: "error",
+			fields: fields{
+				Logger: l,
+				Repo:   &mockRepo{err: errors.New("error")},
+			},
+			args: args{
+				ctx: context.Background(),
+			},
+			wantRes: model.RecordsAvailable{},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := &APIService{
+				Logger: tt.fields.Logger,
+				Repo:   tt.fields.Repo,
+			}
+			gotRes, err := a.GetRecordsAvailable(tt.args.ctx)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("APIService.GetRecordsAvailable() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotRes, tt.wantRes) {
+				t.Errorf("APIService.GetRecordsAvailable() = %v, want %v", gotRes, tt.wantRes)
 			}
 		})
 	}
