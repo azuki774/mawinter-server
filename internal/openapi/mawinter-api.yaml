@@ -113,6 +113,45 @@ paths:
                     num: 1234
       servers:
         - url: 'http://localhost:8080'
+  /v2/record/available:
+    get:
+      summary: record available
+      description: "このDBに登録されているレコード全体の、年月（YYYYMM）と Fiscal Year(fy) の一覧を返却する。\r\nいずれのレスポンスの配列も、新しい順にソートされている。"
+      operationId: get-v2-record-available
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fy:
+                    type: array
+                    items:
+                      type: string
+                      examples:
+                        - '2025'
+                  yyyymm:
+                    type: array
+                    items:
+                      type: string
+                      examples:
+                        - '202501'
+              examples:
+                Example 1:
+                  value:
+                    fy:
+                      - '2024'
+                      - '2023'
+                    yyyymm:
+                      - '202502'
+                      - '202501'
+                      - '202412'
+                      - '202403'
+                      - '202312'
+      servers:
+        - url: 'http://localhost:8080'
   /v2/record/fixmonth:
     post:
       summary: create fixmonth record

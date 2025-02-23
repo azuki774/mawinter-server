@@ -25,6 +25,9 @@ type ServerInterface interface {
 	// create record
 	// (POST /v2/record)
 	PostV2Record(w http.ResponseWriter, r *http.Request)
+	// record available
+	// (GET /v2/record/available)
+	GetV2RecordAvailable(w http.ResponseWriter, r *http.Request)
 	// record count
 	// (GET /v2/record/count)
 	GetV2RecordCount(w http.ResponseWriter, r *http.Request)
@@ -76,6 +79,12 @@ func (_ Unimplemented) GetV2Record(w http.ResponseWriter, r *http.Request, param
 // create record
 // (POST /v2/record)
 func (_ Unimplemented) PostV2Record(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// record available
+// (GET /v2/record/available)
+func (_ Unimplemented) GetV2RecordAvailable(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -224,6 +233,21 @@ func (siw *ServerInterfaceWrapper) PostV2Record(w http.ResponseWriter, r *http.R
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PostV2Record(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetV2RecordAvailable operation middleware
+func (siw *ServerInterfaceWrapper) GetV2RecordAvailable(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetV2RecordAvailable(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -545,6 +569,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/v2/record", wrapper.PostV2Record)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/v2/record/available", wrapper.GetV2RecordAvailable)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/v2/record/count", wrapper.GetV2RecordCount)
