@@ -26,6 +26,7 @@ type APIServiceV2 interface {
 	GetRecordByID(ctx context.Context, id int) (rec openapi.Record, err error)
 	DeleteRecordByID(ctx context.Context, id int) (err error)
 	GetRecordsCount(ctx context.Context) (rec openapi.RecordCount, err error)
+	GetRecordsAvailable(ctx context.Context) (res model.RecordsAvailable, err error)
 	GetCategories(ctx context.Context) (recs []openapi.Category, err error)
 	GetYYYYMMRecordsRecent(ctx context.Context, yyyymm string, num int) (recs []openapi.Record, err error)
 	GetV2YearSummary(ctx context.Context, year int) (sums []openapi.CategoryYearSummary, err error)

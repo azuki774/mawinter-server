@@ -127,6 +127,13 @@ func (m *mockRepo) GetRecordsCount(ctx context.Context) (num int, err error) {
 	return 123, nil // 正常系
 }
 
+func (m *mockRepo) GetRecordsAvailableYYYYMM(ctx context.Context) (yyyymms []string, err error) {
+	if m.err != nil {
+		return []string{}, m.err
+	}
+	return []string{"202504", "202503", "202412"}, nil // 正常系
+}
+
 // empty return
 func (m *mockRepo) GetCategories(ctx context.Context) (cats []model.Category, err error) {
 	return []model.Category{}, nil
