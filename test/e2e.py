@@ -767,6 +767,23 @@ else:
     print(response.status_code)
     sys.exit(1)
 
+print("# get records (7) - no records")
+url = "http://localhost:8080/v2/record?category_id=999&yyyymm=209905&num=999"
+response = requests.get(url)
+if response.status_code == 200:
+    json_data = response.json()
+    want = []
+    if want != json_data:
+        print("[NG] {}".format(url))
+        print(json_data)
+        print(want)
+        sys.exit(1)
+    print("[OK] {}".format(url))
+else:
+    print("[NG] {}".format(url))
+    print(response.status_code)
+    sys.exit(1)
+
 print("# delete id = 1 (before)")
 url = "http://localhost:8080/v2/record/1"
 response = requests.get(url)

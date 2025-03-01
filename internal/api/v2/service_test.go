@@ -292,7 +292,7 @@ func TestAPIService_GetRecords(t *testing.T) {
 					Num: 0,
 				},
 			},
-			wantRecs: nil,
+			wantRecs: []openapi.Record{},
 			wantErr:  false,
 		},
 		{
