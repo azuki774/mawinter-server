@@ -113,6 +113,7 @@ func (a *APIService) GetRecords(ctx context.Context, GetRecordOpt model.GetRecor
 		return nil, err
 	}
 
+	recs = []openapi.Record{}
 	for _, rec := range recsRaw {
 		// categoryName を付与
 		rec.CategoryName = cnf[rec.CategoryId]
