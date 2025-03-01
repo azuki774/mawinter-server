@@ -161,6 +161,7 @@ func (a *apigateway) GetV2Record(w http.ResponseWriter, r *http.Request, params 
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			fmt.Fprint(w, err.Error())
+			return
 		}
 		opts.YYYYMM = *params.Yyyymm
 	}
@@ -227,6 +228,7 @@ func (a *apigateway) GetV2RecordYyyymmConfirm(w http.ResponseWriter, r *http.Req
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, err.Error())
+		return
 	}
 	yc, err := a.ap2.GetMonthlyConfirm(ctx, yyyymm)
 	if err != nil {
@@ -254,6 +256,7 @@ func (a *apigateway) PutV2TableYyyymmConfirm(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, err.Error())
+		return
 	}
 
 	var req openapi.ConfirmInfo
