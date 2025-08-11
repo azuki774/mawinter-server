@@ -17,6 +17,12 @@ services:
     container_name: mawinter-api
     ports:
       - "8080:8080"
+    environment:
+      - DB_HOST=mawinter-db
+      - DB_PORT=3306
+      - DB_NAME=mawinter
+      - DB_USER=root
+      - DB_PASS=password
 
   # mawinter-register:
   #   image: mawinter-register:latest
