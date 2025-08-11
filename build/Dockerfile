@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.23 AS builder
+FROM golang:1.24.2 AS builder
 LABEL description="mawinter-API server"
 
 WORKDIR /app
