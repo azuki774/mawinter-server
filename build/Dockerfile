@@ -17,7 +17,7 @@ RUN --mount=type=bind,target=. \
     -X main.build=$(git describe --tags)" \
     -o /bin/ ./...
 
-FROM gcr.io/distroless/base-debian12
+FROM gcr.io/distroless/base-debian12:nonroot
 ENV TZ=Asia/Tokyo
 COPY --from=builder /bin/mawinter /usr/local/bin/mawinter
 ENTRYPOINT ["/usr/local/bin/mawinter", "start"]
