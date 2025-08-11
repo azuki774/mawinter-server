@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mawinter-server/internal/factory"
 	"mawinter-server/internal/server"
+	"os"
 
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -58,7 +59,14 @@ func start() (err error) {
 	}
 	defer l.Sync()
 
-	db2, err := factory.NewDBRepositoryV2(startOpt.DBInfo.Host, startOpt.DBInfo.Port, startOpt.DBInfo.User, startOpt.DBInfo.Pass, startOpt.DBInfo.Name)
+	// Override with environment variables for security
+	dbHost := getEnvOrDefault("DB_HOST", startOpt.DBInfo.Host)
+	dbPort := getEnvOrDefault("DB_PORT", startOpt.DBInfo.Port)
+	dbName := getEnvOrDefault("DB_NAME", startOpt.DBInfo.Name)
+	dbUser := getEnvOrDefault("DB_USER", startOpt.DBInfo.User)
+	dbPass := getEnvOrDefault("DB_PASS", startOpt.DBInfo.Pass)
+
+	db2, err := factory.NewDBRepositoryV2(dbHost, dbPort, dbUser, dbPass, dbName)
 	if err != nil {
 		l.Error("failed to connect DB", zap.Error(err))
 		return err
@@ -77,12 +85,20 @@ func start() (err error) {
 	return srv.Start(ctx)
 }
 
+// getEnvOrDefault returns environment variable value or default if not set
+func getEnvOrDefault(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
 func init() {
 	rootCmd.AddCommand(startCmd)
 	startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	startCmd.Flags().StringVar(&startOpt.DBInfo.Host, "db-host", "mawinter-db", "DB Host")
-	startCmd.Flags().StringVar(&startOpt.DBInfo.Port, "db-port", "3306", "DB Port")
-	startCmd.Flags().StringVar(&startOpt.DBInfo.Name, "db-name", "mawinter", "DB Name")
-	startCmd.Flags().StringVar(&startOpt.DBInfo.User, "db-user", "root", "DB User")
-	startCmd.Flags().StringVar(&startOpt.DBInfo.Pass, "db-pass", "password", "DB Pass")
+	startCmd.Flags().StringVar(&startOpt.DBInfo.Host, "db-host", "mawinter-db", "DB Host (can be overridden by DB_HOST env var)")
+	startCmd.Flags().StringVar(&startOpt.DBInfo.Port, "db-port", "3306", "DB Port (can be overridden by DB_PORT env var)")
+	startCmd.Flags().StringVar(&startOpt.DBInfo.Name, "db-name", "mawinter", "DB Name (can be overridden by DB_NAME env var)")
+	startCmd.Flags().StringVar(&startOpt.DBInfo.User, "db-user", "root", "DB User (can be overridden by DB_USER env var)")
+	startCmd.Flags().StringVar(&startOpt.DBInfo.Pass, "db-pass", "password", "DB Pass (can be overridden by DB_PASS env var - DEPRECATED: use env var for security)")
 }
